@@ -1,0 +1,10 @@
+.required:after {
+    content: " *";
+    color: red;
+}
+
+.note {
+    color: red;
+    font-style: italic;
+    font-size: smaller;
+}
