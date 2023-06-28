@@ -11,6 +11,12 @@
                     <li class="nav-item">
                         <Link class="nav-link" href="/members">Members</Link>
                     </li>
+                    <li class="nav-item">
+                        <Link class="nav-link" href="/assigned">Assigned</Link>
+                    </li>
+                    <li class="nav-item">
+                        <Link class="nav-link" href="/employees">Employees</Link>
+                    </li>
                     <b-nav-item href="#" disabled>Disabled</b-nav-item>
                 </b-navbar-nav>
 

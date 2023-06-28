@@ -39,7 +39,17 @@ return new class extends Migration
             $table->string('other_gadgets')->nullable();
             $table->string('spouse_occupation');
             $table->string('nature_of_business');
+            $table->string('property_assigned');
+            $table->string('contract_file')->nullable();
+            $table->boolean('is_assigned')->default(false);
+            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
+
+            $table->foreign('employee_id')->references('id')->on('employees');
+            $table->foreign('created_by')->references('id')->on('employees');
+            $table->foreign('updated_by')->references('id')->on('employees');
         });
     }
 

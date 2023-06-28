@@ -1,7 +1,7 @@
 <template>
     <b-container fluid>
         <h5>
-            Add Member |
+            Edit Member |
             <Link class="btn btn-secondary" href="/members">Back</Link>
         </h5>
         <span class="note">Note: Fields that has "*" is required</span>
@@ -553,46 +553,47 @@
 </template>
 
 <script>
-import { Link, router } from "@inertiajs/vue2";
+import { Link, router, useForm } from "@inertiajs/vue2";
 export default {
     components: {
         Link,
     },
     props: {
         errors: Object,
+        member: Object,
     },
     data() {
         return {
-            form: {
-                first_name: null,
-                middle_name: null,
-                last_name: null,
-                title: null,
-                alias: null,
-                suffix: null,
-                birth_date: null,
-                address: null,
-                secondary_address: null,
-                nationality: null,
-                gender: null,
-                civil_status: null,
-                company_name: null,
-                company_number: null,
-                occupation: null,
-                email: null,
-                mobile_number_one: null,
-                mobile_number_two: null,
-                telephone: null,
-                fax: null,
-                combined_monthly_income: null,
-                internet_connection: null,
-                owned_gadgets: [],
-                other_gadgets: null,
-                spouse_occupation: null,
-                nature_of_business: null,
-                property_assigned: null,
-                contract_file: null,
-            },
+            form: this.$inertia.form({
+                first_name: this.member.first_name,
+                middle_name: this.member.middle_name,
+                last_name: this.member.last_name,
+                title: this.member.title,
+                alias: this.member.alias,
+                suffix: this.member.suffix,
+                birth_date: this.member.birth_date,
+                address: this.member.address,
+                secondary_address: this.member.secondary_address,
+                nationality: this.member.nationality,
+                gender: this.member.gender,
+                civil_status: this.member.civil_status,
+                company_name: this.member.company_name,
+                company_number: this.member.company_number,
+                occupation: this.member.occupation,
+                email: this.member.email,
+                mobile_number_one: this.member.mobile_number_one,
+                mobile_number_two: this.member.mobile_number_two,
+                telephone: this.member.telephone,
+                fax: this.member.fax,
+                combined_monthly_income: this.member.combined_monthly_income,
+                internet_connection: this.member.internet_connection,
+                owned_gadgets: this.member.owned_gadgets,
+                other_gadgets: this.member.other_gadgets,
+                spouse_occupation: this.member.spouse_occupation,
+                nature_of_business: this.member.nature_of_business,
+                property_assigned: this.member.property_assigned,
+                contract_file: this.member.contract_file,
+            }),
             titles: [
                 { text: "-- select --", value: null },
                 "Mr.",
@@ -644,9 +645,15 @@ export default {
         submit() {
             this.$bvModal.hide("confirm-submit-modal");
 
-            router.post("/members", this.form, {
+            router.post(`/members/${this.member.id}`, {
+                _method: "PUT",
                 forceFormData: true,
+                ...this.form
             });
+            // this.$validator.validateAll().then((success) => {
+            // });
+
+            console.log("submitted");
         },
     },
 };

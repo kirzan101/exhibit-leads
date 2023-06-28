@@ -47,7 +47,9 @@ class MemberFormRequest extends FormRequest
             'owned_gadgets' => 'required|array',
             'other_gadgets' => 'nullable|min:2',
             'spouse_occupation' => 'required|min:2',
-            'nature_of_business' => 'required|min:2'
+            'nature_of_business' => 'required|min:2',
+            'property_assigned' => 'required|min:2',
+            // 'contract_file' => 'required|file|mimes:png,jpg,jpeg',
         ];
     }
 }

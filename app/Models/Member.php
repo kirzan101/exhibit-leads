@@ -36,6 +36,12 @@ class Member extends Model
         'other_gadgets', //x
         'spouse_occupation',
         'nature_of_business',
+        'property_assigned',
+        'contract_file',
+        'is_assigned',
+        'employee_id',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -43,7 +49,18 @@ class Member extends Model
      *
      * @return string
      */
-    public function getFullName() {
-        return sprintf('%s %s, %s %s', $this->title, $this->last_name, $this->first_name, $this->middle_name );
+    public function getFullName()
+    {
+        return sprintf('%s %s, %s %s', $this->title, $this->last_name, $this->first_name, $this->middle_name);
+    }
+
+    /**
+     * associate member to employee
+     *
+     * @return void
+     */
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
     }
 }

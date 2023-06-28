@@ -32,8 +32,11 @@ class MemberFactory extends Factory
             'combined_monthly_income' => fake()->randomElement(['Php 40k Below', 'Php 40k - 49,999', 'Php 50k Above']),
             'internet_connection' => fake()->randomElement(['Postpaid', 'Prepaid']),
             'owned_gadgets' => fake()->randomElement(['Desktop', 'Laptop', 'Tablet']),
-            'spouse_occupation' => fake()->name(),
-            'nature_of_business' => fake()->bs()
+            'spouse_occupation' => fake()->jobTitle(),
+            'nature_of_business' => fake()->bs(),
+            'property_assigned' => fake()->randomElement(['Astoria Plaza', 'Astoria Palawan', 'Astoria Greenbelt', 'Astoria Boracay']),
+            'created_by' => 1,
+            'is_assigned' => false
         ];
     }
 }

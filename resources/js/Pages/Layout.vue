@@ -1,9 +1,11 @@
 <template>
     <div>
         <Navbar />
-        <div class="m-2 mt-4">
-            <slot />
-        </div>
+        <transition name="page" mode="out-in" appear>
+            <main :key="$page.url" class="m-2 mt-4">
+                <slot />
+            </main>
+        </transition>
     </div>
 </template>
 

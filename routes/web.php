@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AssignedEmployeeController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +32,7 @@ Route::get('/', function () {
 
 // Route::get('/members', [MemberController::class, 'index']);
 Route::resource('members', MemberController::class);
+Route::resource('contracts', ContractController::class);
+Route::resource('employees', EmployeeController::class);
+
+Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
