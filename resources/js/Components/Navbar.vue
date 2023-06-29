@@ -12,7 +12,7 @@
                         <Link class="nav-link" href="/members">Members</Link>
                     </li>
                     <li class="nav-item">
-                        <Link class="nav-link" href="/assigned">Assigned</Link>
+                        <Link class="nav-link" href="/assigned-employees">Assigned</Link>
                     </li>
                     <li class="nav-item">
                         <Link class="nav-link" href="/employees">Employees</Link>

@@ -3,19 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AssignedEmployeeFormRequest;
+use App\Http\Resources\MemberResource;
 use App\Models\AssignedEmployee;
+use App\Models\Employee;
+use App\Models\Member;
 use App\Services\AssignedEmployeeService;
+use App\Services\EmployeeService;
+use App\Services\MemberService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class AssignedEmployeeController extends Controller
 {
-    private AssignedEmployeeService $assignedEmployee;
+    private AssignedEmployeeService $assignedEmployeeService;
+    private MemberService $memberService;
+    private EmployeeService $employeeService;
 
-    public function __construct(AssignedEmployeeService $assignedEmployee)
+    public function __construct(AssignedEmployeeService $assignedEmployeeService, MemberService $memberService, EmployeeService $employeeService)
     {
-        $this->assignedEmployee = $assignedEmployee;
+        $this->assignedEmployeeService = $assignedEmployeeService;
+        $this->memberService = $memberService;
+        $this->employeeService = $employeeService;
     }
 
     /**
@@ -23,7 +33,13 @@ class AssignedEmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $members = MemberResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
+
+        return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
+            'members' => $members,
+            'employees' => $this->employeeService->indexEmployee(),
+            'per_page' => 5
+        ]);
     }
 
     /**
@@ -42,7 +58,7 @@ class AssignedEmployeeController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->assignedEmployee->createAssignedEmployee($request->validated());
+            $this->assignedEmployeeService->createAssignedEmployee($request->validated());
         } catch (Exception $ex) {
 
             DB::rollBack();
@@ -56,9 +72,14 @@ class AssignedEmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AssignedEmployee $assignedEmployee)
+    public function show($id)
     {
-        //
+        $member = Member::find($id);
+        $employee = Employee::find($member->employee_id);
+        return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
+            'member' => $member,
+            'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
+        ]);
     }
 
     /**
@@ -72,9 +93,18 @@ class AssignedEmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AssignedEmployee $assignedEmployee)
+    public function update(AssignedEmployeeFormRequest $request, AssignedEmployee $assignedEmployee)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $this->assignedEmployeeService->updateAssignedEmployee($request->validated(), $assignedEmployee);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned');
     }
 
     /**
@@ -83,5 +113,21 @@ class AssignedEmployeeController extends Controller
     public function destroy(AssignedEmployee $assignedEmployee)
     {
         //
+    }
+
+    public function reassignEmployee(AssignedEmployeeFormRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->assignedEmployeeService->createAssignedEmployee($request->validated());
+        } catch (Exception $ex) {
+
+            DB::rollBack();
+            return redirect()->route('members.index')->with('error', $ex->getMessage());
+        }
+
+        DB::commit();
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned!');
     }
 }

@@ -111,6 +111,7 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
+                            @change="selectEmployee($event, row.item.employee.id)"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
@@ -120,8 +121,7 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <Link :href="'members/' + row.item.id" class="btn mx-1 btn-info" type="button">Show</Link>
-                    <Link :href="'members/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link :href="'assigned-employees/' + row.item.id" class="btn mx-1 btn-info" type="button">Show</Link>
                 </template>
 
                 <template #row-details="row">
@@ -178,17 +178,21 @@ export default {
                 content: "",
             },
             selected_ids: [],
+            selected_employee_ids: [],
             checkedAll: false,
         };
     },
     watch: {
         selected_ids() {
             return this.$emit('selected_member', this.selected_ids);
+        },
+        selected_employee_ids() {
+            return this.$emit('selected_member_employee_id', this.selected_employee_ids);
         }
     },
     computed: {
         sortOptions() {
-            // Create an options list from our fields
+            // Create an options list from our fields99
             return this.fields
                 .filter((f) => f.sortable)
                 .map((f) => {
@@ -217,14 +221,24 @@ export default {
         },
         select() {
             this.selected_ids = [];
+            this.selected_employee_ids = [];
             if (this.checkedAll) {
+                console.log('selected all');
                 for (let i in this.items
-                    .filter((item) => item.is_assigned == false)
+                    .filter((item) => item.is_assigned == true)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
-                }
+                    this.selected_employee_ids.push(this.items[i].employee.id);
+                } 
+
+                // remove duplicate ids
+                this.selected_employee_ids = this.selected_employee_ids.filter((item,index) => this.selected_employee_ids.indexOf(item) === index)
             }
         },
+        selectEmployee(event, data) {
+            // console.log(event.currentTarget);
+            this.selected_employee_ids = data;
+        }
     },
 };
 </script>

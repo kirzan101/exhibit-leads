@@ -34,5 +34,8 @@ Route::get('/', function () {
 Route::resource('members', MemberController::class);
 Route::resource('contracts', ContractController::class);
 Route::resource('employees', EmployeeController::class);
+Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'delete', 'reassigneEmployee', 'show']]);
 
+Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
 Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
+Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);

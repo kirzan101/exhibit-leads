@@ -496,7 +496,6 @@
                         <b-form-group
                             label="Contract file"
                             label-for="contract-file"
-                            label-class="required"
                         >
                             <b-form-file
                                 id="contract-file"
@@ -504,7 +503,6 @@
                                 :state="errors.contract_file ? false : null"
                                 placeholder="Choose an image"
                                 accept="image/png, image/jpg, image/jpeg"
-                                required
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MemberFormRequest;
+use App\Http\Resources\MemberResource;
 use App\Models\Member;
 use App\Services\EmployeeService;
 use App\Services\MemberService;
@@ -27,9 +28,9 @@ class MemberController extends Controller
      */
     public function index()
     {
-        // return $this->memberService->indexMember();
+        $members = MemberResource::collection($this->memberService->indexMember());
         return Inertia::render('Members/IndexMember', [
-            'members' => $this->memberService->indexMember(),
+            'members' => $members,
             'employees' => $this->employeeService->indexEmployee(),
             'per_page' => 5
         ]);
@@ -71,7 +72,9 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        //
+        return Inertia::render('Members/ShowMember', [
+            'member' => $member
+        ]);
     }
 
     /**

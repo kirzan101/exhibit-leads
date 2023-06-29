@@ -49,7 +49,7 @@ class MemberFormRequest extends FormRequest
             'spouse_occupation' => 'required|min:2',
             'nature_of_business' => 'required|min:2',
             'property_assigned' => 'required|min:2',
-            // 'contract_file' => 'required|file|mimes:png,jpg,jpeg',
+            'contract_file' => 'nullable|file|mimes:png,jpg,jpeg',
         ];
     }
 }

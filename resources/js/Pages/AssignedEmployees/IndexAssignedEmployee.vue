@@ -27,10 +27,7 @@
             <h5>
                 <div class="row">
                     <div class="col-sm-6">
-                        Member |
-                        <Link href="/members/create" class="btn btn-success"
-                            >Add</Link
-                        >
+                        Assigned Members
                     </div>
                     <div class="col-sm-6">
                         <b-button
@@ -39,7 +36,7 @@
                             style="float: right;"
                             align-v="end"
                             v-if="selected_member.length > 0"
-                            >Assign</b-button
+                            >Re-assign</b-button
                         >
                         <b-button
                             class="btn btn-info"
@@ -48,7 +45,7 @@
                             align-v="end"
                             disabled
                             v-else
-                            >Assign</b-button
+                            >Re-assign</b-button
                         >
                         <b-modal title="Assign to Employee" id="assign-modal">
                             <b-form @submit.prevent="submitAssigned">
@@ -88,26 +85,28 @@
 
             <br />
 
-            <MemberTable
+            <AssignedEmployeeTable
                 :fields="fields"
                 :items="members"
                 :per_page="per_page"
                 @selected_member="getSelectedMember($event)"
             />
         </b-container>
-
+        
         <br />
     </div>
 </template>
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
+import AssignedEmployeeTable from "../../Components/AssignedEmployeeTable.vue";
 import MemberTable from "../../Components/MemberTable.vue";
 
 export default {
     components: {
         Link,
         MemberTable,
+        AssignedEmployeeTable,
     },
     props: {
         members: Array,
@@ -125,26 +124,27 @@ export default {
                     sortable: true,
                     sortDirection: "desc",
                 },
-                { key: "first_name", label: "First name", sortable: true },
-                { key: "last_name", label: "Last name", sortable: true },
+                { key: "member_full_name", label: "Member name", sortable: true },
                 { key: "address", label: "Address", sortable: true },
-                // {
-                //     key: "is_assigned",
-                //     label: "Is Assigned",
-                //     sortable: false,
-                //     formatter: (value, key, item) => {
-                //         return value ? "Yes" : "No";
-                //     },
-                // },
+                { key: "employee_full_name", label: "Assigned To", sortable: true },
                 { key: 'actions', label: 'Actions' }
             ],
             selected_employee: "",
             selected_member: [],
+            selected_member_employee_id: [],
             form: {
                 employee_id: "",
                 member_ids: [],
             },
+            members_selected: []
         };
+    },
+    watch: {
+        showDismissibleAlert() {
+            this.$page.props.flash.error = ""
+            this.$page.props.flash.success = ""
+            this.$page.props.flash.message = ""
+        }
     },
     computed: {
         employeeList() {
@@ -163,13 +163,16 @@ export default {
         getSelectedMember(data) {
             this.selected_member = data;
         },
+        getSelectedEmployee(data) {
+            this.selected_member_employee_id = data;
+        },
         submitAssigned() {
             this.form.employee_id = this.selected_employee;
             this.form.member_ids = this.selected_member;
 
             this.$bvModal.hide("assign-modal");
 
-            router.post("/assign-employee", this.form);
+            router.post("/reassign-employee", this.form);
             this.selected_employee = "";
             this.selected_member = [];
         },

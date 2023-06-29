@@ -1,8 +1,15 @@
 <template>
     <b-container fluid>
         <h5>
-            Member Details |
-            <Link class="btn btn-secondary" href="/members">Back</Link>
+            <div class="row">
+                <div class="col-sm-6">
+                    Member |
+                    <Link href="/members" class="btn btn-success"
+                        >Back</Link
+                    >
+                </div>
+                <div class="col-sm-6 align-right">Assigned to: {{ assigned_employee }}</div>
+            </div>
         </h5>
         <div class="p-1">
             <b-form>

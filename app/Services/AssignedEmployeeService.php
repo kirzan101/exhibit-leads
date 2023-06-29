@@ -8,6 +8,7 @@ use App\Models\Member;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AssignedEmployeeService
 {
@@ -18,9 +19,9 @@ class AssignedEmployeeService
      */
     public function indexAssignedEmployee(): Collection
     {
-        $assigned_members = AssignedEmployee::all();
+        $assigned_employees = Member::where('is_assigned', true)->get();
 
-        return $assigned_members;
+        return $assigned_employees;
     }
 
     /**
@@ -59,11 +60,29 @@ class AssignedEmployeeService
      * @param AssignedEmployee $assignedEmployee
      * @return AssignedEmployee
      */
-    public function updateAssignedEmployee(array $request, AssignedEmployee $assignedEmployee): AssignedEmployee
+    public function updateAssignedEmployee(array $request, AssignedEmployee $assignedEmployee): bool
     {
-        $assigned_employee = tap($assignedEmployee)->update($request);
+        try {
+            foreach ($request['member_ids'] as $member) {
+                AssignedEmployee::create([
+                    'member_id' => $member,
+                    'employee_id' => $request['employee_id'],
+                    'created_by' => 1,
+                ]);
 
-        return $assigned_employee;
+                $member = Member::find($member);
+                $member->update([
+                    'is_assigned' => true,
+                    'employee_id' => $request['employee_id']
+                ]);
+            }
+        } catch (Exception $ex) {
+            return false;
+        }
+
+        // $assigned_employee = tap($assignedEmployee)->update($request);
+
+        return true;
     }
 
     /**

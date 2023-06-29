@@ -18,7 +18,7 @@ class MemberService
      *
      * @return void
      */
-    public function indexMember() : Collection
+    public function indexMember(): Collection
     {
         $member = Member::where('is_assigned', false)->get();
 
@@ -33,7 +33,6 @@ class MemberService
      */
     public function createMember(array $request): Member
     {
-        // dd($request['contract_file']);
         // convert array to single string
         $owned_gadgets = implode(',', $request['owned_gadgets']);
 
@@ -65,14 +64,16 @@ class MemberService
             'spouse_occupation' => $request['spouse_occupation'],
             'nature_of_business' => $request['nature_of_business'],
             'property_assigned' => $request['property_assigned'],
-            'created_by' => 1,//$request['create_by'],
-            'updated_by' => 1,//$request['updated_by'],
+            'created_by' => 1, //$request['create_by'],
+            'updated_by' => 1, //$request['updated_by'],
         ]);
 
-        $result = Helper::uploadFile($request['contract_file'], $member);
+        if ($request['contract_file']) {
+            $result = Helper::uploadFile($request['contract_file'], $member);
 
-        if(!$result) {
-            throw ValidationException::withMessages(['error on file upload']);
+            if (!$result) {
+                throw ValidationException::withMessages(['error on file upload']);
+            }
         }
 
         return $member;
@@ -87,7 +88,7 @@ class MemberService
      */
     public function updateMember(array $request, Member $member): Member
     {
-        $owned_gadgets = implode(',',$request['owned_gadgets']);
+        $owned_gadgets = implode(',', $request['owned_gadgets']);
         $request['owned_gadgets'] = $owned_gadgets;
 
         $member = tap($member)->update($request);
@@ -101,23 +102,23 @@ class MemberService
      * @param Member $member
      * @return boolean
      */
-    public function deleteMember(Member $member) : bool
+    public function deleteMember(Member $member): bool
     {
         $member = $member->delete();
 
         return $member;
     }
 
-    public function showMember(Member $model) : Member
+    public function showMember(Member $model): Member
     {
         $owned_gadgets = $model->owned_gadgets;
-        $arrayed_owned_gadgets = explode(',',$owned_gadgets);
-        
+        $arrayed_owned_gadgets = explode(',', $owned_gadgets);
+
         $member = new Member;
         $member = $model;
         $member->owned_gadgets = $arrayed_owned_gadgets;
-        
-        if($model->contract_file) {
+
+        if ($model->contract_file) {
             $member->contract_file = response()->file(public_path($model->contract_file))->getFile();
         }
         // $member->contract_file = File::files(public_path('uploads'))[0];
