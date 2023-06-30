@@ -77,7 +77,7 @@ class AssignedEmployeeController extends Controller
         $member = Member::find($id);
         $employee = Employee::find($member->employee_id);
         return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
-            'member' => $member,
+            'member' => $this->memberService->showMember($member),
             'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
         ]);
     }
@@ -129,5 +129,16 @@ class AssignedEmployeeController extends Controller
 
         DB::commit();
         return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned!');
+    }
+
+    public function removeAssignment(AssignedEmployeeFormRequest $request)
+    {
+        $result = $this->assignedEmployeeService->removedAssgined($request->validated());
+
+        if(!$result) {
+            return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');
+        }
+
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully removed assignment!');
     }
 }

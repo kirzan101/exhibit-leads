@@ -39,6 +39,7 @@ class Member extends Model
         'property_assigned',
         'contract_file',
         'is_assigned',
+        'remarks',
         'employee_id',
         'created_by',
         'updated_by',

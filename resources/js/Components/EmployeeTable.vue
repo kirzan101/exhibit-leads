@@ -102,8 +102,9 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <b-button variant="info" class="mx-1">Show</b-button>
+                    <!-- <b-button variant="info" class="mx-1">Show</b-button> -->
                     <!-- <b-button variant="warning" class="mx-1">Edit</b-button> -->
+                    <Link :href="'employees/' + row.item.id + ''" class="btn mx-1 btn-info" type="button">Show</Link>
                     <Link :href="'employees/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button">Edit</Link>
                 </template>
 

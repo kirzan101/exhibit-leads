@@ -95,4 +95,22 @@ class AssignedEmployeeService
     {
         return $assignedEmployee->delete;
     }
+
+    public function removedAssgined(array $request) : bool
+    {
+        try {
+            foreach ($request['member_ids'] as $member) {
+                $member = Member::find($member);
+                $member->update([
+                    'is_assigned' => false,
+                    'employee_id' => null,
+                    'remarks' => null
+                ]);
+            }
+        } catch (Exception $ex) {
+            return false;
+        }
+
+        return true;
+    }
 }

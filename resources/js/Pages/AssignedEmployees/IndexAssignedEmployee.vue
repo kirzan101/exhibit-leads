@@ -47,7 +47,7 @@
                             v-else
                             >Re-assign</b-button
                         >
-                        <b-modal title="Assign to Employee" id="assign-modal">
+                        <b-modal title="Reassign to Employee" id="assign-modal">
                             <b-form @submit.prevent="submitAssigned">
                                 <b-form-select
                                     v-model="selected_employee"
@@ -136,6 +136,7 @@ export default {
                 employee_id: "",
                 member_ids: [],
             },
+            remarks: "",
             members_selected: []
         };
     },

@@ -27,6 +27,7 @@ class EmployeeFormRequest extends FormRequest
             'last_name' => 'required|min:2',
             'position' => 'required|min:2',
             'property' => 'required|min:2',
+            'email' => 'required|email',
         ];
     }
 }

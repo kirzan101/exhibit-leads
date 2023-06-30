@@ -14,7 +14,8 @@ class Employee extends Model
         'middle_name',
         'last_name',
         'position',
-        'property'
+        'property',
+        'user_id',
     ];
 
     /**
@@ -24,5 +25,14 @@ class Employee extends Model
      */
     public function getFullName() {
         return sprintf('%s, %s', $this->last_name, $this->first_name);
+    }
+
+    /**
+     * associate user to employee
+     *
+     * @return void
+     */
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

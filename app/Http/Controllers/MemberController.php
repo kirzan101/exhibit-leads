@@ -116,4 +116,20 @@ class MemberController extends Controller
     {
         //
     }
+
+    public function remarks(Request $request)
+    {
+        $request = $request->validate([
+            'member_id' => 'required|exists:members,id',
+            'remarks' => 'required|min:2',
+        ]);
+
+        $result = $this->memberService->modifyRemarks($request);
+
+        if(!$result) {
+            return redirect()->route('assigned-employees.index')->with('error', 'Something went wrong on saving!');
+        }
+
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully saved!');
+    }
 }

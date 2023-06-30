@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // $this->call([
-        //     Employee::class
-        // ]);
-        
-        Employee::factory(2)->create();
+        $this->call([
+            EmployeeSeeder::class,
+        ]);
         Member::factory(10)->create();
+        
+        // Employee::factory(2)->create();
 
     }
 }

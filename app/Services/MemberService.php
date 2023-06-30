@@ -129,4 +129,13 @@ class MemberService
 
         return $member;
     }
+
+    public function modifyRemarks(array $request) : bool
+    {
+        $member = Member::find($request['member_id']);
+
+        return $member->update([
+            'remarks' => $request['remarks']
+        ]);
+    }
 }

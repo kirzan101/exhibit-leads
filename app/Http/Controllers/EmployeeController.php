@@ -44,10 +44,13 @@ class EmployeeController extends Controller
     public function store(EmployeeFormRequest $request)
     {
         try {
+            $request->validate([
+                'password' => 'required|min:2'
+            ]);
+
             DB::beginTransaction();
 
             $this->employeeService->createEmployee($request->validated());
-
         } catch (Exception $ex) {
             DB::rollBack();
             return redirect()->route('employees.index')->with('error', $ex->getMessage());
@@ -62,7 +65,10 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        return $this->employeeService->showEmployee($employee);
+        return Inertia::render('Employees/ShowEmployee', [
+            'employee' => $this->employeeService->showEmployee($employee),
+            'user' => $employee->user
+        ]);
     }
 
     /**
@@ -71,7 +77,8 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         return Inertia::render('Employees/EditEmployee', [
-            'employee' => $this->employeeService->showEmployee($employee)
+            'employee' => $this->employeeService->showEmployee($employee),
+            'user' => $employee->user
         ]);
     }
 
@@ -99,10 +106,26 @@ class EmployeeController extends Controller
     {
         $result = $this->employeeService->deleteEmployee($employee);
 
-        if($result) {
+        if ($result) {
             return redirect()->route('employees.index')->with('success', 'Successfully deleted!');
         }
 
         return redirect()->route('employees.index')->with('error', 'error on deletion');
+    }
+
+    /**
+     * Reset user password | Default Password: P@ssw0rd
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function resetPassword($id)
+    {
+        $result = $this->employeeService->resetPassword($id);
+
+        if ($result) {
+            return redirect()->route('employees.index')->with('success', 'Successfully reset the password!');
+        }
+        return redirect()->route('employees.index')->with('error', 'error on password reset');
     }
 }

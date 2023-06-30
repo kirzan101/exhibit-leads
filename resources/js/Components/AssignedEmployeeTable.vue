@@ -32,21 +32,6 @@
                 </b-col>
 
                 <b-col lg="6" class="my-1">
-                    <!-- <b-form-group
-                        label="Is Assigned"
-                        label-for="initial-sort-select"
-                        label-cols-sm="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                    >
-                        <b-form-select
-                            id="initial-sort-select"
-                            v-model="filterOn"
-                            :options="['all', true, false]"
-                            size="sm"
-                        ></b-form-select>
-                    </b-form-group> -->
                     &nbsp;
                 </b-col>
 
@@ -111,7 +96,9 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
-                            @change="selectEmployee($event, row.item.employee.id)"
+                            @change="
+                                selectEmployee($event, row.item.employee.id)
+                            "
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
@@ -121,7 +108,26 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <Link :href="'assigned-employees/' + row.item.id" class="btn mx-1 btn-info" type="button">Show</Link>
+                    <Link
+                        :href="'assigned-employees/' + row.item.id"
+                        class="btn mx-1 btn-info"
+                        type="button"
+                        >Show</Link
+                    >
+                    <b-button
+                        v-b-modal.remarks-modal
+                        variant="warning text-white"
+                        @click="selectedMember(row.item.id)"
+                        v-if="!row.item.remarks"
+                        >Add remarks</b-button
+                    >
+                    <b-button
+                        v-b-modal.remarks-modal
+                        variant="danger"
+                        @click="selectedMember(row.item.id)"
+                        v-else
+                        >Edit remarks</b-button
+                    >
                 </template>
 
                 <template #row-details="row">
@@ -135,21 +141,36 @@
                 </template>
             </b-table>
 
-            <!-- Info modal -->
-            <b-modal
-                :id="infoModal.id"
-                :title="infoModal.title"
-                ok-only
-                @hide="resetInfoModal"
-            >
-                <pre>{{ infoModal.content }}</pre>
+            <!-- Add Remarks modal -->
+            <b-modal id="remarks-modal" title="Remarks">
+                <b-form-textarea
+                    id="textarea"
+                    v-model="remarks"
+                    placeholder="Enter something..."
+                    rows="3"
+                    max-rows="6"
+                ></b-form-textarea>
+                <template #modal-footer>
+                    <b-button
+                        variant="danger"
+                        type="button"
+                        @click="$bvModal.hide('remarks-modal')"
+                        >Close</b-button
+                    >
+                    <b-button
+                        variant="success"
+                        type="button"
+                        @click="modifyRemarks"
+                        >Submit</b-button
+                    >
+                </template>
             </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -171,7 +192,7 @@ export default {
             sortDesc: false,
             sortDirection: "asc",
             filter: null,
-            filterOn: ['is_assigned'],
+            filterOn: ["is_assigned"],
             infoModal: {
                 id: "info-modal",
                 title: "",
@@ -180,15 +201,24 @@ export default {
             selected_ids: [],
             selected_employee_ids: [],
             checkedAll: false,
+            remarks: "",
+            selected_row_id: null,
+            form: {
+                remarks: "",
+                member_id: ""
+            }
         };
     },
     watch: {
         selected_ids() {
-            return this.$emit('selected_member', this.selected_ids);
+            return this.$emit("selected_member", this.selected_ids);
         },
         selected_employee_ids() {
-            return this.$emit('selected_member_employee_id', this.selected_employee_ids);
-        }
+            return this.$emit(
+                "selected_member_employee_id",
+                this.selected_employee_ids
+            );
+        },
     },
     computed: {
         sortOptions() {
@@ -223,21 +253,35 @@ export default {
             this.selected_ids = [];
             this.selected_employee_ids = [];
             if (this.checkedAll) {
-                console.log('selected all');
+                console.log("selected all");
                 for (let i in this.items
                     .filter((item) => item.is_assigned == true)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
                     this.selected_employee_ids.push(this.items[i].employee.id);
-                } 
+                }
 
                 // remove duplicate ids
-                this.selected_employee_ids = this.selected_employee_ids.filter((item,index) => this.selected_employee_ids.indexOf(item) === index)
+                this.selected_employee_ids = this.selected_employee_ids.filter(
+                    (item, index) =>
+                        this.selected_employee_ids.indexOf(item) === index
+                );
             }
         },
         selectEmployee(event, data) {
             // console.log(event.currentTarget);
             this.selected_employee_ids = data;
+        },
+        modifyRemarks() {
+            this.form.member_id = this.selected_row_id;
+            this.form.remarks = this.remarks;
+            router.post("/remarks", this.form);
+            this.remarks = "";
+            this.$bvModal.hide("remarks-modal");
+        },
+        selectedMember(id) {
+            console.log(id);
+            this.selected_row_id = id
         }
     },
 };

@@ -50,6 +50,7 @@ class MemberResource extends JsonResource
             'spouse_occupation' => $this->spouse_occupation,
             'contract_file' => $this->contract_file,
             'is_assigned' => (bool) $this->is_assigned,
+            'remarks' => $this->remarks,
             'employee' => $this->employee,
             'employee_full_name' => ($this->employee_id) ? $this->employee->getFullName() : null,
             'member_full_name' => $this->getFullName(),
