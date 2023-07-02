@@ -120,8 +120,8 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <Link :href="'members/' + row.item.id" class="btn mx-1 btn-info" type="button">Show</Link>
-                    <Link :href="'members/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link :href="'members/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
+                    <Link :href="'members/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
                 </template>
 
                 <template #row-details="row">

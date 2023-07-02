@@ -110,21 +110,21 @@
                 <template #cell(actions)="row">
                     <Link
                         :href="'assigned-employees/' + row.item.id"
-                        class="btn mx-1 btn-info"
+                        class="btn mx-1 my-1 btn-info"
                         type="button"
                         >Show</Link
                     >
                     <b-button
                         v-b-modal.remarks-modal
                         variant="warning text-white"
-                        @click="selectedMember(row.item.id)"
+                        @click="selectedMember(row.item)"
                         v-if="!row.item.remarks"
                         >Add remarks</b-button
                     >
                     <b-button
                         v-b-modal.remarks-modal
                         variant="danger"
-                        @click="selectedMember(row.item.id)"
+                        @click="selectedMember(row.item)"
                         v-else
                         >Edit remarks</b-button
                     >
@@ -219,6 +219,9 @@ export default {
                 this.selected_employee_ids
             );
         },
+        checkedAll() {
+            return this.$emit("checkedAll", this.checkedAll);
+        },
     },
     computed: {
         sortOptions() {
@@ -279,9 +282,9 @@ export default {
             this.remarks = "";
             this.$bvModal.hide("remarks-modal");
         },
-        selectedMember(id) {
-            console.log(id);
-            this.selected_row_id = id
+        selectedMember(data) {
+            this.selected_row_id = data.id;
+            this.remarks = data.remarks;
         }
     },
 };

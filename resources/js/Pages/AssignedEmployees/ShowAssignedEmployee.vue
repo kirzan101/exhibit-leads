@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     Member |
-                    <Link href="/members" class="btn btn-success"
+                    <Link href="/assigned-employees" class="btn btn-success"
                         >Back</Link
                     >
                 </div>

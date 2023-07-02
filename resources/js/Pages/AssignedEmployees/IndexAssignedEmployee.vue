@@ -92,7 +92,7 @@
                 @selected_member="getSelectedMember($event)"
             />
         </b-container>
-        
+
         <br />
     </div>
 </template>
@@ -137,7 +137,8 @@ export default {
                 member_ids: [],
             },
             remarks: "",
-            members_selected: []
+            members_selected: [],
+            checked_all: false
         };
     },
     watch: {
