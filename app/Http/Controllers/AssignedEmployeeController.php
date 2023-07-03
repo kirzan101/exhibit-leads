@@ -131,9 +131,19 @@ class AssignedEmployeeController extends Controller
         return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned!');
     }
 
-    public function removeAssignment(AssignedEmployeeFormRequest $request)
+    /**
+     * removed assigned employee to a members
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function removeAssignment(Request $request)
     {
-        $result = $this->assignedEmployeeService->removedAssgined($request->validated());
+        $request = $request->validate([
+            'member_ids' => 'required|array'
+        ]);
+
+        $result = $this->assignedEmployeeService->removedAssgined($request);
 
         if(!$result) {
             return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');

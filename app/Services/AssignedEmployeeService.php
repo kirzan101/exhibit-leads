@@ -96,6 +96,12 @@ class AssignedEmployeeService
         return $assignedEmployee->delete;
     }
 
+    /**
+     * removed assigned employee in a member
+     *
+     * @param array $request
+     * @return boolean
+     */
     public function removedAssgined(array $request) : bool
     {
         try {

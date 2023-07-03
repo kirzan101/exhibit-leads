@@ -12,12 +12,16 @@
                         <Link class="nav-link" href="/members">Members</Link>
                     </li>
                     <li class="nav-item">
-                        <Link class="nav-link" href="/assigned-employees">Assigned</Link>
+                        <Link class="nav-link" href="/assigned-employees"
+                            >Assign</Link
+                        >
                     </li>
                     <li class="nav-item">
-                        <Link class="nav-link" href="/employees">Employees</Link>
+                        <Link class="nav-link" href="/employees"
+                            >Employees</Link
+                        >
                     </li>
-                    <b-nav-item href="#" disabled>Disabled</b-nav-item>
+                    <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
@@ -43,10 +47,12 @@
                     <b-nav-item-dropdown right>
                         <!-- Using 'button-content' slot -->
                         <template #button-content>
-                            <em>User</em>
+                            <em>{{ username }}</em>
                         </template>
-                        <b-dropdown-item href="#">Profile</b-dropdown-item>
-                        <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+                        <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
+                        <li role="presentation">
+                            <Link role="menuitem" href="/logout" method="post" class="dropdown-item">Logout</Link>
+                        </li>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
@@ -55,10 +61,15 @@
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue2'
+import { Link } from "@inertiajs/vue2";
 export default {
     components: {
-        Link
-    }
-}
+        Link,
+    },
+    computed: {
+        username() {
+            return this.$page.props.auth.user.username;
+        },
+    },
+};
 </script>

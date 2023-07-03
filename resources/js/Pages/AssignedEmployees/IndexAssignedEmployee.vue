@@ -26,27 +26,41 @@
         <b-container fluid>
             <h5>
                 <div class="row">
+                    <div class="col-sm-6">Assigned Members</div>
                     <div class="col-sm-6">
-                        Assigned Members
-                    </div>
-                    <div class="col-sm-6">
-                        <b-button
-                            class="btn btn-info"
-                            v-b-modal.assign-modal
-                            style="float: right;"
-                            align-v="end"
-                            v-if="selected_member.length > 0"
-                            >Re-assign</b-button
-                        >
-                        <b-button
-                            class="btn btn-info"
-                            v-b-modal.assign-modal
-                            style="float: right;"
-                            align-v="end"
-                            disabled
-                            v-else
-                            >Re-assign</b-button
-                        >
+                        <div v-if="selected_member.length > 0">
+                            <b-button
+                                class="btn btn-danger mx-1 my-1"
+                                v-b-modal.remove-modal
+                                style="float: right"
+                                align-v="end"
+                                >Remove</b-button
+                            >
+                            <b-button
+                                class="btn btn-info mx-1 my-1"
+                                v-b-modal.assign-modal
+                                style="float: right"
+                                align-v="end"
+                                >Re-assign</b-button
+                            >
+                        </div>
+                        <div v-else>
+                            <b-button
+                                class="btn btn-danger mx-1 my-1"
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                >Remove</b-button
+                            >
+                            <b-button
+                                class="btn btn-info mx-1 my-1"
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                >Re-assign</b-button
+                            >
+                        </div>
+                        <!-- Reassign modal start -->
                         <b-modal title="Reassign to Employee" id="assign-modal">
                             <b-form @submit.prevent="submitAssigned">
                                 <b-form-select
@@ -79,6 +93,27 @@
                                 >
                             </template>
                         </b-modal>
+                        <!-- Reassign modal end -->
+
+                        <!-- Remove modal start -->
+                        <b-modal title="Notice:" id="remove-modal">
+                            <h5>Remove Assigned?</h5>
+                            <template #modal-footer>
+                                <b-button
+                                    variant="danger"
+                                    type="button"
+                                    @click="$bvModal.hide('remove-modal')"
+                                    >Close</b-button
+                                >
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    @click="submitRemove()"
+                                    >Submit</b-button
+                                >
+                            </template>
+                        </b-modal>
+                        <!-- Remove modal End -->
                     </div>
                 </div>
             </h5>
@@ -124,10 +159,18 @@ export default {
                     sortable: true,
                     sortDirection: "desc",
                 },
-                { key: "member_full_name", label: "Member name", sortable: true },
+                {
+                    key: "member_full_name",
+                    label: "Member name",
+                    sortable: true,
+                },
                 { key: "address", label: "Address", sortable: true },
-                { key: "employee_full_name", label: "Assigned To", sortable: true },
-                { key: 'actions', label: 'Actions' }
+                {
+                    key: "employee_full_name",
+                    label: "Assigned To",
+                    sortable: true,
+                },
+                { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
             selected_member: [],
@@ -138,15 +181,15 @@ export default {
             },
             remarks: "",
             members_selected: [],
-            checked_all: false
+            checked_all: false,
         };
     },
     watch: {
         showDismissibleAlert() {
-            this.$page.props.flash.error = ""
-            this.$page.props.flash.success = ""
-            this.$page.props.flash.message = ""
-        }
+            this.$page.props.flash.error = "";
+            this.$page.props.flash.success = "";
+            this.$page.props.flash.message = "";
+        },
     },
     computed: {
         employeeList() {
@@ -175,6 +218,15 @@ export default {
             this.$bvModal.hide("assign-modal");
 
             router.post("/reassign-employee", this.form);
+            this.selected_employee = "";
+            this.selected_member = [];
+        },
+        submitRemove() {
+            this.form.member_ids = this.selected_member;
+
+            this.$bvModal.hide("remove-modal");
+            
+            router.post("/remove-assign", this.form);
             this.selected_employee = "";
             this.selected_member = [];
         },
