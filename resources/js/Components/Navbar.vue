@@ -2,21 +2,21 @@
     <div>
         <b-navbar toggleable="lg" type="dark" variant="info">
             <!-- <b-navbar-brand href="/">NavBar</b-navbar-brand> -->
-            <Link href="/" target="_self" class="navbar-brand">Leads</Link>
+            <Link href="/" target="_self" class="navbar-brand">Exhibit-Leads</Link>
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="check_access('members', 'read')">
                         <Link class="nav-link" href="/members">Members</Link>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="check_access('assigns', 'read')">
                         <Link class="nav-link" href="/assigned-employees"
                             >Assign</Link
                         >
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="check_access('employees', 'read')">
                         <Link class="nav-link" href="/employees"
                             >Employees</Link
                         >
@@ -51,7 +51,7 @@
                         </template>
                         <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
                         <li role="presentation">
-                            <Link role="menuitem" href="/logout" method="post" class="dropdown-item">Logout</Link>
+                            <Link role="menuitem" href="/logout" method="post" class="dropdown-item" as="button">Logout</Link>
                         </li>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
@@ -71,5 +71,19 @@ export default {
             return this.$page.props.auth.user.username;
         },
     },
+    methods: {
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
+        },
+    }
 };
 </script>

@@ -5,6 +5,8 @@ namespace App\Helpers;
 use App\Models\Member;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class Helper
 {
@@ -21,6 +23,15 @@ class Helper
         $file_name = $file->getClientOriginalName();
         $file->move(public_path('uploads'), $file_name);
         $file_path = 'uploads/' . $file_name;
+
+        // $file_name = time().'_'.$file->getClientOriginalName();
+        // if($member->contract_file) {
+        //     if(Storage::disk('public')->exists($member->contract_file)) {
+        //         Storage::disk('public')->delete($member->contract_file);
+        //     }
+        // }
+
+        // $file_path = $file->store('uploads', 'public');
 
         try {
             $result = $member->update([
@@ -89,5 +100,21 @@ class Helper
         }
 
         return $result;
+    }
+
+    /**
+     * check user access type to a module
+     *
+     * @param [type] $module
+     * @param [type] $type
+     * @return boolean
+     */
+    public static function checkAccess($module, $type) : bool
+    {
+        $permission = Auth::user()->employee->userGroup->user_group_permissions->map(function ($item, $key) {
+            return $item->permission;
+        })->where('module', $module);
+
+        return $permission->contains('type', $type);
     }
 }

@@ -101,7 +101,9 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
+                        v-if="check_access('assigns', 'update')"
                     ></b-form-checkbox>
+                    <span v-else>&nbsp;</span>
                 </template>
 
                 <template v-slot:cell(selected)="row">
@@ -111,17 +113,14 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
+                            v-if="check_access('assigns', 'update')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
 
-                <template #cell(name)="row">
-                    {{ row.value.first }} {{ row.value.last }}
-                </template>
-
                 <template #cell(actions)="row">
-                    <Link :href="'members/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
-                    <Link :href="'members/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link v-if="check_access('members', 'read')" :href="'members/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
+                    <Link v-if="check_access('members', 'update')" :href="'members/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
                 </template>
 
                 <template #row-details="row">
@@ -224,6 +223,16 @@ export default {
                     this.selected_ids.push(this.items[i].id);
                 }
             }
+        },
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions.filter(item => item.module === module).map(element => ({
+                module: element.module,
+                type: element.type
+            }))
+
+            return access.some(item => item.type === type);
         },
     },
 };

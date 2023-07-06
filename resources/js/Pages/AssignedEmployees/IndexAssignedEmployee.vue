@@ -29,7 +29,8 @@
                     <div class="col-sm-6">Assigned Members</div>
                     <div class="col-sm-6">
                         <div v-if="selected_member.length > 0">
-                            <b-button
+                            <div v-if="check_access('assigns', 'update')">
+                                <b-button
                                 class="btn btn-danger mx-1 my-1"
                                 v-b-modal.remove-modal
                                 style="float: right"
@@ -43,6 +44,7 @@
                                 align-v="end"
                                 >Re-assign</b-button
                             >
+                            </div>
                         </div>
                         <div v-else>
                             <b-button
@@ -229,6 +231,18 @@ export default {
             router.post("/remove-assign", this.form);
             this.selected_employee = "";
             this.selected_member = [];
+        },
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
         },
     },
 };

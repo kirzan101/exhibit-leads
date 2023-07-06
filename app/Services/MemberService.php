@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use File;
+use Illuminate\Support\Facades\Auth;
 
 class MemberService
 {
@@ -64,8 +65,7 @@ class MemberService
             'spouse_occupation' => $request['spouse_occupation'],
             'nature_of_business' => $request['nature_of_business'],
             'property_assigned' => $request['property_assigned'],
-            'created_by' => 1, //$request['create_by'],
-            'updated_by' => 1, //$request['updated_by'],
+            'created_by' => Auth::user()->employee->id
         ]);
 
         if ($request['contract_file']) {
@@ -90,6 +90,7 @@ class MemberService
     {
         $owned_gadgets = implode(',', $request['owned_gadgets']);
         $request['owned_gadgets'] = $owned_gadgets;
+        $request['updated_by'] = Auth::user()->employee->id;
 
         $member = tap($member)->update($request);
 
@@ -119,7 +120,8 @@ class MemberService
         $member->owned_gadgets = $arrayed_owned_gadgets;
 
         if ($model->contract_file) {
-            $member->contract_file = response()->file(public_path($model->contract_file))->getFile();
+            // $member->contract_file = response()->file(public_path($model->contract_file))->getFile();
+            $member->contract_file = $member->getUploadedFile();
         }
         // $member->contract_file = File::files(public_path('uploads'))[0];
         // dd(File::files(public_path('uploads'))[0]);
@@ -135,7 +137,8 @@ class MemberService
         $member = Member::find($request['member_id']);
 
         return $member->update([
-            'remarks' => $request['remarks']
+            'remarks' => $request['remarks'],
+            'updated_by' => Auth::user()->employee->id
         ]);
     }
 }

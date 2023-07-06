@@ -31,9 +31,7 @@
                     </b-form-group>
                 </b-col>
 
-                <b-col lg="6" class="my-1">
-                    &nbsp;
-                </b-col>
+                <b-col lg="6" class="my-1"> &nbsp; </b-col>
 
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
@@ -86,7 +84,9 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
+                        v-if="check_access('assigns', 'update')"
                     ></b-form-checkbox>
+                    <span v-else>&nbsp;</span>
                 </template>
 
                 <template v-slot:cell(selected)="row">
@@ -99,6 +99,7 @@
                             @change="
                                 selectEmployee($event, row.item.employee.id)
                             "
+                            v-if="check_access('assigns', 'update')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
@@ -112,22 +113,25 @@
                         :href="'assigned-employees/' + row.item.id"
                         class="btn mx-1 my-1 btn-info"
                         type="button"
+                        v-if="check_access('assigns', 'read')"
                         >Show</Link
                     >
-                    <b-button
-                        v-b-modal.remarks-modal
-                        variant="warning text-white"
-                        @click="selectedMember(row.item)"
-                        v-if="!row.item.remarks"
-                        >Add remarks</b-button
-                    >
-                    <b-button
-                        v-b-modal.remarks-modal
-                        variant="danger"
-                        @click="selectedMember(row.item)"
-                        v-else
-                        >Edit remarks</b-button
-                    >
+                    <div v-if="check_access('assigns', 'update')">
+                        <b-button
+                            v-b-modal.remarks-modal
+                            variant="warning text-white"
+                            @click="selectedMember(row.item)"
+                            v-if="!row.item.remarks"
+                            >Add remarks</b-button
+                        >
+                        <b-button
+                            v-b-modal.remarks-modal
+                            variant="danger"
+                            @click="selectedMember(row.item)"
+                            v-else
+                            >Edit remarks</b-button
+                        >
+                    </div>
                 </template>
 
                 <template #row-details="row">
@@ -205,8 +209,8 @@ export default {
             selected_row_id: null,
             form: {
                 remarks: "",
-                member_id: ""
-            }
+                member_id: "",
+            },
         };
     },
     watch: {
@@ -285,7 +289,19 @@ export default {
         selectedMember(data) {
             this.selected_row_id = data.id;
             this.remarks = data.remarks;
-        }
+        },
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
+        },
     },
 };
 </script>

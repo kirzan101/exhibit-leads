@@ -48,9 +48,14 @@ class HandleInertiaRequests extends Middleware
             'auth' => Auth::user() ? [
                 'user' => [
                     'username' => Auth::user()->username,
+                    'full_name' => Auth::user()->employee->getFullName(),
                     'email' => Auth::user()->email,
-                    'employee' => Auth::user()->employee
-                ]
+                    'employee' => Auth::user()->employee,
+                    'user_group' => Auth::user()->employee->userGroup
+                ],
+                'permissions' => Auth::user()->employee->userGroup->user_group_permissions->map(function ($item, $key) {
+                    return $item->permission;
+                })
             ] : null
         ]);
     }

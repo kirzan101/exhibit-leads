@@ -8,11 +8,22 @@ use Inertia\Inertia;
 
 class AuthController extends Controller
 {
+    /**
+     * render login page
+     *
+     * @return void
+     */
     public function index()
     {
         return Inertia::render('Login', []);
     }
 
+    /**
+     * login the user
+     *
+     * @param Request $request
+     * @return void
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -31,6 +42,11 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
+    /**
+     * logout user
+     *
+     * @return void
+     */
     public function logout()
     {
         Auth::logout();

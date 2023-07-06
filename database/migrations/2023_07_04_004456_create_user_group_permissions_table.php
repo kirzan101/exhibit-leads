@@ -11,19 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('user_group_permissions', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->string('position');
-            $table->string('property');
-            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('user_group_id');
+            $table->unsignedBigInteger('permission_id');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('user_group_id')->references('id')->on('user_groups');
+            $table->foreign('permission_id')->references('id')->on('permissions');
         });
     }
 
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('user_group_permissions');
     }
 };

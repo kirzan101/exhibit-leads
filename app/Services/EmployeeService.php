@@ -19,7 +19,8 @@ class EmployeeService
      */
     public function indexEmployee() : Collection
     {
-        $employee = Employee::all();
+        // $employee = Employee::all();
+        $employee = Employee::where('user_group_id', '!=', '1')->get(); // remove admin accounts
 
         return $employee;
     }
@@ -32,13 +33,14 @@ class EmployeeService
      */
     public function createEmployee(array $request) : Employee
     {
+        // dd($request['password']);
         // generate username
         $username = Helper::username($request['first_name'], $request['last_name']);
 
         $user = User::create([
             'username' => $username,
             'email' => $request['email'],
-            'passwod' => bcrypt($request['password'])
+            'password' => bcrypt($request['password'])
         ]);
 
         $employee = Employee::create([
@@ -47,6 +49,7 @@ class EmployeeService
             'last_name' => $request['last_name'],
             'property' => $request['property'],
             'position' => $request['position'],
+            'user_group_id' => $request['user_group_id'],
             'user_id' => $user->id
         ]);
 
@@ -73,6 +76,7 @@ class EmployeeService
             'last_name' => $request['last_name'],
             'property' => $request['property'],
             'position' => $request['position'],
+            'user_group_id' => $request['user_group_id'],
         ]);
 
         return $employee;

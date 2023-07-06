@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Head>
+            <title>Members</title>
+        </Head>
         <!--Alert message here start-->
         <b-alert
             v-if="$page.props.flash.success"
@@ -28,28 +31,33 @@
                 <div class="row">
                     <div class="col-sm-6">
                         Member |
-                        <Link href="/members/create" class="btn btn-success"
+                        <Link
+                            href="/members/create"
+                            class="btn btn-success"
+                            v-if="check_access('members', 'create')"
                             >Add</Link
                         >
                     </div>
                     <div class="col-sm-6">
-                        <b-button
-                            class="btn btn-info"
-                            v-b-modal.assign-modal
-                            style="float: right;"
-                            align-v="end"
-                            v-if="selected_member.length > 0"
-                            >Assign</b-button
-                        >
-                        <b-button
-                            class="btn btn-info"
-                            v-b-modal.assign-modal
-                            style="float: right;"
-                            align-v="end"
-                            disabled
-                            v-else
-                            >Assign</b-button
-                        >
+                        <div v-if="check_access('assigns', 'update')">
+                            <b-button
+                                class="btn btn-info"
+                                v-b-modal.assign-modal
+                                style="float: right"
+                                align-v="end"
+                                v-if="selected_member.length > 0"
+                                >Assign</b-button
+                            >
+                            <b-button
+                                class="btn btn-info"
+                                v-b-modal.assign-modal
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                v-else
+                                >Assign</b-button
+                            >
+                        </div>
                         <b-modal title="Assign to Employee" id="assign-modal">
                             <b-form @submit.prevent="submitAssigned">
                                 <b-form-select
@@ -136,7 +144,7 @@ export default {
                 //         return value ? "Yes" : "No";
                 //     },
                 // },
-                { key: 'actions', label: 'Actions' }
+                { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
             selected_member: [],
@@ -172,6 +180,18 @@ export default {
             router.post("/assign-employee", this.form);
             this.selected_employee = "";
             this.selected_member = [];
+        },
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
         },
     },
 };

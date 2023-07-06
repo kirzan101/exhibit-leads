@@ -16,6 +16,7 @@ class Employee extends Model
         'position',
         'property',
         'user_id',
+        'user_group_id',
     ];
 
     /**
@@ -34,5 +35,14 @@ class Employee extends Model
      */
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * associate user group to employee
+     *
+     * @return void
+     */
+    public function userGroup() {
+        return $this->belongsTo(UserGroup::class);
     }
 }

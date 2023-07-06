@@ -104,8 +104,8 @@
                 <template #cell(actions)="row">
                     <!-- <b-button variant="info" class="mx-1">Show</b-button> -->
                     <!-- <b-button variant="warning" class="mx-1">Edit</b-button> -->
-                    <Link :href="'employees/' + row.item.id + ''" class="btn mx-1 btn-info" type="button">Show</Link>
-                    <Link :href="'employees/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link :href="'employees/' + row.item.id + ''" class="btn mx-1 btn-info" type="button" v-if="check_access('employees', 'read')">Show</Link>
+                    <Link :href="'employees/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button" v-if="check_access('employees', 'update')">Edit</Link>
                 </template>
 
                 <template #row-details="row">
@@ -192,6 +192,18 @@ export default {
             // Trigger pagination to update the number of buttons/pages due to filtering
             this.totalRows = filteredItems.length;
             this.currentPage = 1;
+        },
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
         },
     },
 };

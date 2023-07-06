@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class MemberResource extends JsonResource
 {
@@ -49,6 +50,7 @@ class MemberResource extends JsonResource
             'other_gadgets' => $this->other_gadgets,
             'spouse_occupation' => $this->spouse_occupation,
             'contract_file' => $this->contract_file,
+            'uploaded_contract_file' => ($this->contract_file) ? asset($this->contract_file) : null, //($this->contract_file) ? Storage::disk('public')->get($this->contract_file) : null,
             'is_assigned' => (bool) $this->is_assigned,
             'remarks' => $this->remarks,
             'employee' => $this->employee,

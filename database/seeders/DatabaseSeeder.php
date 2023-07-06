@@ -23,8 +23,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            PermissionSeeder::class,
+            UserGroupSeeder::class,
             EmployeeSeeder::class,
         ]);
+
         Member::factory(10)->create();
         
         // Employee::factory(2)->create();

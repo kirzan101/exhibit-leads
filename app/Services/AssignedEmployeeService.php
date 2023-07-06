@@ -8,6 +8,7 @@ use App\Models\Member;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssignedEmployeeService
@@ -118,5 +119,17 @@ class AssignedEmployeeService
         }
 
         return true;
+    }
+
+    /**
+     * index of current assigned employee service
+     *
+     * @return Collection
+     */
+    public function indexCurrentAssignedEmployee(): Collection
+    {
+        $assigned_employees = Member::where('is_assigned', true)->where('employee_id', Auth::user()->employee->id)->get();
+
+        return $assigned_employees;
     }
 }

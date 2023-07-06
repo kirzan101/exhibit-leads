@@ -9,7 +9,10 @@ use App\Services\EmployeeService;
 use App\Services\MemberService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MemberController extends Controller
@@ -41,6 +44,8 @@ class MemberController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Member::class);
+
         return Inertia::render('Members/CreateMember', []);
     }
 
@@ -49,7 +54,8 @@ class MemberController extends Controller
      */
     public function store(MemberFormRequest $request)
     {
-        // dd($request->file('contract_file'));
+        $this->authorize('create', Member::class);
+
         try {
             DB::beginTransaction();
 
@@ -72,8 +78,12 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
+        $this->authorize('read', Member::class);
+
+        $member = $this->memberService->showMember($member);
+
         return Inertia::render('Members/ShowMember', [
-            'member' => $member
+            'member' => new MemberResource($member)
         ]);
     }
 
@@ -82,9 +92,12 @@ class MemberController extends Controller
      */
     public function edit(Member $member)
     {
-        // dd($this->memberService->showMember($member)->owned_gadgets);
+        $this->authorize('update', Member::class);
+        // dd($member->getUploadedFile(), Storage::disk('public'));
+        $member = $this->memberService->showMember($member);
+
         return Inertia::render('Members/EditMember', [
-            'member' => $this->memberService->showMember($member)
+            'member' => new MemberResource($member)
         ]);
     }
 
@@ -93,6 +106,8 @@ class MemberController extends Controller
      */
     public function update(MemberFormRequest $request, Member $member)
     {
+        $this->authorize('update', Member::class);
+        
         try {
             DB::beginTransaction();
 
@@ -119,6 +134,8 @@ class MemberController extends Controller
 
     public function remarks(Request $request)
     {
+        $this->authorize('update', Member::class);
+        
         $request = $request->validate([
             'member_id' => 'required|exists:members,id',
             'remarks' => 'required|min:2',

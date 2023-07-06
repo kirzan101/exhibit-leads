@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EmployeeFormRequest;
 use App\Models\Employee;
 use App\Services\EmployeeService;
+use App\Services\UserGroupService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,10 +14,12 @@ use Inertia\Inertia;
 class EmployeeController extends Controller
 {
     private EmployeeService $employeeService;
+    private UserGroupService $userGroupService;
 
-    public function __construct(EmployeeService $employeeService)
+    public function __construct(EmployeeService $employeeService, UserGroupService $userGroupService)
     {
         $this->employeeService = $employeeService;
+        $this->userGroupService = $userGroupService;
     }
 
     /**
@@ -24,9 +27,11 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        $this->authorize('read', Employee::class);
+
         return Inertia::render('Employees/IndexEmployee', [
             'employees' => $this->employeeService->indexEmployee(),
-            'per_page' => 5
+            'per_page' => 5,
         ]);
     }
 
@@ -35,7 +40,11 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Employees/CreateEmployee', []);
+        $this->authorize('create', Employee::class);
+
+        return Inertia::render('Employees/CreateEmployee', [
+            'user_groups' => $this->userGroupService->indexUserGroup()
+        ]);
     }
 
     /**
@@ -43,14 +52,16 @@ class EmployeeController extends Controller
      */
     public function store(EmployeeFormRequest $request)
     {
+        $this->authorize('create', Employee::class);
+
         try {
             $request->validate([
                 'password' => 'required|min:2'
             ]);
-
+            
             DB::beginTransaction();
 
-            $this->employeeService->createEmployee($request->validated());
+            $this->employeeService->createEmployee($request->toArray());
         } catch (Exception $ex) {
             DB::rollBack();
             return redirect()->route('employees.index')->with('error', $ex->getMessage());
@@ -65,9 +76,12 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
+        $this->authorize('read', Employee::class);
+
         return Inertia::render('Employees/ShowEmployee', [
             'employee' => $this->employeeService->showEmployee($employee),
-            'user' => $employee->user
+            'user' => $employee->user,
+            'user_groups' => $this->userGroupService->indexUserGroup()
         ]);
     }
 
@@ -76,9 +90,12 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
+        $this->authorize('update', Employee::class);
+
         return Inertia::render('Employees/EditEmployee', [
             'employee' => $this->employeeService->showEmployee($employee),
-            'user' => $employee->user
+            'user' => $employee->user,
+            'user_groups' => $this->userGroupService->indexUserGroup()
         ]);
     }
 
@@ -87,6 +104,8 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeFormRequest $request, Employee $employee)
     {
+        $this->authorize('update', Employee::class);
+
         try {
             DB::beginTransaction();
             $this->employeeService->updateEmployee($request->validated(), $employee);
@@ -104,6 +123,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
+        $this->authorize('delete', Employee::class);
+
         $result = $this->employeeService->deleteEmployee($employee);
 
         if ($result) {
@@ -121,6 +142,8 @@ class EmployeeController extends Controller
      */
     public function resetPassword($id)
     {
+        $this->authorize('update', Employee::class);
+
         $result = $this->employeeService->resetPassword($id);
 
         if ($result) {

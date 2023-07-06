@@ -1,5 +1,8 @@
 <template>
     <b-container fluid>
+        <Head>
+            <title>Employees | Edit</title>
+        </Head>
         <h5>
             Edit Employee |
             <Link class="btn btn-secondary" href="/employees">Back</Link>
@@ -68,7 +71,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Email"
                             label-for="email"
@@ -87,7 +90,7 @@
                             >
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Property"
                             label-for="property"
@@ -107,7 +110,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Position"
                             label-for="position"
@@ -124,6 +127,34 @@
                                 :state="errors.position ? false : null"
                             >
                                 {{ errors.position }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="3">
+                        <b-form-group
+                            label="User group"
+                            label-for="user-group"
+                            label-class="required"
+                        >
+                            <b-form-select
+                                id="user-group"
+                                v-model="form.user_group_id"
+                                :state="errors.user_group_id ? false : null"
+                                :options="user_groups"
+                                value-field="id"
+                                text-field="name"
+                                required
+                            >
+                                <template #first>
+                                    <b-form-select-option value="null" disabled
+                                        >-- select --</b-form-select-option
+                                    >
+                                </template>
+                            </b-form-select>
+                            <b-form-invalid-feedback
+                                :state="errors.user_group_id ? false : null"
+                            >
+                                {{ errors.user_group_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -174,6 +205,7 @@ export default {
         errors: Object,
         employee: Object,
         user: Object,
+        user_groups: Array,
     },
     data() {
         return {
@@ -183,7 +215,8 @@ export default {
                 last_name: this.employee.last_name,
                 position: this.employee.position,
                 property: this.employee.property,
-                email: this.user.email
+                email: this.user.email,
+                user_group_id: this.employee.user_group_id
             },
             property_locations: [
                 { text: "-- select --", value: null },

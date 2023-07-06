@@ -28,6 +28,7 @@ class EmployeeFormRequest extends FormRequest
             'position' => 'required|min:2',
             'property' => 'required|min:2',
             'email' => 'required|email',
+            'user_group_id' => 'required|exists:user_groups,id'
         ];
     }
 }

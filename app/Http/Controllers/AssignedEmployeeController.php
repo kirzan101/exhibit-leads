@@ -12,6 +12,7 @@ use App\Services\EmployeeService;
 use App\Services\MemberService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -33,7 +34,16 @@ class AssignedEmployeeController extends Controller
      */
     public function index()
     {
+        $this->authorize('read', AssignedEmployee::class);
+
+        $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
+
         $members = MemberResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
+
+        if($isEmployee) {
+            $members = MemberResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
+        }
+
 
         return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
             'members' => $members,
@@ -55,6 +65,8 @@ class AssignedEmployeeController extends Controller
      */
     public function store(AssignedEmployeeFormRequest $request)
     {
+        $this->authorize('create', AssignedEmployee::class);
+
         try {
             DB::beginTransaction();
 
@@ -74,6 +86,8 @@ class AssignedEmployeeController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('read', AssignedEmployee::class);
+
         $member = Member::find($id);
         $employee = Employee::find($member->employee_id);
         return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
@@ -95,6 +109,8 @@ class AssignedEmployeeController extends Controller
      */
     public function update(AssignedEmployeeFormRequest $request, AssignedEmployee $assignedEmployee)
     {
+        $this->authorize('update', AssignedEmployee::class);
+
         try {
             DB::beginTransaction();
 
@@ -117,6 +133,8 @@ class AssignedEmployeeController extends Controller
 
     public function reassignEmployee(AssignedEmployeeFormRequest $request)
     {
+        $this->authorize('update', AssignedEmployee::class);
+
         try {
             DB::beginTransaction();
 
@@ -139,6 +157,8 @@ class AssignedEmployeeController extends Controller
      */
     public function removeAssignment(Request $request)
     {
+        $this->authorize('update', AssignedEmployee::class);
+        
         $request = $request->validate([
             'member_ids' => 'required|array'
         ]);

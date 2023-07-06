@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Member extends Model
 {
@@ -63,5 +64,15 @@ class Member extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function getUploadedFile()
+    {
+        if(Storage::disk('public')->exists($this->contract_file)) {
+            return asset($this->contract_file);
+            // return asset('storage/public/'.$this->contract_file);
+        }
+
+        return $this->contract_file;
     }
 }

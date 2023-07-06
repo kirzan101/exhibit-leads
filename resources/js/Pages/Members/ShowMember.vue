@@ -1,5 +1,8 @@
 <template>
     <b-container fluid>
+        <Head>
+            <title>Members | Details</title>
+        </Head>
         <h5>
             Member Details |
             <Link class="btn btn-secondary" href="/members">Back</Link>
