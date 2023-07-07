@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Head>
+            <title>Assigned Members</title>
+        </Head>
         <!--Alert message here start-->
         <b-alert
             v-if="$page.props.flash.success"

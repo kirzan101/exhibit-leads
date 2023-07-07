@@ -31,7 +31,23 @@
                     </b-form-group>
                 </b-col>
 
-                <b-col lg="6" class="my-1"> &nbsp; </b-col>
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Has Remarks"
+                        label-for="has-remarks-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="has-remarks-select"
+                            v-model="hasRemarks"
+                            :options="['All', 'Yes', 'No']"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
 
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
@@ -67,7 +83,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="items"
+                :items="assignedMembers"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -155,7 +171,7 @@
                     max-rows="6"
                 ></b-form-textarea>
                 <br />
-                Last remarks by: <b>test</b>
+                <p v-if="updated_by !== ''">Last remark by: <b>{{ updated_by }}</b></p>
                 <template #modal-footer>
                     <b-button
                         variant="danger"
@@ -213,6 +229,8 @@ export default {
                 remarks: "",
                 member_id: "",
             },
+            hasRemarks: "All",
+            updated_by: "",
         };
     },
     watch: {
@@ -238,6 +256,16 @@ export default {
                     return { text: f.label, value: f.key };
                 });
         },
+        assignedMembers() {
+
+            if(this.hasRemarks == 'Yes') {
+                return this.items.filter(item => item.remarks != null);
+            } else if(this.hasRemarks == 'No') {
+                return this.items.filter(item => item.remarks == null);
+            }
+
+            return this.items
+        }
     },
     mounted() {
         // Set the initial number of items
@@ -291,6 +319,7 @@ export default {
         selectedMember(data) {
             this.selected_row_id = data.id;
             this.remarks = data.remarks;
+            this.updated_by = (data.updated_by.length != 0) ? data.updated_by.last_name + ', ' + data.updated_by.first_name : ""
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

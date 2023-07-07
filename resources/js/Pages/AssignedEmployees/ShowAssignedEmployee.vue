@@ -1,5 +1,8 @@
 <template>
     <b-container fluid>
+        <Head>
+            <title>Assigned Member Details</title>
+        </Head>
         <h5>
             <div class="row">
                 <div class="col-sm-6">
