@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\EmployeeFormRequest;
+use App\Http\Requests\ProfileFormRequest;
 use App\Models\Employee;
 use App\Services\EmployeeService;
 use App\Services\UserGroupService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -58,7 +61,7 @@ class EmployeeController extends Controller
             $request->validate([
                 'password' => 'required|min:2'
             ]);
-            
+
             DB::beginTransaction();
 
             $this->employeeService->createEmployee($request->toArray());
@@ -106,9 +109,15 @@ class EmployeeController extends Controller
     {
         $this->authorize('update', Employee::class);
 
+        //clear the notification message session
+        Helper::clearNotifications();
+
         try {
             DB::beginTransaction();
-            $this->employeeService->updateEmployee($request->validated(), $employee);
+
+            $request->merge(['user_id' => $employee->user_id]);
+
+            $this->employeeService->updateEmployee($request->toArray(), $employee);
         } catch (Exception $ex) {
             DB::rollBack();
             return redirect()->route('employees.index')->with('error', $ex->getMessage());
@@ -150,5 +159,50 @@ class EmployeeController extends Controller
             return redirect()->route('employees.index')->with('success', 'Successfully reset the password!');
         }
         return redirect()->route('employees.index')->with('error', 'error on password reset');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function profile()
+    {
+        $employee = Auth::user()->employee;
+        return Inertia::render('Profiles/IndexProfile', [
+            'employee' => $this->employeeService->showEmployee($employee),
+            'user' => Auth::user()
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function profileEdit(ProfileFormRequest $request)
+    {
+        $employee = Auth::user()->employee;
+
+        //clear the notification message session
+        // Helper::clearNotifications();
+
+        try {
+            DB::beginTransaction();
+
+            // add additional fields for ids in request
+            $request->merge(['user_id' => $employee->user_id]);
+            $request->merge(['user_group_id' => $employee->user_group_id]);
+
+            $employee = $this->employeeService->updateEmployee($request->toArray(), $employee);
+
+            // if password is filled
+            if($request->password != null) {
+                $this->employeeService->updatePassword($request->toArray(), $employee->user_id);
+            }
+
+        } catch (Exception $ex) {
+            DB::rollBack();
+            return redirect()->route('profile')->with('error', $ex->getMessage());
+        }
+
+        DB::commit();
+        return redirect()->route('profile')->with('success', 'Successfully updated!');
     }
 }

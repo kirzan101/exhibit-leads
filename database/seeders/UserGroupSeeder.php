@@ -70,6 +70,11 @@ class UserGroupSeeder extends Seeder
                         'user_group_id' => $usergroup->id,
                         'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'read')->first()->id
                     ]);
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'update')->first()->id
+                    ]);
                 }
             }
         }

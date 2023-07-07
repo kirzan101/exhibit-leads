@@ -84,7 +84,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
-                        v-if="check_access('assigns', 'update')"
+                        v-if="check_access('assigns', 'create')"
                     ></b-form-checkbox>
                     <span v-else>&nbsp;</span>
                 </template>
@@ -99,7 +99,7 @@
                             @change="
                                 selectEmployee($event, row.item.employee.id)
                             "
-                            v-if="check_access('assigns', 'update')"
+                            v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
@@ -154,6 +154,8 @@
                     rows="3"
                     max-rows="6"
                 ></b-form-textarea>
+                <br />
+                Last remarks by: <b>test</b>
                 <template #modal-footer>
                     <b-button
                         variant="danger"

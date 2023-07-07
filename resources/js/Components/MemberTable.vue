@@ -101,7 +101,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
-                        v-if="check_access('assigns', 'update')"
+                        v-if="check_access('assigns', 'create')"
                     ></b-form-checkbox>
                     <span v-else>&nbsp;</span>
                 </template>
@@ -113,7 +113,7 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
-                            v-if="check_access('assigns', 'update')"
+                            v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>

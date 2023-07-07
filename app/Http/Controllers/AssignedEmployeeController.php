@@ -133,7 +133,7 @@ class AssignedEmployeeController extends Controller
 
     public function reassignEmployee(AssignedEmployeeFormRequest $request)
     {
-        $this->authorize('update', AssignedEmployee::class);
+        $this->authorize('create', AssignedEmployee::class);
 
         try {
             DB::beginTransaction();
@@ -157,7 +157,7 @@ class AssignedEmployeeController extends Controller
      */
     public function removeAssignment(Request $request)
     {
-        $this->authorize('update', AssignedEmployee::class);
+        $this->authorize('create', AssignedEmployee::class);
         
         $request = $request->validate([
             'member_ids' => 'required|array'

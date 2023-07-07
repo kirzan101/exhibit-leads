@@ -38,13 +38,14 @@ class AssignedEmployeeService
                 AssignedEmployee::create([
                     'member_id' => $member,
                     'employee_id' => $request['employee_id'],
-                    'created_by' => 1,
+                    'created_by' => Auth::user()->employee->id,
                 ]);
 
                 $member = Member::find($member);
                 $member->update([
                     'is_assigned' => true,
-                    'employee_id' => $request['employee_id']
+                    'employee_id' => $request['employee_id'],
+                    'updated_by' => Auth::user()->employee->id
                 ]);
             }
         } catch (Exception $ex) {
@@ -68,13 +69,14 @@ class AssignedEmployeeService
                 AssignedEmployee::create([
                     'member_id' => $member,
                     'employee_id' => $request['employee_id'],
-                    'created_by' => 1,
+                    'created_by' => Auth::user()->employee->id,
                 ]);
 
                 $member = Member::find($member);
                 $member->update([
                     'is_assigned' => true,
-                    'employee_id' => $request['employee_id']
+                    'employee_id' => $request['employee_id'],
+                    'updated_by' => Auth::user()->employee->id
                 ]);
             }
         } catch (Exception $ex) {
@@ -111,7 +113,8 @@ class AssignedEmployeeService
                 $member->update([
                     'is_assigned' => false,
                     'employee_id' => null,
-                    'remarks' => null
+                    'remarks' => null,
+                    'updated_by' => Auth::user()->employee->id
                 ]);
             }
         } catch (Exception $ex) {

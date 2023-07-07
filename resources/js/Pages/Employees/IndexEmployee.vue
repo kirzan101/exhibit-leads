@@ -9,8 +9,8 @@
             variant="success"
             dismissible
             fade
-            :show="$page.props.flash.success ? true : false"
-            @dismissed="showDismissibleAlert = false"
+            :show="showAlert($page.props.flash.success)"
+            @dismissed="clearNotif"
         >
             {{ $page.props.flash.success }}
         </b-alert>
@@ -19,8 +19,8 @@
             variant="danger"
             dismissible
             fade
-            :show="$page.props.flash.error ? true : false"
-            @dismissed="showDismissibleAlert = false"
+            :show="showAlert($page.props.flash.error)"
+            @dismissed="clearNotif"
         >
             {{ $page.props.flash.error }}
         </b-alert>
@@ -76,6 +76,7 @@ export default {
                 { key: "property", label: "Property", sortable: true },
                 { key: "actions", label: "Actions" },
             ],
+            alert: false,
         };
     },
     methods: {
@@ -93,6 +94,16 @@ export default {
                 }));
 
             return access.some((item) => item.type === type);
+        },
+        showAlert(data) {
+            this.alert = data ? true : false;
+
+            return this.alert;
+        },
+        clearNotif() {
+            this.$page.props.flash.success = null;
+            this.$page.props.flash.error = null;
+            this.$page.props.flash.message = null;
         },
     },
 };

@@ -6,8 +6,8 @@
             variant="success"
             dismissible
             fade
-            :show="$page.props.flash.success ? true : false"
-            @dismissed="showDismissibleAlert = false"
+            :show="showAlert($page.props.flash.success)"
+            @dismissed="clearNotif"
         >
             {{ $page.props.flash.success }}
         </b-alert>
@@ -16,8 +16,8 @@
             variant="danger"
             dismissible
             fade
-            :show="$page.props.flash.error ? true : false"
-            @dismissed="showDismissibleAlert = false"
+            :show="showAlert($page.props.flash.error)"
+            @dismissed="clearNotif"
         >
             {{ $page.props.flash.error }}
         </b-alert>
@@ -29,38 +29,40 @@
                     <div class="col-sm-6">Assigned Members</div>
                     <div class="col-sm-6">
                         <div v-if="selected_member.length > 0">
-                            <div v-if="check_access('assigns', 'update')">
+                            <div v-if="check_access('assigns', 'create')">
                                 <b-button
-                                class="btn btn-danger mx-1 my-1"
-                                v-b-modal.remove-modal
-                                style="float: right"
-                                align-v="end"
-                                >Remove</b-button
-                            >
-                            <b-button
-                                class="btn btn-info mx-1 my-1"
-                                v-b-modal.assign-modal
-                                style="float: right"
-                                align-v="end"
-                                >Re-assign</b-button
-                            >
+                                    class="btn btn-danger mx-1 my-1"
+                                    v-b-modal.remove-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    >Remove</b-button
+                                >
+                                <b-button
+                                    class="btn btn-info mx-1 my-1"
+                                    v-b-modal.assign-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    >Re-assign</b-button
+                                >
                             </div>
                         </div>
                         <div v-else>
-                            <b-button
-                                class="btn btn-danger mx-1 my-1"
-                                style="float: right"
-                                align-v="end"
-                                disabled
-                                >Remove</b-button
-                            >
-                            <b-button
-                                class="btn btn-info mx-1 my-1"
-                                style="float: right"
-                                align-v="end"
-                                disabled
-                                >Re-assign</b-button
-                            >
+                            <div v-if="check_access('assigns', 'create')">
+                                <b-button
+                                    class="btn btn-danger mx-1 my-1"
+                                    style="float: right"
+                                    align-v="end"
+                                    disabled
+                                    >Remove</b-button
+                                >
+                                <b-button
+                                    class="btn btn-info mx-1 my-1"
+                                    style="float: right"
+                                    align-v="end"
+                                    disabled
+                                    >Re-assign</b-button
+                                >
+                            </div>
                         </div>
                         <!-- Reassign modal start -->
                         <b-modal title="Reassign to Employee" id="assign-modal">
@@ -184,6 +186,7 @@ export default {
             remarks: "",
             members_selected: [],
             checked_all: false,
+            alert: false,
         };
     },
     watch: {
@@ -227,7 +230,7 @@ export default {
             this.form.member_ids = this.selected_member;
 
             this.$bvModal.hide("remove-modal");
-            
+
             router.post("/remove-assign", this.form);
             this.selected_employee = "";
             this.selected_member = [];
@@ -243,6 +246,16 @@ export default {
                 }));
 
             return access.some((item) => item.type === type);
+        },
+        showAlert(data) {
+            this.alert = data ? true : false;
+
+            return this.alert;
+        },
+        clearNotif() {
+            this.$page.props.flash.success = null;
+            this.$page.props.flash.error = null;
+            this.$page.props.flash.message = null;
         },
     },
 };

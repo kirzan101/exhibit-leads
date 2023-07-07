@@ -526,11 +526,12 @@
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
-                                <b>{{
+                                <b v-if="member.contract_file_name == null">{{
                                     form.contract_file
                                         ? form.contract_file.name
                                         : ""
                                 }}</b>
+                                <b v-else>{{ member.contract_file_name }}</b>
                             </div>
                         </b-form-group>
                     </b-col>

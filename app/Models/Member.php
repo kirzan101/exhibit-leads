@@ -66,13 +66,33 @@ class Member extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function getUploadedFile()
+    /**
+     * Get uploaded file name
+     *
+     * @return void
+     */
+    public function getFileName()
     {
-        if(Storage::disk('public')->exists($this->contract_file)) {
-            return asset($this->contract_file);
-            // return asset('storage/public/'.$this->contract_file);
-        }
+        return ltrim(strstr($this->contract_file, "/"), '/');
+    }
 
-        return $this->contract_file;
+    /**
+     * associate member created by to employee
+     *
+     * @return void
+     */
+    public function createdBy()
+    {
+        return $this->belongsTo(Employee::class, 'created_by');
+    }
+
+    /**
+     * associate member updated by to employee
+     *
+     * @return void
+     */
+    public function updatedBy()
+    {
+        return $this->belongsTo(Employee::class, 'updated_by')->withDefault();
     }
 }

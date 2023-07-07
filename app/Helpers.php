@@ -20,7 +20,7 @@ class Helper
      */
     public static function uploadFile($file, Member $member): bool
     {
-        $file_name = $file->getClientOriginalName();
+        $file_name = time().'_'.$file->getClientOriginalName();
         $file->move(public_path('uploads'), $file_name);
         $file_path = 'uploads/' . $file_name;
 
@@ -116,5 +116,14 @@ class Helper
         })->where('module', $module);
 
         return $permission->contains('type', $type);
+    }
+
+    public static function clearNotifications() : string
+    {
+        session()->forget('success');
+        session()->forget('error');
+        session()->forget('message');
+
+        return "successfully cleared";
     }
 }

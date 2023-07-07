@@ -1,12 +1,32 @@
 <template>
     <b-container fluid>
         <Head>
-            <title>Employees | Edit</title>
+            <title>Profile</title>
         </Head>
-        <h5>
-            Edit Employee |
-            <Link class="btn btn-secondary" href="/employees">Back</Link>
-        </h5>
+        <!--Alert message here start-->
+        <b-alert
+            v-if="$page.props.flash.success"
+            variant="success"
+            dismissible
+            fade
+            :show="showAlert($page.props.flash.success)"
+            @dismissed="clearNotif"
+        >
+            {{ $page.props.flash.success }}
+        </b-alert>
+        <b-alert
+            v-if="$page.props.flash.error"
+            variant="danger"
+            dismissible
+            fade
+            :show="showAlert($page.props.flash.error)"
+            @dismissed="clearNotif"
+        >
+            {{ $page.props.flash.error }}
+        </b-alert>
+        <!--Alert message here end-->
+
+        <h5>Edit Profile</h5>
         <span class="note">Note: Fields that has "*" is required</span>
         <div class="p-1">
             <b-form @submit.prent="submit">
@@ -91,6 +111,21 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
+                        <b-form-group label="Password" label-for="password">
+                            <b-form-input
+                                type="password"
+                                id="password"
+                                v-model="form.password"
+                                :state="errors.password ? false : null"
+                                required
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.password ? false : null"
+                                >{{ errors.password }}</b-form-invalid-feedback
+                            >
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="3">
                         <b-form-group
                             label="Property"
                             label-for="property"
@@ -127,34 +162,6 @@
                                 :state="errors.position ? false : null"
                             >
                                 {{ errors.position }}
-                            </b-form-invalid-feedback>
-                        </b-form-group>
-                    </b-col>
-                    <b-col sm="3">
-                        <b-form-group
-                            label="User group"
-                            label-for="user-group"
-                            label-class="required"
-                        >
-                            <b-form-select
-                                id="user-group"
-                                v-model="form.user_group_id"
-                                :state="errors.user_group_id ? false : null"
-                                :options="user_groups"
-                                value-field="id"
-                                text-field="name"
-                                required
-                            >
-                                <template #first>
-                                    <b-form-select-option value="null" disabled
-                                        >-- select --</b-form-select-option
-                                    >
-                                </template>
-                            </b-form-select>
-                            <b-form-invalid-feedback
-                                :state="errors.user_group_id ? false : null"
-                            >
-                                {{ errors.user_group_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -205,7 +212,6 @@ export default {
         errors: Object,
         employee: Object,
         user: Object,
-        user_groups: Array,
     },
     data() {
         return {
@@ -216,7 +222,7 @@ export default {
                 position: this.employee.position,
                 property: this.employee.property,
                 email: this.user.email,
-                user_group_id: this.employee.user_group_id
+                password: null,
             },
             property_locations: [
                 { text: "-- select --", value: null },
@@ -228,18 +234,27 @@ export default {
                 "Astoria Bohol",
                 "Stellar Potter's Ridge",
             ],
+            alert: false,
         };
     },
     methods: {
         submit() {
             this.$bvModal.hide("confirm-submit-modal");
 
-            // router.post("/employees", this.form);
-
-            router.post(`/employees/${this.employee.id}`, {
+            router.post("/profile/edit", {
                 _method: "PUT",
-                ...this.form
+                ...this.form,
             });
+        },
+        showAlert(data) {
+            this.alert = data ? true : false;
+
+            return this.alert;
+        },
+        clearNotif() {
+            this.$page.props.flash.success = null;
+            this.$page.props.flash.error = null;
+            this.$page.props.flash.message = null;
         },
     },
 };

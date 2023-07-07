@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\MemberFormRequest;
 use App\Http\Resources\MemberResource;
 use App\Models\Member;

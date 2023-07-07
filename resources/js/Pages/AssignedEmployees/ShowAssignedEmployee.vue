@@ -3,12 +3,14 @@
         <h5>
             <div class="row">
                 <div class="col-sm-6">
-                    Member |
+                    Member Details |
                     <Link href="/assigned-employees" class="btn btn-success"
                         >Back</Link
                     >
                 </div>
-                <div class="col-sm-6 align-right">Assigned to: {{ assigned_employee }}</div>
+                <div class="col-sm-6 align-right">
+                    Assigned to: {{ assigned_employee }}
+                </div>
             </div>
         </h5>
         <div class="p-1">
@@ -530,11 +532,12 @@
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
-                                <b>{{
+                                <b v-if="member.contract_file_name == null">{{
                                     form.contract_file
                                         ? form.contract_file.name
                                         : ""
                                 }}</b>
+                                <b v-else>{{ member.contract_file_name }}</b>
                             </div>
                         </b-form-group>
                     </b-col>

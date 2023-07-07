@@ -48,4 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return inertia('Welcome');
     });
+
+    Route::get('/profile', [EmployeeController::class, 'profile'])->name('profile');
+    Route::put('/profile/edit', [EmployeeController::class, 'profileEdit']);
 });

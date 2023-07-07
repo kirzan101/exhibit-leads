@@ -47,9 +47,12 @@
                     <b-nav-item-dropdown right>
                         <!-- Using 'button-content' slot -->
                         <template #button-content>
-                            <em>{{ username }}</em>
+                            <em>{{ fullName }}</em>
                         </template>
                         <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
+                        <li role="presentation">
+                            <Link role="menuitem" href="/profile" class="dropdown-item">Profile</Link>
+                        </li>
                         <li role="presentation">
                             <Link role="menuitem" href="/logout" method="post" class="dropdown-item" as="button">Logout</Link>
                         </li>
@@ -70,6 +73,9 @@ export default {
         username() {
             return this.$page.props.auth.user.username;
         },
+        fullName() {
+            return this.$page.props.auth.user.full_name;
+        }
     },
     methods: {
         check_access(module, type) {

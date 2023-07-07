@@ -49,13 +49,18 @@ class MemberResource extends JsonResource
             'owned_gadgets' => $this->owned_gadgets,
             'other_gadgets' => $this->other_gadgets,
             'spouse_occupation' => $this->spouse_occupation,
-            'contract_file' => $this->contract_file,
+            'property_assigned' => $this->property_assigned,
+            'contract_file_name' => $this->getFileName(),
             'uploaded_contract_file' => ($this->contract_file) ? asset($this->contract_file) : null, //($this->contract_file) ? Storage::disk('public')->get($this->contract_file) : null,
             'is_assigned' => (bool) $this->is_assigned,
             'remarks' => $this->remarks,
             'employee' => $this->employee,
             'employee_full_name' => ($this->employee_id) ? $this->employee->getFullName() : null,
             'member_full_name' => $this->getFullName(),
+            'created_at' => $this->created_at,
+            'created_by' => $this->createdBy,
+            'updated_at' => $this->updated_at,
+            'updated_by' => $this->updatedBy
         ];
     }
 }

@@ -128,4 +128,22 @@ class EmployeeService
 
         return $result;
     }
+    
+    /**
+     * update employee service
+     *
+     * @param array $request
+     * @param Employee $employee
+     * @return Employee
+     */
+    public function updatePassword(array $request, int $id) : bool
+    {
+        $user = User::find($id);
+        
+        $result = $user->update([
+            'password' => bcrypt($request['password']),
+        ]);
+
+        return $result;
+    }
 }
