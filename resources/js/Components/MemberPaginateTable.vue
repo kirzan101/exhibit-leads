@@ -32,21 +32,22 @@
                 </b-col>
 
                 <b-col lg="6" class="my-1">
-                    <b-form-group
-                        label="Has Remarks"
-                        label-for="has-remarks-select"
+                    <!-- <b-form-group
+                        label="Is Assigned"
+                        label-for="initial-sort-select"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
                         class="mb-0"
                     >
                         <b-form-select
-                            id="has-remarks-select"
-                            v-model="hasRemarks"
-                            :options="['All', 'Yes', 'No']"
+                            id="initial-sort-select"
+                            v-model="filterOn"
+                            :options="['all', true, false]"
                             size="sm"
                         ></b-form-select>
-                    </b-form-group>
+                    </b-form-group> -->
+                    &nbsp;
                 </b-col>
 
                 <b-col sm="5" md="6" class="my-1">
@@ -83,7 +84,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="assignedMembers"
+                :items="items"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -112,55 +113,25 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
-                            @change="
-                                selectEmployee($event, row.item.employee.id)
-                            "
                             v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
 
-                <template #cell(name)="row">
-                    {{ row.value.first }} {{ row.value.last }}
-                </template>
-
                 <template #cell(actions)="row">
                     <Link
-                        :href="'assigned-employees/' + row.item.id"
-                        class="btn m-1 btn-info"
+                        v-if="check_access('members', 'read')"
+                        :href="'members/' + row.item.id"
+                        class="btn mx-1 my-1 btn-info"
                         type="button"
-                        v-if="check_access('assigns', 'read')"
                         >Show</Link
                     >
-                    <b-button
-                        v-b-modal.remarks-modal
-                        variant="warning text-white"
-                        @click="selectedMember(row.item)"
-                        class="m-1"
-                        v-if="
-                            !row.item.remarks &&
-                            check_access('assigns', 'update')
-                        "
-                        >Add remarks</b-button
-                    >
-                    <b-button
-                        v-b-modal.remarks-modal
-                        variant="danger"
-                        @click="selectedMember(row.item)"
-                        class="m-1"
-                        v-else
-                        >Edit remarks</b-button
-                    >
-                    <b-button
-                        v-if="
-                            row.item.remarks &&
-                            check_access('assigns', 'update')
-                        "
-                        v-b-modal.invite-modal
-                        variant="success"
-                        @click="selectedMember(row.item)"
-                        class="m-1"
-                        >Invite</b-button
+                    <Link
+                        v-if="check_access('members', 'update')"
+                        :href="'members/' + row.item.id + '/edit'"
+                        class="btn mx-1 my-1 btn-warning text-white"
+                        type="button"
+                        >Edit</Link
                     >
                 </template>
 
@@ -174,56 +145,36 @@
                     </b-card>
                 </template>
             </b-table>
+<!-- 
+            <b-pagination-nav
+                :number-of-pages="meta.last_page"
+                :base-url="`?per_page=${perPage}&page=`"
+            ></b-pagination-nav> -->
 
-            <!-- Add Remarks modal -->
-            <b-modal id="remarks-modal" title="Remarks">
-                <b-form-textarea
-                    id="textarea"
-                    v-model="remarks"
-                    placeholder="Enter something..."
-                    rows="3"
-                    max-rows="6"
-                ></b-form-textarea>
-                <br />
-                <p v-if="updated_by !== ''">
-                    Last remark by: <b>{{ updated_by }}</b>
-                </p>
-                <template #modal-footer>
-                    <b-button
-                        variant="danger"
-                        type="button"
-                        @click="$bvModal.hide('remarks-modal')"
-                        >Close</b-button
-                    >
-                    <b-button
-                        variant="success"
-                        type="button"
-                        @click="modifyRemarks"
-                        >Submit</b-button
-                    >
-                </template>
-            </b-modal>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li v-for="(link, key) in meta.links" class="page-item" :key="key">
+                        <Link v-if="link.url === null" class="page-link" href="#" v-html="link.label" />
+                        <Link v-else class="page-link" :href="link.url" v-html="link.label" />
+                    </li>
+                </ul>
+            </nav>
 
-            <b-modal id="invite-modal" title="Notice">
-                <p>Mark as Invited?</p>
-                <template #modal-footer>
-                    <b-button
-                        variant="danger"
-                        type="button"
-                        @click="$bvModal.hide('invite-modal')"
-                        >Close</b-button
-                    >
-                    <b-button variant="success" type="button" @click="invite"
-                        >Yes</b-button
-                    >
-                </template>
+            <!-- Info modal -->
+            <b-modal
+                :id="infoModal.id"
+                :title="infoModal.title"
+                ok-only
+                @hide="resetInfoModal"
+            >
+                <pre>{{ infoModal.content }}</pre>
             </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link, router } from "@inertiajs/vue2";
+import { Link } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -234,12 +185,14 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
+        current_page: Number,
+        meta: Object,
     },
     data() {
         return {
-            totalRows: 1,
-            currentPage: 1,
-            perPage: this.per_page,
+            totalRows: this.meta.total,
+            currentPage: this.meta.current_page,
+            perPage: this.meta.per_page,
             pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
             sortBy: "",
             sortDesc: false,
@@ -252,58 +205,28 @@ export default {
                 content: "",
             },
             selected_ids: [],
-            selected_employee_ids: [],
             checkedAll: false,
-            remarks: "",
-            selected_row_id: null,
-            form: {
-                remarks: "",
-                member_id: "",
-            },
-            hasRemarks: "All",
-            updated_by: "",
-            invite_form: {
-                status: true,
-                member_id: "",
-            },
         };
     },
     watch: {
         selected_ids() {
-            return this.$emit("selected_member", this.selected_ids);
-        },
-        selected_employee_ids() {
-            return this.$emit(
-                "selected_member_employee_id",
-                this.selected_employee_ids
-            );
-        },
-        checkedAll() {
-            return this.$emit("checkedAll", this.checkedAll);
+            return this.$emit("selected_member", this.selected_ids).length;
         },
     },
     computed: {
         sortOptions() {
-            // Create an options list from our fields99
+            // Create an options list from our fields
             return this.fields
                 .filter((f) => f.sortable)
                 .map((f) => {
                     return { text: f.label, value: f.key };
                 });
         },
-        assignedMembers() {
-            if (this.hasRemarks == "Yes") {
-                return this.items.filter((item) => item.remarks != null);
-            } else if (this.hasRemarks == "No") {
-                return this.items.filter((item) => item.remarks == null);
-            }
-
-            return this.items;
-        },
     },
     mounted() {
         // Set the initial number of items
-        this.totalRows = this.items.length;
+        // this.totalRows = this.items.length;
+        this.totalRows = this.meta.total;
     },
     methods: {
         info(item, index, button) {
@@ -322,43 +245,13 @@ export default {
         },
         select() {
             this.selected_ids = [];
-            this.selected_employee_ids = [];
             if (this.checkedAll) {
-                console.log("selected all");
                 for (let i in this.items
-                    .filter((item) => item.is_assigned == true)
+                    .filter((item) => item.is_assigned == false)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
-                    this.selected_employee_ids.push(this.items[i].employee.id);
                 }
-
-                // remove duplicate ids
-                this.selected_employee_ids = this.selected_employee_ids.filter(
-                    (item, index) =>
-                        this.selected_employee_ids.indexOf(item) === index
-                );
             }
-        },
-        selectEmployee(event, data) {
-            // console.log(event.currentTarget);
-            this.selected_employee_ids = data;
-        },
-        modifyRemarks() {
-            this.form.member_id = this.selected_row_id;
-            this.form.remarks = this.remarks;
-            router.post("/remarks", this.form);
-            this.remarks = "";
-            this.$bvModal.hide("remarks-modal");
-        },
-        selectedMember(data) {
-            this.selected_row_id = data.id;
-            this.remarks = data.remarks;
-            this.updated_by =
-                data.updated_by.length != 0
-                    ? data.updated_by.last_name +
-                      ", " +
-                      data.updated_by.first_name
-                    : "";
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;
@@ -371,11 +264,6 @@ export default {
                 }));
 
             return access.some((item) => item.type === type);
-        },
-        invite() {
-            this.invite_form.member_id = this.selected_row_id;
-            router.post("/invites", this.invite_form);
-            this.$bvModal.hide("invite-modal");
         },
     },
 };

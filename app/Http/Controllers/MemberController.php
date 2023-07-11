@@ -62,7 +62,6 @@ class MemberController extends Controller
 
             // add member
             $this->memberService->createMember($request->validated());
-
         } catch (Exception $ex) {
 
             DB::rollBack();
@@ -108,12 +107,11 @@ class MemberController extends Controller
     public function update(MemberFormRequest $request, Member $member)
     {
         $this->authorize('update', Member::class);
-        
+
         try {
             DB::beginTransaction();
 
             $this->memberService->updateMember($request->validated(), $member);
-
         } catch (Exception $ex) {
 
             DB::rollBack();
@@ -136,7 +134,7 @@ class MemberController extends Controller
     public function remarks(Request $request)
     {
         $this->authorize('update', Member::class);
-        
+
         $request = $request->validate([
             'member_id' => 'required|exists:members,id',
             'remarks' => 'required|min:2',
@@ -144,10 +142,99 @@ class MemberController extends Controller
 
         $result = $this->memberService->modifyRemarks($request);
 
-        if(!$result) {
+        if (!$result) {
             return redirect()->route('assigned-employees.index')->with('error', 'Something went wrong on saving!');
         }
 
         return redirect()->route('assigned-employees.index')->with('success', 'Successfully saved!');
+    }
+
+    /**
+     * Display a listing of the resource
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function indexInvite(Request $request)
+    {
+        $invited = true;
+
+        $members = MemberResource::collection($this->memberService->indexInvitedMember($invited));
+
+        return Inertia::render('Invites/IndexInvite', [
+            'members' => $members,
+            'employees' => $this->employeeService->indexEmployee(),
+            'per_page' => 5
+        ]);
+    }
+
+    /**
+     * Display a paginate listing of the resource.
+     */
+    public function indexPaginate(Request $request)
+    {
+        $per_page = $request->per_page;
+        $page = $request->page;
+
+        if (!$per_page) {
+            $per_page = 5;
+        }
+
+        // if(!$page) {
+        //     $page = 1;
+        // }
+
+        $members = MemberResource::collection($this->memberService->indexPaginateMember($per_page));
+
+        // dd($members);
+        return Inertia::render('Members/PaginateMember', [
+            'members' => $members,
+            'employees' => $this->employeeService->indexEmployee(),
+            'per_page' => 5
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function invite(Request $request)
+    {
+        $request->validate([
+            'member_id' => 'required|exists:members,id',
+            'status' => 'required|boolean'
+        ]);
+
+        try {
+            $member = Member::find($request->member_id);
+
+            $member = $this->memberService->inviteMember($member, $request->status);
+
+        } catch (Exception $e) {
+            return redirect()->route('assigned-employees.index')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully invited!');
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function inviteCancel(Request $request)
+    {
+        $request->validate([
+            'member_ids' => 'required|array'
+        ]);
+
+        try {
+            foreach ($request->member_ids as $member_id) {
+                $member = Member::find($member_id);
+
+                $member = $this->memberService->inviteMember($member, false);
+            }
+        } catch (Exception $e) {
+            return redirect()->route('invites')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('invites')->with('success', 'Successfully removed from invitees!');
     }
 }

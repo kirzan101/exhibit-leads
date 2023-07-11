@@ -40,6 +40,7 @@ class Member extends Model
         'property_assigned',
         'contract_file',
         'is_assigned',
+        'is_invited',
         'remarks',
         'employee_id',
         'created_by',

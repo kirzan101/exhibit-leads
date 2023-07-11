@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use File;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 class MemberService
@@ -21,7 +22,7 @@ class MemberService
      */
     public function indexMember(): Collection
     {
-        $member = Member::where('is_assigned', false)->get();
+        $member = Member::where('is_assigned', false)->orderBy('id', 'desc')->get();
 
         return $member;
     }
@@ -110,6 +111,12 @@ class MemberService
         return $member;
     }
 
+    /**
+     * show member service
+     *
+     * @param Member $model
+     * @return Member
+     */
     public function showMember(Member $model): Member
     {
         $owned_gadgets = $model->owned_gadgets;
@@ -120,18 +127,18 @@ class MemberService
         $member->owned_gadgets = $arrayed_owned_gadgets;
 
         if ($model->contract_file) {
-            // $member->contract_file = response()->file(public_path($model->contract_file))->getFile();
-            $member->contract_file = $member->getUploadedFile();
+            $member->contract_file = response()->file(public_path($model->contract_file))->getFile();//$member->getUploadedFile();
         }
-        // $member->contract_file = File::files(public_path('uploads'))[0];
-        // dd(File::files(public_path('uploads'))[0]);
-        // dd(response()->file(public_path($model->contract_file))->getFile());
-
-        // dd($member);
 
         return $member;
     }
 
+    /**
+     * modify remarks of member service
+     *
+     * @param array $request
+     * @return boolean
+     */
     public function modifyRemarks(array $request) : bool
     {
         $member = Member::find($request['member_id']);
@@ -140,5 +147,50 @@ class MemberService
             'remarks' => $request['remarks'],
             'updated_by' => Auth::user()->employee->id
         ]);
+    }
+
+    /**
+     * index of invited member service
+     *
+     * @return void
+     */
+    public function indexInvitedMember(bool $invited): Collection
+    {
+        $members = Member::where('is_invited', $invited)->orderBy('id', 'desc')->get();
+        
+        if(Auth::user()->employee->userGroup->name == 'employees') {
+            $members = Member::where('is_invited', $invited)->where('employee_id', Auth::user()->employee->id)->get();
+        }
+
+        return $members;
+    }
+
+    /**
+     * Add invite status on member service
+     *
+     * @param Member $member
+     * @param bool $status
+     * @return Member
+     */
+    public function inviteMember(Member $member, bool $status) : Member
+    {
+        $member = tap($member)->update([
+            'is_invited' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        return $member;
+    }
+
+    /**
+     * index page with paginate
+     *
+     * @return Paginator
+     */
+    public function indexPaginateMember(int $perPage): Paginator
+    {
+        $member = Member::where('is_assigned', false)->paginate($perPage);
+
+        return $member;
     }
 }

@@ -20,7 +20,7 @@ class AssignedEmployeeService
      */
     public function indexAssignedEmployee(): Collection
     {
-        $assigned_employees = Member::where('is_assigned', true)->get();
+        $assigned_employees = Member::where('is_assigned', true)->where('is_invited', false)->get();
 
         return $assigned_employees;
     }
@@ -131,7 +131,7 @@ class AssignedEmployeeService
      */
     public function indexCurrentAssignedEmployee(): Collection
     {
-        $assigned_employees = Member::where('is_assigned', true)->where('employee_id', Auth::user()->employee->id)->get();
+        $assigned_employees = Member::where('is_assigned', true)->where('is_invited', false)->where('employee_id', Auth::user()->employee->id)->get();
 
         return $assigned_employees;
     }

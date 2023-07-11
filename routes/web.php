@@ -28,9 +28,9 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
 
-Route::get('/welcome', function () {
-    return inertia('Welcome');
-});
+// Route::get('/welcome', function () {
+//     return inertia('Welcome');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::resource('members', MemberController::class);
@@ -49,6 +49,14 @@ Route::middleware('auth')->group(function () {
         return inertia('Welcome');
     });
 
+    // update profile
     Route::get('/profile', [EmployeeController::class, 'profile'])->name('profile');
     Route::put('/profile/edit', [EmployeeController::class, 'profileEdit']);
+
+    // invites
+    Route::get('invites', [MemberController::class, 'indexInvite'])->name('invites');
+    Route::post('invites', [MemberController::class, 'invite']);
+    Route::post('invites/cancel', [MemberController::class, 'inviteCancel']);
+
+    // Route::get('paginate', [MemberController::class, 'indexPaginate']);
 });

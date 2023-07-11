@@ -21,6 +21,11 @@
                             >Employees</Link
                         >
                     </li>
+                    <li class="nav-item">
+                        <Link class="nav-link" href="/invites"
+                            >Invites</Link
+                        >
+                    </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>
 

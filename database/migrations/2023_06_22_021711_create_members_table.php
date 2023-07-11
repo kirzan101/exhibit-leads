@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('contract_file')->nullable();
             $table->boolean('is_assigned')->default(false);
             $table->longText('remarks')->nullable();
+            $table->boolean('is_invited')->default(false);
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
