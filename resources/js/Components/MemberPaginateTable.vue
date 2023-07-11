@@ -71,14 +71,50 @@
                 </b-col>
 
                 <b-col sm="7" md="6" class="my-1">
-                    <b-pagination
+                    <!-- <b-pagination
                         v-model="currentPage"
                         :total-rows="totalRows"
                         :per-page="perPage"
                         align="fill"
                         size="sm"
                         class="my-0"
-                    ></b-pagination>
+                    ></b-pagination> -->
+                    <ul
+                        role="menubar"
+                        aria-disabled="false"
+                        aria-label="Pagination"
+                        class="pagination my-0 b-pagination pagination-sm text-center"
+                    >
+                        <li
+                            v-for="(link, key) in meta.links"
+                            class="page-item flex-fill d-flex"
+                            :key="key"
+                            :class="(link.active) ? 'active' : ''"
+                        >
+                            <Link
+                                v-if="link.url === null"
+                                class="page-link flex-grow-1"
+                                href="#"
+                                v-html="link.label"
+                                :aria-label="link.label"
+                                aria-checked="false"
+                                aria-posinset="1"
+                                aria-setsize="2"
+                                tabindex="-1"
+                            />
+                            <Link
+                                v-else
+                                class="page-link flex-grow-1"
+                                :href="link.url"
+                                v-html="link.label"
+                                :aria-label="link.label"
+                                aria-checked="false"
+                                aria-posinset="1"
+                                aria-setsize="2"
+                                tabindex="-1"
+                            />
+                        </li>
+                    </ul>
                 </b-col>
             </b-row>
 
@@ -86,8 +122,6 @@
             <b-table
                 :items="items"
                 :fields="fields"
-                :current-page="currentPage"
-                :per-page="perPage"
                 :filter="filter"
                 :sort-by.sync="sortBy"
                 :sort-desc.sync="sortDesc"
@@ -145,20 +179,11 @@
                     </b-card>
                 </template>
             </b-table>
-<!-- 
+            <!-- 
             <b-pagination-nav
                 :number-of-pages="meta.last_page"
                 :base-url="`?per_page=${perPage}&page=`"
             ></b-pagination-nav> -->
-
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li v-for="(link, key) in meta.links" class="page-item" :key="key">
-                        <Link v-if="link.url === null" class="page-link" href="#" v-html="link.label" />
-                        <Link v-else class="page-link" :href="link.url" v-html="link.label" />
-                    </li>
-                </ul>
-            </nav>
 
             <!-- Info modal -->
             <b-modal

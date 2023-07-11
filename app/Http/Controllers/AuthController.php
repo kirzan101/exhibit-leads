@@ -15,6 +15,10 @@ class AuthController extends Controller
      */
     public function index()
     {
+        if(Auth::user()) {
+            return redirect('/');
+        }
+
         return Inertia::render('Login', []);
     }
 

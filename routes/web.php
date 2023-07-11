@@ -58,5 +58,5 @@ Route::middleware('auth')->group(function () {
     Route::post('invites', [MemberController::class, 'invite']);
     Route::post('invites/cancel', [MemberController::class, 'inviteCancel']);
 
-    // Route::get('paginate', [MemberController::class, 'indexPaginate']);
+    Route::get('paginate', [MemberController::class, 'indexPaginate']);
 });
