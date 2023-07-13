@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Head>
+            <title>Home</title>
+        </Head>
         <div class="container">
             <h3>Welcome {{ fullName }}!</h3>
 
