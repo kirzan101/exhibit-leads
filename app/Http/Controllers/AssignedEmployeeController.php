@@ -40,7 +40,7 @@ class AssignedEmployeeController extends Controller
 
         $members = MemberResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
 
-        if($isEmployee) {
+        if ($isEmployee) {
             $members = MemberResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
         }
 
@@ -88,12 +88,17 @@ class AssignedEmployeeController extends Controller
     {
         $this->authorize('read', AssignedEmployee::class);
 
-        $member = Member::find($id);
-        $employee = Employee::find($member->employee_id);
-        return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
-            'member' => $this->memberService->showMember($member),
-            'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
-        ]);
+        $member = Member::where('id', $id)->where('is_assigned', true)->first();
+
+        if ($member) {
+            $employee = Employee::find($member->employee_id);
+            return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
+                'member' => $this->memberService->showMember($member),
+                'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
+            ]);
+        }
+
+        return redirect()->route('assigned-employees.index')->with('error', 'Member not found.');
     }
 
     /**
@@ -115,7 +120,6 @@ class AssignedEmployeeController extends Controller
             DB::beginTransaction();
 
             $this->assignedEmployeeService->updateAssignedEmployee($request->validated(), $assignedEmployee);
-
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -158,14 +162,14 @@ class AssignedEmployeeController extends Controller
     public function removeAssignment(Request $request)
     {
         $this->authorize('create', AssignedEmployee::class);
-        
+
         $request = $request->validate([
             'member_ids' => 'required|array'
         ]);
 
         $result = $this->assignedEmployeeService->removedAssgined($request);
 
-        if(!$result) {
+        if (!$result) {
             return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');
         }
 

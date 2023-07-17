@@ -64,7 +64,7 @@
                                 href="/profile"
                                 target="_self"
                                 class="dropdown-item"
-                                @change="closeDropDown"
+                                @click="closeDropDown"
                                 >Profile</Link
                             >
                         </li>
@@ -115,11 +115,13 @@ export default {
         },
         closeDropDown() {
             // this.$refs.dropdown.hide(true);
-            // this.$root.$on("bv::dropdown::hide", (bvEvent) => {
-            //     console.log("Dropdown is about to be shown", bvEvent);
-            // });
-            this.$refs.dropdown.hide(true)
-            console.log("clicked dropdown", this.$refs);
+            this.$root.$on("bv::dropdown::hide", (bvEvent) => {
+                console.log("Dropdown is about to be shown", bvEvent);
+            });
+            // this.$refs.dropdown.hide(true)
+            // event.preventDefault();
+            console.log("clicked dropdown");
+            // console.log("clicked dropdown");
         },
     },
 };

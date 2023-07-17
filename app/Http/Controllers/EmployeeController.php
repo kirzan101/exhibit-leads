@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Http\Requests\EmployeeFormRequest;
 use App\Http\Requests\ProfileFormRequest;
+use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use App\Services\EmployeeService;
 use App\Services\UserGroupService;
@@ -32,8 +33,10 @@ class EmployeeController extends Controller
     {
         $this->authorize('read', Employee::class);
 
+        $employees = EmployeeResource::collection($this->employeeService->indexEmployee());
+
         return Inertia::render('Employees/IndexEmployee', [
-            'employees' => $this->employeeService->indexEmployee(),
+            'employees' => $employees,
             'per_page' => 5,
         ]);
     }
