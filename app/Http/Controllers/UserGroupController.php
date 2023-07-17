@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserGroup;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UserGroupController extends Controller
 {
@@ -13,6 +14,7 @@ class UserGroupController extends Controller
     public function index()
     {
         //
+        return Inertia::render('UserGroups/IndexUserGroup');
     }
 
     /**

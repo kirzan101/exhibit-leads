@@ -104,8 +104,27 @@
                 <template #cell(actions)="row">
                     <!-- <b-button variant="info" class="mx-1">Show</b-button> -->
                     <!-- <b-button variant="warning" class="mx-1">Edit</b-button> -->
-                    <Link :href="'employees/' + row.item.id + ''" class="btn mx-1 btn-info" type="button" v-if="check_access('employees', 'read')">Show</Link>
-                    <Link :href="'employees/' + row.item.id + '/edit'" class="btn mx-1 btn-warning text-white" type="button" v-if="check_access('employees', 'update')">Edit</Link>
+                    <Link
+                        :href="'employees/' + row.item.id + ''"
+                        class="btn mx-1 btn-info"
+                        type="button"
+                        v-if="check_access('employees', 'read')"
+                        >Show</Link
+                    >
+                    <Link
+                        :href="'employees/' + row.item.id + '/edit'"
+                        class="btn mx-1 btn-warning text-white"
+                        type="button"
+                        v-if="check_access('employees', 'update')"
+                        >Edit</Link
+                    >
+                    <b-button
+                        variant="danger"
+                        class="mx-1"
+                        @click="selectedEmployee(row.item)"
+                        v-b-modal.reset-modal
+                        >Reset</b-button
+                    >
                 </template>
 
                 <template #row-details="row">
@@ -128,12 +147,31 @@
             >
                 <pre>{{ infoModal.content }}</pre>
             </b-modal>
+
+            <!-- Reset modal -->
+            <b-modal id="reset-modal" title="Notice">
+                <p class="my-4">Reset employee password?</p>
+                <template #modal-footer>
+                    <b-button
+                        variant="danger"
+                        type="button"
+                        @click="$bvModal.hide('remove-modal')"
+                        >Close</b-button
+                    >
+                    <b-button
+                        variant="success"
+                        type="button"
+                        @click="resetEmployee()"
+                        >Yes</b-button
+                    >
+                </template>
+            </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -154,7 +192,7 @@ export default {
             sortDesc: false,
             sortDirection: "asc",
             filter: null,
-            filterOn: ['is_assigned'],
+            filterOn: ["is_assigned"],
             infoModal: {
                 id: "info-modal",
                 title: "",
@@ -162,6 +200,7 @@ export default {
             },
             selected_ids: [],
             checkedAll: false,
+            selected_row_id: "",
         };
     },
     computed: {
@@ -204,6 +243,18 @@ export default {
                 }));
 
             return access.some((item) => item.type === type);
+        },
+        selectedEmployee(data) {
+            this.selected_row_id = data.id;
+        },
+        resetEmployee() {
+            this.$bvModal.hide("reset-modal");
+
+            if(this.selected_row_id != "") {
+                router.post(`/employees/reset-password/${this.selected_row_id}`);
+            }
+
+            this.selected_row_id = "";
         },
     },
 };

@@ -156,7 +156,7 @@ class EmployeeController extends Controller
         $result = $this->employeeService->resetPassword($id);
 
         if ($result) {
-            return redirect()->route('employees.index')->with('success', 'Successfully reset the password!');
+            return redirect()->route('employees.index')->with('success', 'Successfully reset the password! The new password is:  P@ssw0rd');
         }
         return redirect()->route('employees.index')->with('error', 'error on password reset');
     }

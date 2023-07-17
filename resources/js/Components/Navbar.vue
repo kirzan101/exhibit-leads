@@ -2,7 +2,9 @@
     <div>
         <b-navbar toggleable="lg" type="dark" variant="info">
             <!-- <b-navbar-brand href="/">NavBar</b-navbar-brand> -->
-            <Link href="/" target="_self" class="navbar-brand">Exhibit-Leads</Link>
+            <Link href="/" target="_self" class="navbar-brand"
+                >Exhibit-Leads</Link
+            >
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -16,15 +18,16 @@
                             >Assign</Link
                         >
                     </li>
-                    <li class="nav-item" v-if="check_access('employees', 'read')">
+                    <li
+                        class="nav-item"
+                        v-if="check_access('employees', 'read')"
+                    >
                         <Link class="nav-link" href="/employees"
                             >Employees</Link
                         >
                     </li>
                     <li class="nav-item">
-                        <Link class="nav-link" href="/invites"
-                            >Invites</Link
-                        >
+                        <Link class="nav-link" href="/invites">Invites</Link>
                     </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>
@@ -56,10 +59,25 @@
                         </template>
                         <!-- <b-dropdown-item href="#">Profile</b-dropdown-item> -->
                         <li role="presentation">
-                            <Link role="menuitem" href="/profile" class="dropdown-item">Profile</Link>
+                            <Link
+                                role="menuitem"
+                                href="/profile"
+                                target="_self"
+                                class="dropdown-item"
+                                @change="closeDropDown"
+                                >Profile</Link
+                            >
                         </li>
                         <li role="presentation">
-                            <Link role="menuitem" href="/logout" method="post" class="dropdown-item" as="button">Logout</Link>
+                            <Link
+                                role="menuitem"
+                                href="/logout"
+                                target="_self"
+                                method="post"
+                                class="dropdown-item"
+                                as="button"
+                                >Logout</Link
+                            >
                         </li>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
@@ -80,7 +98,7 @@ export default {
         },
         fullName() {
             return this.$page.props.auth.user.full_name;
-        }
+        },
     },
     methods: {
         check_access(module, type) {
@@ -95,6 +113,14 @@ export default {
 
             return access.some((item) => item.type === type);
         },
-    }
+        closeDropDown() {
+            // this.$refs.dropdown.hide(true);
+            // this.$root.$on("bv::dropdown::hide", (bvEvent) => {
+            //     console.log("Dropdown is about to be shown", bvEvent);
+            // });
+            this.$refs.dropdown.hide(true)
+            console.log("clicked dropdown", this.$refs);
+        },
+    },
 };
 </script>

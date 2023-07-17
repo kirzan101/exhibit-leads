@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\UserGroupController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,4 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::post('invites/cancel', [MemberController::class, 'inviteCancel']);
 
     Route::get('paginate', [MemberController::class, 'indexPaginate']);
+
+    Route::get('/usergroups', [UserGroupController::class, 'index']);
 });
