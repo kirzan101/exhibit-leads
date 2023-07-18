@@ -78,7 +78,7 @@
         }
       },
       methods: {
-        toggleAll(checked) {
+        toggleAll(checked) { 
           console.log(checked, event);
           this.selected = checked ? this.flavours.slice() : []
         }

@@ -1,5 +1,8 @@
 <template>
     <div class="container lg:p-10">
+        <head>
+            <title>Exhibit-Leads | Login</title>
+        </head>
         <div class="col-lg-4 col-md-6 mx-auto">
             <b-card class="mt-5">
                 <div class="mx-auto">

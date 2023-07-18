@@ -114,12 +114,12 @@ export default {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
-                {
-                    key: "id",
-                    label: "Id",
-                    sortable: true,
-                    sortDirection: "desc",
-                },
+                // {
+                //     key: "id",
+                //     label: "Id",
+                //     sortable: true,
+                //     sortDirection: "desc",
+                // },
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "address", label: "Address", sortable: true },

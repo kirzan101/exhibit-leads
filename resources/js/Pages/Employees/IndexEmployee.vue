@@ -64,12 +64,12 @@ export default {
         return {
             showDismissibleAlert: false,
             fields: [
-                {
-                    key: "id",
-                    label: "Id",
-                    sortable: true,
-                    sortDirection: "desc",
-                },
+                // {
+                //     key: "id",
+                //     label: "Id",
+                //     sortable: true,
+                //     sortDirection: "desc",
+                // },
                 { key: "full_name", label: "Name", sortable: true },
                 { key: "user.email", label: "Email", sortable: true },
                 { key: "position", label: "Position", sortable: true },

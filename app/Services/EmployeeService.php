@@ -20,7 +20,7 @@ class EmployeeService
     public function indexEmployee() : Collection
     {
         // $employee = Employee::all();
-        $employee = Employee::where('user_group_id', '!=', '1')->get(); // remove admin accounts
+        $employee = Employee::where('user_group_id', '!=', '1')->orderBy('id', 'desc')->get(); // remove admin accounts
 
         return $employee;
     }

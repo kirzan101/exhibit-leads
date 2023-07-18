@@ -216,6 +216,7 @@ export default {
                 position: this.employee.position,
                 property: this.employee.property,
                 email: this.user.email,
+                user_id: this.user.id,
                 user_group_id: this.employee.user_group_id
             },
             property_locations: [

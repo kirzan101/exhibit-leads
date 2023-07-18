@@ -160,12 +160,12 @@ export default {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
-                {
-                    key: "id",
-                    label: "Id",
-                    sortable: true,
-                    sortDirection: "desc",
-                },
+                // {
+                //     key: "id",
+                //     label: "Id",
+                //     sortable: true,
+                //     sortDirection: "desc",
+                // },
                 {
                     key: "member_full_name",
                     label: "Member name",
