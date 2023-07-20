@@ -18,6 +18,9 @@
                             >Assign</Link
                         >
                     </li>
+                    <li class="nav-item" v-if="check_access('invites', 'read')">
+                        <Link class="nav-link" href="/invites">Invites</Link>
+                    </li>
                     <li
                         class="nav-item"
                         v-if="check_access('employees', 'read')"
@@ -25,9 +28,6 @@
                         <Link class="nav-link" href="/employees"
                             >Employees</Link
                         >
-                    </li>
-                    <li class="nav-item">
-                        <Link class="nav-link" href="/invites">Invites</Link>
                     </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>

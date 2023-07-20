@@ -30,7 +30,7 @@
             <h5>
                 <div class="row">
                     <div class="col-sm-6">
-                        Lead |
+                        Leads |
                         <Link
                             href="/leads/create"
                             class="btn btn-success"

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\AssignedEmployee;
 use App\Models\Contract;
-use App\Models\Member;
+use App\Models\Lead;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class AssignedEmployeeService
      */
     public function indexAssignedEmployee(): Collection
     {
-        $assigned_employees = Member::where('is_assigned', true)->where('is_invited', false)->get();
+        $assigned_employees = Lead::where('is_assigned', true)->where('is_invited', false)->get();
 
         return $assigned_employees;
     }
@@ -34,15 +34,15 @@ class AssignedEmployeeService
     public function createAssignedEmployee(array $request): bool
     {
         try {
-            foreach ($request['member_ids'] as $member) {
+            foreach ($request['lead_ids'] as $lead) {
                 AssignedEmployee::create([
-                    'member_id' => $member,
+                    'lead_id' => $lead,
                     'employee_id' => $request['employee_id'],
                     'created_by' => Auth::user()->employee->id,
                 ]);
 
-                $member = Member::find($member);
-                $member->update([
+                $lead = Lead::find($lead);
+                $lead->update([
                     'is_assigned' => true,
                     'employee_id' => $request['employee_id'],
                     'updated_by' => Auth::user()->employee->id
@@ -65,15 +65,15 @@ class AssignedEmployeeService
     public function updateAssignedEmployee(array $request, AssignedEmployee $assignedEmployee): bool
     {
         try {
-            foreach ($request['member_ids'] as $member) {
+            foreach ($request['lead_ids'] as $lead) {
                 AssignedEmployee::create([
-                    'member_id' => $member,
+                    'lead_id' => $lead,
                     'employee_id' => $request['employee_id'],
                     'created_by' => Auth::user()->employee->id,
                 ]);
 
-                $member = Member::find($member);
-                $member->update([
+                $lead = Lead::find($lead);
+                $lead->update([
                     'is_assigned' => true,
                     'employee_id' => $request['employee_id'],
                     'updated_by' => Auth::user()->employee->id
@@ -100,7 +100,7 @@ class AssignedEmployeeService
     }
 
     /**
-     * removed assigned employee in a member
+     * removed assigned employee in a lead
      *
      * @param array $request
      * @return boolean
@@ -108,9 +108,9 @@ class AssignedEmployeeService
     public function removedAssgined(array $request) : bool
     {
         try {
-            foreach ($request['member_ids'] as $member) {
-                $member = Member::find($member);
-                $member->update([
+            foreach ($request['lead_ids'] as $lead) {
+                $lead = Lead::find($lead);
+                $lead->update([
                     'is_assigned' => false,
                     'employee_id' => null,
                     'remarks' => null,
@@ -131,7 +131,7 @@ class AssignedEmployeeService
      */
     public function indexCurrentAssignedEmployee(): Collection
     {
-        $assigned_employees = Member::where('is_assigned', true)->where('is_invited', false)->where('employee_id', Auth::user()->employee->id)->get();
+        $assigned_employees = Lead::where('is_assigned', true)->where('is_invited', false)->where('employee_id', Auth::user()->employee->id)->get();
 
         return $assigned_employees;
     }
