@@ -31,6 +31,8 @@ class LeadController extends Controller
      */
     public function index()
     {
+        $this->authorize('read', Lead::class);
+
         $leads = LeadResource::collection($this->leadService->indexLead());
         return Inertia::render('Leads/IndexLead', [
             'leads' => $leads,

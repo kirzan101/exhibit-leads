@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\Member;
+use App\Models\Lead;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -12,29 +12,29 @@ class Helper
 {
 
     /**
-     * Upload member contract image
+     * Upload lead contract image
      *
      * @param [type] $file
-     * @param Member $member
+     * @param Lead $lead
      * @return boolean
      */
-    public static function uploadFile($file, Member $member): bool
+    public static function uploadFile($file, Lead $lead): bool
     {
         $file_name = time().'_'.$file->getClientOriginalName();
         $file->move(public_path('uploads'), $file_name);
         $file_path = 'uploads/' . $file_name;
 
         // $file_name = time().'_'.$file->getClientOriginalName();
-        // if($member->contract_file) {
-        //     if(Storage::disk('public')->exists($member->contract_file)) {
-        //         Storage::disk('public')->delete($member->contract_file);
+        // if($lead->contract_file) {
+        //     if(Storage::disk('public')->exists($lead->contract_file)) {
+        //         Storage::disk('public')->delete($lead->contract_file);
         //     }
         // }
 
         // $file_path = $file->store('uploads', 'public');
 
         try {
-            $result = $member->update([
+            $result = $lead->update([
                 'contract_file' => $file_path
             ]);
 

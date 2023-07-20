@@ -39,11 +39,11 @@ class UserGroupSeeder extends Seeder
         ];
 
         $admin_permissions = Permission::all();
-        $exhibit_permissions = Permission::where('module', 'members')
+        $exhibit_permissions = Permission::where('module', 'leads')
             ->orWhere('module', 'employees')
             ->orWhere('module', 'assigns')
             ->orWhere('module', 'invites')->get();
-        $employee_permissions = Permission::where('module', 'members')->get();
+        $employee_permissions = Permission::where('module', 'leads')->get();
 
         if ($admin_permissions->count() > 0) {
             foreach ($user_groups as $user_group) {
