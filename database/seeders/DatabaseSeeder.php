@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Employee;
+use App\Models\Lead;
 use App\Models\Member;
 use Illuminate\Database\Seeder;
 
@@ -29,7 +30,7 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
         ]);
 
-        Member::factory(50)->create();
+        Lead::factory(50)->create();
         
         // Employee::factory(2)->create();
 

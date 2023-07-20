@@ -83,7 +83,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="assignedMembers"
+                :items="assignedLeads"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -135,7 +135,7 @@
                     <b-button
                         v-b-modal.remarks-modal
                         variant="warning text-white"
-                        @click="selectedMember(row.item)"
+                        @click="selectedLead(row.item)"
                         class="m-1"
                         v-if="
                             !row.item.remarks &&
@@ -146,7 +146,7 @@
                     <b-button
                         v-b-modal.remarks-modal
                         variant="danger"
-                        @click="selectedMember(row.item)"
+                        @click="selectedLead(row.item)"
                         class="m-1"
                         v-else
                         >Edit remarks</b-button
@@ -158,7 +158,7 @@
                         "
                         v-b-modal.invite-modal
                         variant="success"
-                        @click="selectedMember(row.item)"
+                        @click="selectedLead(row.item)"
                         class="m-1"
                         >Invite</b-button
                     >
@@ -230,7 +230,7 @@ export default {
         Link,
     },
     props: {
-        members: Array,
+        leads: Array,
         items: Array,
         fields: Array,
         per_page: Number,
@@ -258,23 +258,23 @@ export default {
             selected_row_id: null,
             form: {
                 remarks: "",
-                member_id: "",
+                lead_id: "",
             },
             hasRemarks: "All",
             updated_by: "",
             invite_form: {
                 status: true,
-                member_id: "",
+                lead_id: "",
             },
         };
     },
     watch: {
         selected_ids() {
-            return this.$emit("selected_member", this.selected_ids);
+            return this.$emit("selected_lead", this.selected_ids);
         },
         selected_employee_ids() {
             return this.$emit(
-                "selected_member_employee_id",
+                "selected_lead_employee_id",
                 this.selected_employee_ids
             );
         },
@@ -291,7 +291,7 @@ export default {
                     return { text: f.label, value: f.key };
                 });
         },
-        assignedMembers() {
+        assignedLeads() {
             if (this.hasRemarks == "Yes") {
                 return this.items.filter((item) => item.remarks != null);
             } else if (this.hasRemarks == "No") {
@@ -344,13 +344,13 @@ export default {
             this.selected_employee_ids = data;
         },
         modifyRemarks() {
-            this.form.member_id = this.selected_row_id;
+            this.form.lead_id = this.selected_row_id;
             this.form.remarks = this.remarks;
             router.post("/remarks", this.form);
             this.remarks = "";
             this.$bvModal.hide("remarks-modal");
         },
-        selectedMember(data) {
+        selectedLead(data) {
             this.selected_row_id = data.id;
             this.remarks = data.remarks;
             this.updated_by =
@@ -373,7 +373,7 @@ export default {
             return access.some((item) => item.type === type);
         },
         invite() {
-            this.invite_form.member_id = this.selected_row_id;
+            this.invite_form.lead_id = this.selected_row_id;
             router.post("/invites", this.invite_form);
             this.$bvModal.hide("invite-modal");
         },

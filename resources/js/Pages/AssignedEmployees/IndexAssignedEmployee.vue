@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Assigned Members</title>
+            <title>Assigned Leads</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -29,9 +29,9 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">Assigned Members</div>
+                    <div class="col-sm-6">Assigned Leads</div>
                     <div class="col-sm-6">
-                        <div v-if="selected_member.length > 0">
+                        <div v-if="selected_lead.length > 0">
                             <div v-if="check_access('assigns', 'create')">
                                 <b-button
                                     class="btn btn-danger mx-1 my-1"
@@ -129,9 +129,9 @@
 
             <AssignedEmployeeTable
                 :fields="fields"
-                :items="members"
+                :items="leads"
                 :per_page="per_page"
-                @selected_member="getSelectedMember($event)"
+                @selected_lead="getSelectedLead($event)"
             />
         </b-container>
 
@@ -142,16 +142,16 @@
 <script>
 import { Link, router } from "@inertiajs/vue2";
 import AssignedEmployeeTable from "../../Components/AssignedEmployeeTable.vue";
-import MemberTable from "../../Components/MemberTable.vue";
+import LeadTable from "../../Components/LeadTable.vue";
 
 export default {
     components: {
         Link,
-        MemberTable,
+        LeadTable,
         AssignedEmployeeTable,
     },
     props: {
-        members: Array,
+        leads: Array,
         employees: Array,
         per_page: Number,
     },
@@ -167,8 +167,8 @@ export default {
                 //     sortDirection: "desc",
                 // },
                 {
-                    key: "member_full_name",
-                    label: "Member name",
+                    key: "lead_full_name",
+                    label: "Lead name",
                     sortable: true,
                 },
                 { key: "address", label: "Address", sortable: true },
@@ -180,14 +180,14 @@ export default {
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
-            selected_member: [],
-            selected_member_employee_id: [],
+            selected_lead: [],
+            selected_lead_employee_id: [],
             form: {
                 employee_id: "",
-                member_ids: [],
+                lead_ids: [],
             },
             remarks: "",
-            members_selected: [],
+            leads_selected: [],
             checked_all: false,
             alert: false,
         };
@@ -213,30 +213,30 @@ export default {
         updatedPerPage(value) {
             this.per_page = value;
         },
-        getSelectedMember(data) {
-            this.selected_member = data;
+        getSelectedLead(data) {
+            this.selected_lead = data;
         },
         getSelectedEmployee(data) {
-            this.selected_member_employee_id = data;
+            this.selected_lead_employee_id = data;
         },
         submitAssigned() {
             this.form.employee_id = this.selected_employee;
-            this.form.member_ids = this.selected_member;
+            this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("assign-modal");
 
             router.post("/reassign-employee", this.form);
             this.selected_employee = "";
-            this.selected_member = [];
+            this.selected_lead = [];
         },
         submitRemove() {
-            this.form.member_ids = this.selected_member;
+            this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("remove-modal");
 
             router.post("/remove-assign", this.form);
             this.selected_employee = "";
-            this.selected_member = [];
+            this.selected_lead = [];
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

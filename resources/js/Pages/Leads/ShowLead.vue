@@ -1,11 +1,11 @@
 <template>
     <b-container fluid>
         <Head>
-            <title>Members | Details</title>
+            <title>Leads | Details</title>
         </Head>
         <h5>
-            Member Details |
-            <Link class="btn btn-secondary" href="/members">Back</Link>
+            Lead Details |
+            <Link class="btn btn-secondary" href="/leads">Back</Link>
         </h5>
         <div class="p-1">
             <b-form>
@@ -526,12 +526,12 @@
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
-                                <b v-if="member.contract_file_name == null">{{
+                                <b v-if="lead.contract_file_name == null">{{
                                     form.contract_file
                                         ? form.contract_file.name
                                         : ""
                                 }}</b>
-                                <b v-else>{{ member.contract_file_name }}</b>
+                                <b v-else>{{ lead.contract_file_name }}</b>
                             </div>
                         </b-form-group>
                     </b-col>
@@ -549,41 +549,41 @@ export default {
     },
     props: {
         errors: Object,
-        member: Object,
+        lead: Object,
         assigned_employee: String,
         properties: Array,
     },
     data() {
         return {
             form: this.$inertia.form({
-                first_name: this.member.first_name,
-                middle_name: this.member.middle_name,
-                last_name: this.member.last_name,
-                title: this.member.title,
-                alias: this.member.alias,
-                suffix: this.member.suffix,
-                birth_date: this.member.birth_date,
-                address: this.member.address,
-                secondary_address: this.member.secondary_address,
-                nationality: this.member.nationality,
-                gender: this.member.gender,
-                civil_status: this.member.civil_status,
-                company_name: this.member.company_name,
-                company_number: this.member.company_number,
-                occupation: this.member.occupation,
-                email: this.member.email,
-                mobile_number_one: this.member.mobile_number_one,
-                mobile_number_two: this.member.mobile_number_two,
-                telephone: this.member.telephone,
-                fax: this.member.fax,
-                combined_monthly_income: this.member.combined_monthly_income,
-                internet_connection: this.member.internet_connection,
-                owned_gadgets: this.member.owned_gadgets,
-                other_gadgets: this.member.other_gadgets,
-                spouse_occupation: this.member.spouse_occupation,
-                nature_of_business: this.member.nature_of_business,
-                property_id: this.member.property_id,
-                contract_file: this.member.contract_file,
+                first_name: this.lead.first_name,
+                middle_name: this.lead.middle_name,
+                last_name: this.lead.last_name,
+                title: this.lead.title,
+                alias: this.lead.alias,
+                suffix: this.lead.suffix,
+                birth_date: this.lead.birth_date,
+                address: this.lead.address,
+                secondary_address: this.lead.secondary_address,
+                nationality: this.lead.nationality,
+                gender: this.lead.gender,
+                civil_status: this.lead.civil_status,
+                company_name: this.lead.company_name,
+                company_number: this.lead.company_number,
+                occupation: this.lead.occupation,
+                email: this.lead.email,
+                mobile_number_one: this.lead.mobile_number_one,
+                mobile_number_two: this.lead.mobile_number_two,
+                telephone: this.lead.telephone,
+                fax: this.lead.fax,
+                combined_monthly_income: this.lead.combined_monthly_income,
+                internet_connection: this.lead.internet_connection,
+                owned_gadgets: this.lead.owned_gadgets,
+                other_gadgets: this.lead.other_gadgets,
+                spouse_occupation: this.lead.spouse_occupation,
+                nature_of_business: this.lead.nature_of_business,
+                property_id: this.lead.property_id,
+                contract_file: this.lead.contract_file,
             }),
             titles: [
                 { text: "-- select --", value: null },

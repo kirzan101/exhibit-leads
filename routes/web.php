@@ -4,7 +4,7 @@ use App\Http\Controllers\AssignedEmployeeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\MemberController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\UserGroupController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +34,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 // });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('members', MemberController::class);
+    Route::resource('leads', LeadController::class);
     Route::resource('contracts', ContractController::class);
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
     Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
     Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);
-    Route::post('remarks', [MemberController::class, 'remarks']);
+    Route::post('remarks', [LeadController::class, 'remarks']);
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
 
     Route::get('/', function () {
@@ -55,11 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/edit', [EmployeeController::class, 'profileEdit']);
 
     // invites
-    Route::get('invites', [MemberController::class, 'indexInvite'])->name('invites');
-    Route::post('invites', [MemberController::class, 'invite']);
-    Route::post('invites/cancel', [MemberController::class, 'inviteCancel']);
+    Route::get('invites', [LeadController::class, 'indexInvite'])->name('invites');
+    Route::post('invites', [LeadController::class, 'invite']);
+    Route::post('invites/cancel', [LeadController::class, 'inviteCancel']);
 
-    Route::get('paginate', [MemberController::class, 'indexPaginate']);
+    Route::get('paginate', [LeadController::class, 'indexPaginate']);
 
     Route::get('/usergroups', [UserGroupController::class, 'index']);
 });

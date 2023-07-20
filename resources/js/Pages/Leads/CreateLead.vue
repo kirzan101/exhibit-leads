@@ -1,11 +1,11 @@
 <template>
     <b-container fluid>
         <Head>
-            <title>Members | Add</title>
+            <title>Leads | Add</title>
         </Head>
         <h5>
-            Add Member |
-            <Link class="btn btn-secondary" href="/members">Back</Link>
+            Add Lead |
+            <Link class="btn btn-secondary" href="/leads">Back</Link>
         </h5>
         <span class="note">Note: Fields that has "*" is required</span>
         <div class="p-1">
@@ -640,7 +640,7 @@ export default {
         submit() {
             this.$bvModal.hide("confirm-submit-modal");
 
-            router.post("/members", this.form, {
+            router.post("/leads", this.form, {
                 forceFormData: true,
             });
         },

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
@@ -42,6 +42,7 @@ return new class extends Migration
             $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
             $table->boolean('is_assigned')->default(false);
+            $table->boolean('is_confirmed')->default(false);
             $table->longText('remarks')->nullable();
             $table->boolean('is_invited')->default(false);
             $table->unsignedBigInteger('employee_id')->nullable();
@@ -61,6 +62,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('members');
+        Schema::dropIfExists('leads');
     }
 };

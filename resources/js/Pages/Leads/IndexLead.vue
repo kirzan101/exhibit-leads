@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Members</title>
+            <title>Leads</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -30,11 +30,11 @@
             <h5>
                 <div class="row">
                     <div class="col-sm-6">
-                        Member |
+                        Lead |
                         <Link
-                            href="/members/create"
+                            href="/leads/create"
                             class="btn btn-success"
-                            v-if="check_access('members', 'create')"
+                            v-if="check_access('leads', 'create')"
                             >Add</Link
                         >
                     </div>
@@ -45,7 +45,7 @@
                                 v-b-modal.assign-modal
                                 style="float: right"
                                 align-v="end"
-                                v-if="selected_member.length > 0"
+                                v-if="selected_lead.length > 0"
                                 >Assign</b-button
                             >
                             <b-button
@@ -96,13 +96,11 @@
 
             <br />
 
-            <MemberPaginateTable
+            <leadTable
                 :fields="fields"
-                :items="members.data"
-                :per_page="members.meta.per_page"
-                :current_page="members.meta.current_page"
-                :meta="members.meta"
-                @selected_member="getSelectedMember($event)"
+                :items="leads"
+                :per_page="per_page"
+                @selected_lead="getSelectedLead($event)"
             />
         </b-container>
 
@@ -112,17 +110,15 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import MemberTable from "../../Components/MemberTable.vue";
-import MemberPaginateTable from "../../Components/MemberPaginateTable.vue";
+import leadTable from "../../Components/leadTable.vue";
 
 export default {
     components: {
         Link,
-        MemberTable,
-        MemberPaginateTable,
+        leadTable,
     },
     props: {
-        members: Object,
+        leads: Array,
         employees: Array,
         per_page: Number,
     },
@@ -131,12 +127,12 @@ export default {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
-                {
-                    key: "id",
-                    label: "Id",
-                    sortable: true,
-                    sortDirection: "desc",
-                },
+                // {
+                //     key: "id",
+                //     label: "Id",
+                //     sortable: true,
+                //     sortDirection: "desc",
+                // },
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "address", label: "Address", sortable: true },
@@ -151,10 +147,10 @@ export default {
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
-            selected_member: [],
+            selected_lead: [],
             form: {
                 employee_id: "",
-                member_ids: [],
+                lead_ids: [],
             },
             alert: false,
         };
@@ -173,18 +169,18 @@ export default {
         updatedPerPage(value) {
             this.per_page = value;
         },
-        getSelectedMember(data) {
-            this.selected_member = data;
+        getSelectedLead(data) {
+            this.selected_lead = data;
         },
         submitAssigned() {
             this.form.employee_id = this.selected_employee;
-            this.form.member_ids = this.selected_member;
+            this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("assign-modal");
 
             router.post("/assign-employee", this.form);
             this.selected_employee = "";
-            this.selected_member = [];
+            this.selected_lead = [];
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

@@ -39,7 +39,7 @@
                                 v-b-modal.remove-modal
                                 style="float: right"
                                 align-v="end"
-                                v-if="selected_member.length > 0"
+                                v-if="selected_lead.length > 0"
                                 >Remove</b-button
                             >
                             <b-button
@@ -83,11 +83,11 @@
 
             <br />
 
-            <MemberTable
+            <LeadTable
                 :fields="fields"
-                :items="members"
+                :items="leads"
                 :per_page="per_page"
-                @selected_member="getSelectedMember($event)"
+                @selected_lead="getSelectedLead($event)"
             />
         </b-container>
 
@@ -97,15 +97,15 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import MemberTable from "../../Components/MemberTable.vue";
+import LeadTable from "../../Components/LeadTable.vue";
 
 export default {
     components: {
         Link,
-        MemberTable,
+        LeadTable,
     },
     props: {
-        members: Array,
+        leads: Array,
         employees: Array,
         per_page: Number,
     },
@@ -138,9 +138,9 @@ export default {
                     sortable: true,
                 },
             ],
-            selected_member: [],
+            selected_lead: [],
             form: {
-                member_ids: [],
+                lead_ids: [],
             },
             alert: false,
         };
@@ -159,16 +159,16 @@ export default {
         updatedPerPage(value) {
             this.per_page = value;
         },
-        getSelectedMember(data) {
-            this.selected_member = data;
+        getSelectedLead(data) {
+            this.selected_lead = data;
         },
         submitInvite() {
-            this.form.member_ids = this.selected_member;
+            this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("remove-modal");
 
             router.post("/invites/cancel", this.form);
-            this.selected_member = [];
+            this.selected_lead = [];
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

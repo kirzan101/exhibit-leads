@@ -11,7 +11,7 @@ class AssignedEmployee extends Model
 
     protected $fillable = [
         'employee_id',
-        'member_id',
+        'lead_id',
         'created_by',
         'updated_by'
     ];

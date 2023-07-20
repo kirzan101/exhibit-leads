@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AssignedEmployeeFormRequest;
-use App\Http\Resources\MemberResource;
+use App\Http\Resources\LeadResource;
 use App\Models\AssignedEmployee;
 use App\Models\Employee;
-use App\Models\Member;
+use App\Models\Lead;
 use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
-use App\Services\MemberService;
+use App\Services\LeadService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,13 +19,13 @@ use Inertia\Inertia;
 class AssignedEmployeeController extends Controller
 {
     private AssignedEmployeeService $assignedEmployeeService;
-    private MemberService $memberService;
+    private LeadService $leadService;
     private EmployeeService $employeeService;
 
-    public function __construct(AssignedEmployeeService $assignedEmployeeService, MemberService $memberService, EmployeeService $employeeService)
+    public function __construct(AssignedEmployeeService $assignedEmployeeService, LeadService $leadService, EmployeeService $employeeService)
     {
         $this->assignedEmployeeService = $assignedEmployeeService;
-        $this->memberService = $memberService;
+        $this->leadService = $leadService;
         $this->employeeService = $employeeService;
     }
 
@@ -38,15 +38,15 @@ class AssignedEmployeeController extends Controller
 
         $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
 
-        $members = MemberResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
+        $leads = LeadResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
 
         if ($isEmployee) {
-            $members = MemberResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
+            $leads = LeadResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
         }
 
 
         return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
-            'members' => $members,
+            'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
             'per_page' => 5
         ]);
@@ -74,11 +74,11 @@ class AssignedEmployeeController extends Controller
         } catch (Exception $ex) {
 
             DB::rollBack();
-            return redirect()->route('members.index')->with('error', $ex->getMessage());
+            return redirect()->route('leads.index')->with('error', $ex->getMessage());
         }
 
         DB::commit();
-        return redirect()->route('members.index')->with('success', 'Successfully assigned!');
+        return redirect()->route('leads.index')->with('success', 'Successfully assigned!');
     }
 
     /**
@@ -88,17 +88,17 @@ class AssignedEmployeeController extends Controller
     {
         $this->authorize('read', AssignedEmployee::class);
 
-        $member = Member::where('id', $id)->where('is_assigned', true)->first();
+        $lead = Lead::where('id', $id)->where('is_assigned', true)->first();
 
-        if ($member) {
-            $employee = Employee::find($member->employee_id);
+        if ($lead) {
+            $employee = Employee::find($lead->employee_id);
             return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
-                'member' => $this->memberService->showMember($member),
+                'lead' => $this->leadService->showLead($lead),
                 'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
             ]);
         }
 
-        return redirect()->route('assigned-employees.index')->with('error', 'Member not found.');
+        return redirect()->route('assigned-employees.index')->with('error', 'Lead not found.');
     }
 
     /**
@@ -146,7 +146,7 @@ class AssignedEmployeeController extends Controller
         } catch (Exception $ex) {
 
             DB::rollBack();
-            return redirect()->route('members.index')->with('error', $ex->getMessage());
+            return redirect()->route('leads.index')->with('error', $ex->getMessage());
         }
 
         DB::commit();
@@ -154,7 +154,7 @@ class AssignedEmployeeController extends Controller
     }
 
     /**
-     * removed assigned employee to a members
+     * removed assigned employee to a leads
      *
      * @param Request $request
      * @return void
@@ -164,7 +164,7 @@ class AssignedEmployeeController extends Controller
         $this->authorize('create', AssignedEmployee::class);
 
         $request = $request->validate([
-            'member_ids' => 'required|array'
+            'lead_ids' => 'required|array'
         ]);
 
         $result = $this->assignedEmployeeService->removedAssgined($request);

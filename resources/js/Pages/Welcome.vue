@@ -14,17 +14,17 @@
                         title="Member"
                     >
                         <b-card-text
-                            >Add member information</b-card-text
+                            >Add lead information</b-card-text
                         >
-                        <Link href="/members" class="btn btn-success" v-if="check_access('members', 'read')">Go to members</Link>
-                        <b-btn variant="success" disabled v-else>Go to members</b-btn>
+                        <Link href="/leads" class="btn btn-success" v-if="check_access('leads', 'read')">Go to leads</Link>
+                        <b-btn variant="success" disabled v-else>Go to leads</b-btn>
                     </b-card>
 
                     <b-card
-                        title="Assigned member"
+                        title="Assigned lead"
                     >
                         <b-card-text
-                            >Assign member to an employee</b-card-text
+                            >Assign lead to an employee</b-card-text
                         >
                         <Link href="/assigned-employees" class="btn btn-info" v-if="check_access('assigns', 'read')">Go to assign</Link>
                         <b-btn variant="info" disabled v-else>Go to assign</b-btn>

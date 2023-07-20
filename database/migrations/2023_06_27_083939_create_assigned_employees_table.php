@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('assigned_employees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('member_id');
+            $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
 
-            $table->foreign('member_id')->references('id')->on('members');
+            $table->foreign('lead_id')->references('id')->on('leads');
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('created_by')->references('id')->on('employees');
             $table->foreign('updated_by')->references('id')->on('employees');

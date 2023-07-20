@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
-class Member extends Model
+class Lead extends Model
 {
     use HasFactory;
 
@@ -41,6 +40,7 @@ class Member extends Model
         'contract_file',
         'is_assigned',
         'is_invited',
+        'is_confirmed',
         'remarks',
         'employee_id',
         'created_by',

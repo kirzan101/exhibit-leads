@@ -2,30 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Helper;
-use App\Http\Requests\MemberFormRequest;
-use App\Http\Resources\MemberResource;
-use App\Models\Member;
+use App\Http\Requests\LeadFormRequest;
+use App\Http\Resources\LeadResource;
+use App\Models\Lead;
 use App\Services\EmployeeService;
-use App\Services\MemberService;
+use App\Services\LeadService;
 use App\Services\PropertyService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-class MemberController extends Controller
+class LeadController extends Controller
 {
-    private MemberService $memberService;
+    private LeadService $leadService;
     private EmployeeService $employeeService;
     private PropertyService $propertyService;
 
-    public function __construct(MemberService $memberService, EmployeeService $employeeService, PropertyService $propertyService)
+    public function __construct(LeadService $leadService, EmployeeService $employeeService, PropertyService $propertyService)
     {
-        $this->memberService = $memberService;
+        $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
     }
@@ -35,9 +31,9 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $members = MemberResource::collection($this->memberService->indexMember());
-        return Inertia::render('Members/IndexMember', [
-            'members' => $members,
+        $leads = LeadResource::collection($this->leadService->indexLead());
+        return Inertia::render('Leads/IndexLead', [
+            'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
             'per_page' => 5
         ]);
@@ -48,9 +44,9 @@ class MemberController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Member::class);
+        $this->authorize('create', Lead::class);
 
-        return Inertia::render('Members/CreateMember', [
+        return Inertia::render('Leads/CreateLead', [
             'properties' => $this->propertyService->indexProperty()
         ]);
     }
@@ -58,37 +54,37 @@ class MemberController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MemberFormRequest $request)
+    public function store(LeadFormRequest $request)
     {
-        $this->authorize('create', Member::class);
+        $this->authorize('create', Lead::class);
 
         try {
             DB::beginTransaction();
 
-            // add member
-            $this->memberService->createMember($request->validated());
+            // add lead
+            $this->leadService->createLead($request->validated());
         } catch (Exception $ex) {
 
             DB::rollBack();
 
-            return redirect()->route('members.index')->with('error', $ex->getMessage());
+            return redirect()->route('leads.index')->with('error', $ex->getMessage());
         }
 
         DB::commit();
-        return redirect()->route('members.index')->with('success', 'Successfully saved!');
+        return redirect()->route('leads.index')->with('success', 'Successfully saved!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Member $member)
+    public function show(Lead $lead)
     {
-        $this->authorize('read', Member::class);
+        $this->authorize('read', Lead::class);
 
-        $member = $this->memberService->showMember($member);
+        $lead = $this->leadService->showLead($lead);
 
-        return Inertia::render('Members/ShowMember', [
-            'member' => new MemberResource($member),
+        return Inertia::render('Leads/ShowLead', [
+            'lead' => new LeadResource($lead),
             'properties' => $this->propertyService->indexProperty()
         ]);
     }
@@ -96,14 +92,14 @@ class MemberController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Member $member)
+    public function edit(Lead $lead)
     {
-        $this->authorize('update', Member::class);
-        // dd($member->getUploadedFile(), Storage::disk('public'));
-        $member = $this->memberService->showMember($member);
+        $this->authorize('update', Lead::class);
+        // dd($lead->getUploadedFile(), Storage::disk('public'));
+        $lead = $this->leadService->showLead($lead);
 
-        return Inertia::render('Members/EditMember', [
-            'member' => new MemberResource($member),
+        return Inertia::render('Leads/EditLead', [
+            'lead' => new LeadResource($lead),
             'properties' => $this->propertyService->indexProperty()
         ]);
     }
@@ -111,43 +107,43 @@ class MemberController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(MemberFormRequest $request, Member $member)
+    public function update(LeadFormRequest $request, Lead $lead)
     {
-        $this->authorize('update', Member::class);
+        $this->authorize('update', Lead::class);
 
         try {
             DB::beginTransaction();
 
-            $this->memberService->updateMember($request->validated(), $member);
+            $this->leadService->updateLead($request->validated(), $lead);
         } catch (Exception $ex) {
 
             DB::rollBack();
 
-            return redirect()->route('members.index')->with('error', $ex->getMessage());
+            return redirect()->route('leads.index')->with('error', $ex->getMessage());
         }
 
         DB::commit();
-        return redirect()->route('members.index')->with('success', 'Successfully updated!');
+        return redirect()->route('leads.index')->with('success', 'Successfully updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Member $member)
+    public function destroy(Lead $lead)
     {
         //
     }
 
     public function remarks(Request $request)
     {
-        $this->authorize('update', Member::class);
+        $this->authorize('update', Lead::class);
 
         $request = $request->validate([
-            'member_id' => 'required|exists:members,id',
+            'lead_id' => 'required|exists:leads,id',
             'remarks' => 'required|min:2',
         ]);
 
-        $result = $this->memberService->modifyRemarks($request);
+        $result = $this->leadService->modifyRemarks($request);
 
         if (!$result) {
             return redirect()->route('assigned-employees.index')->with('error', 'Something went wrong on saving!');
@@ -166,10 +162,10 @@ class MemberController extends Controller
     {
         $invited = true;
 
-        $members = MemberResource::collection($this->memberService->indexInvitedMember($invited));
+        $leads = LeadResource::collection($this->leadService->indexInvitedLead($invited));
 
         return Inertia::render('Invites/IndexInvite', [
-            'members' => $members,
+            'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
             'per_page' => 5
         ]);
@@ -191,11 +187,11 @@ class MemberController extends Controller
         //     $page = 1;
         // }
 
-        $members = MemberResource::collection($this->memberService->indexPaginateMember($per_page));
+        $leads = LeadResource::collection($this->leadService->indexPaginateLead($per_page));
 
-        // dd($members);
-        return Inertia::render('Members/PaginateMember', [
-            'members' => $members,
+        // dd($leads);
+        return Inertia::render('Leads/PaginateLead', [
+            'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
             'per_page' => 5
         ]);
@@ -207,15 +203,14 @@ class MemberController extends Controller
     public function invite(Request $request)
     {
         $request->validate([
-            'member_id' => 'required|exists:members,id',
+            'lead_id' => 'required|exists:leads,id',
             'status' => 'required|boolean'
         ]);
 
         try {
-            $member = Member::find($request->member_id);
+            $lead = Lead::find($request->lead_id);
 
-            $member = $this->memberService->inviteMember($member, $request->status);
-
+            $lead = $this->leadService->inviteLead($lead, $request->status);
         } catch (Exception $e) {
             return redirect()->route('assigned-employees.index')->with('error', $e->getMessage());
         }
@@ -229,14 +224,14 @@ class MemberController extends Controller
     public function inviteCancel(Request $request)
     {
         $request->validate([
-            'member_ids' => 'required|array'
+            'lead_ids' => 'required|array'
         ]);
 
         try {
-            foreach ($request->member_ids as $member_id) {
-                $member = Member::find($member_id);
+            foreach ($request->lead_ids as $lead_id) {
+                $lead = Lead::find($lead_id);
 
-                $member = $this->memberService->inviteMember($member, false);
+                $lead = $this->leadService->inviteLead($lead, false);
             }
         } catch (Exception $e) {
             return redirect()->route('invites')->with('error', $e->getMessage());
