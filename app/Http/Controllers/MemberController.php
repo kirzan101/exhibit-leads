@@ -8,6 +8,7 @@ use App\Http\Resources\MemberResource;
 use App\Models\Member;
 use App\Services\EmployeeService;
 use App\Services\MemberService;
+use App\Services\PropertyService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +21,13 @@ class MemberController extends Controller
 {
     private MemberService $memberService;
     private EmployeeService $employeeService;
+    private PropertyService $propertyService;
 
-    public function __construct(MemberService $memberService, EmployeeService $employeeService)
+    public function __construct(MemberService $memberService, EmployeeService $employeeService, PropertyService $propertyService)
     {
         $this->memberService = $memberService;
         $this->employeeService = $employeeService;
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -47,7 +50,9 @@ class MemberController extends Controller
     {
         $this->authorize('create', Member::class);
 
-        return Inertia::render('Members/CreateMember', []);
+        return Inertia::render('Members/CreateMember', [
+            'properties' => $this->propertyService->indexProperty()
+        ]);
     }
 
     /**
@@ -83,7 +88,8 @@ class MemberController extends Controller
         $member = $this->memberService->showMember($member);
 
         return Inertia::render('Members/ShowMember', [
-            'member' => new MemberResource($member)
+            'member' => new MemberResource($member),
+            'properties' => $this->propertyService->indexProperty()
         ]);
     }
 
@@ -97,7 +103,8 @@ class MemberController extends Controller
         $member = $this->memberService->showMember($member);
 
         return Inertia::render('Members/EditMember', [
-            'member' => new MemberResource($member)
+            'member' => new MemberResource($member),
+            'properties' => $this->propertyService->indexProperty()
         ]);
     }
 

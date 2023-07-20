@@ -49,7 +49,7 @@ class MemberResource extends JsonResource
             'owned_gadgets' => $this->owned_gadgets,
             'other_gadgets' => $this->other_gadgets,
             'spouse_occupation' => $this->spouse_occupation,
-            'property_assigned' => $this->property_assigned,
+            'property_id' => $this->property_id,
             'contract_file_name' => $this->getFileName(),
             'uploaded_contract_file' => ($this->contract_file) ? asset($this->contract_file) : null, //($this->contract_file) ? Storage::disk('public')->get($this->contract_file) : null,
             'is_assigned' => (bool) $this->is_assigned,

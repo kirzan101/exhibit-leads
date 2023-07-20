@@ -483,15 +483,15 @@
                         >
                             <b-form-select
                                 id="property-location"
-                                v-model="form.property_assigned"
-                                :state="errors.property_assigned ? false : null"
+                                v-model="form.property_id"
+                                :state="errors.property_id ? false : null"
                                 :options="property_locations"
                                 required
                             ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="errors.property_assigned ? false : null"
+                                :state="errors.property_id ? false : null"
                             >
-                                {{ errors.property_assigned }}
+                                {{ errors.property_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -561,6 +561,7 @@ export default {
     },
     props: {
         errors: Object,
+        properties: Array,
     },
     data() {
         return {
@@ -591,7 +592,7 @@ export default {
                 other_gadgets: null,
                 spouse_occupation: null,
                 nature_of_business: null,
-                property_assigned: null,
+                property_id: null,
                 contract_file: null,
             },
             titles: [
@@ -631,13 +632,7 @@ export default {
             ],
             property_locations: [
                 { text: "-- select --", value: null },
-                "Astoria Plaza",
-                "Astoria Current",
-                "Astoria Greenbelt",
-                "Astoria Palawan",
-                "Astoria Boracay",
-                "Astoria Bohol",
-                "Stellar Potter's Ridge",
+                ...this.properties.map(i => { return { text: i.name, value: i.id } })
             ],
         };
     },

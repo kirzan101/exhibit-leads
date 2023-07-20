@@ -483,15 +483,15 @@
                         >
                             <b-form-select
                                 id="property-location"
-                                v-model="form.property_assigned"
-                                :state="errors.property_assigned ? false : null"
+                                v-model="form.property_id"
+                                :state="errors.property_id ? false : null"
                                 :options="property_locations"
                                 required
                             ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="errors.property_assigned ? false : null"
+                                :state="errors.property_id ? false : null"
                             >
-                                {{ errors.property_assigned }}
+                                {{ errors.property_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -563,6 +563,7 @@ export default {
     props: {
         errors: Object,
         member: Object,
+        properties: Array,
     },
     data() {
         return {
@@ -593,7 +594,7 @@ export default {
                 other_gadgets: this.member.other_gadgets,
                 spouse_occupation: this.member.spouse_occupation,
                 nature_of_business: this.member.nature_of_business,
-                property_assigned: this.member.property_assigned,
+                property_id: this.member.property_id,
                 contract_file: this.member.contract_file,
             }),
             titles: [
@@ -633,13 +634,7 @@ export default {
             ],
             property_locations: [
                 { text: "-- select --", value: null },
-                "Astoria Plaza",
-                "Astoria Current",
-                "Astoria Greenbelt",
-                "Astoria Palawan",
-                "Astoria Boracay",
-                "Astoria Bohol",
-                "Stellar Potter's Ridge",
+                ...this.properties.map(i => { return { text: i.name, value: i.id } })
             ],
         };
     },
