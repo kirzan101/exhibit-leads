@@ -119,8 +119,8 @@
                 </template>
 
                 <template #cell(actions)="row">
-                    <Link v-if="check_access('members', 'read')" :href="'members/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
-                    <Link v-if="check_access('members', 'update')" :href="'members/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link v-if="check_access('leads', 'read')" :href="'leads/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
+                    <Link v-if="check_access('leads', 'update')" :href="'leads/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
                 </template>
 
                 <template #row-details="row">
@@ -155,7 +155,7 @@ export default {
         Link,
     },
     props: {
-        members: Array,
+        leads: Array,
         items: Array,
         fields: Array,
         per_page: Number,
@@ -182,7 +182,7 @@ export default {
     },
     watch: {
         selected_ids() {
-            return this.$emit('selected_member', this.selected_ids);
+            return this.$emit('selected_lead', this.selected_ids);
         }
     },
     computed: {
