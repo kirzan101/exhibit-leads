@@ -11,7 +11,7 @@
             <div>
                 <b-card-group deck>
                     <b-card
-                        title="Member"
+                        title="Leads"
                     >
                         <b-card-text
                             >Add lead information</b-card-text

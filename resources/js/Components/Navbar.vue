@@ -10,8 +10,8 @@
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <li class="nav-item" v-if="check_access('members', 'read')">
-                        <Link class="nav-link" href="/members">Members</Link>
+                    <li class="nav-item" v-if="check_access('leads', 'read')">
+                        <Link class="nav-link" href="/leads">Leads</Link>
                     </li>
                     <li class="nav-item" v-if="check_access('assigns', 'read')">
                         <Link class="nav-link" href="/assigned-employees"
