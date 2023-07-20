@@ -65,7 +65,7 @@ class MemberService
             'other_gadgets' => $request['other_gadgets'],
             'spouse_occupation' => $request['spouse_occupation'],
             'nature_of_business' => $request['nature_of_business'],
-            'property_assigned' => $request['property_assigned'],
+            'property_id' => $request['property_id'],
             'created_by' => Auth::user()->employee->id
         ]);
 

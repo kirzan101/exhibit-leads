@@ -34,7 +34,7 @@ class MemberFactory extends Factory
             'owned_gadgets' => fake()->randomElement(['Desktop', 'Laptop', 'Tablet']),
             'spouse_occupation' => fake()->jobTitle(),
             'nature_of_business' => fake()->bs(),
-            'property_assigned' => fake()->randomElement(['Astoria Plaza', 'Astoria Palawan', 'Astoria Greenbelt', 'Astoria Boracay']),
+            'property_id' => 1,
             'created_by' => 1,
             'is_assigned' => false
         ];

@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_groups', function (Blueprint $table) {
+        Schema::create('properties', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('department');
+            $table->string('address')->nullable();
             $table->string('description')->nullable();
-            $table->unsignedBigInteger('property_id');
             $table->timestamps();
-
-            $table->foreign('property_id')->references('id')->on('properties');
         });
     }
 
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_groups');
+        Schema::dropIfExists('properties');
     }
 };

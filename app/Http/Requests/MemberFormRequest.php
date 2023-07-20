@@ -48,7 +48,7 @@ class MemberFormRequest extends FormRequest
             'other_gadgets' => 'nullable|min:2',
             'spouse_occupation' => 'required|min:2',
             'nature_of_business' => 'required|min:2',
-            'property_assigned' => 'required|min:2',
+            'property_id' => 'required|exists:properties,id',
             'contract_file' => 'nullable|file|mimes:png,jpg,jpeg',
         ];
     }

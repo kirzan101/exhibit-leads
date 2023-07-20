@@ -13,6 +13,7 @@ class UserGroup extends Model
         'name',
         'department',
         'description',
+        'property_id',
     ];
 
     /**
@@ -23,5 +24,15 @@ class UserGroup extends Model
     public function user_group_permissions()
     {
         return $this->hasMany(UserGroupPermission::class);
+    }
+
+    /**
+     * assoiciate employee to property
+     *
+     * @return void
+     */
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
     }
 }

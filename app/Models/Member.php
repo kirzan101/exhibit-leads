@@ -37,7 +37,7 @@ class Member extends Model
         'other_gadgets', //x
         'spouse_occupation',
         'nature_of_business',
-        'property_assigned',
+        'property_id',
         'contract_file',
         'is_assigned',
         'is_invited',
@@ -65,6 +65,16 @@ class Member extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    /**
+     * associate member to a property
+     *
+     * @return void
+     */
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
     }
 
     /**

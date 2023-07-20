@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('other_gadgets')->nullable();
             $table->string('spouse_occupation');
             $table->string('nature_of_business');
-            $table->string('property_assigned');
+            $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
             $table->boolean('is_assigned')->default(false);
             $table->longText('remarks')->nullable();
@@ -49,6 +49,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
 
+            $table->foreign('property_id')->references('id')->on('properties');
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('created_by')->references('id')->on('employees');
             $table->foreign('updated_by')->references('id')->on('employees');

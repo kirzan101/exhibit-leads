@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
+use App\Models\Property;
 use App\Models\UserGroup;
 use App\Models\UserGroupPermission;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -15,21 +16,25 @@ class UserGroupSeeder extends Seeder
      */
     public function run(): void
     {
+        $property = Property::all()->first();
         $user_groups = [
             [
                 'name' => 'admin',
                 'department' => 'ICT',
                 'description' => 'ICT department',
+                'property_id' => $property->id,
             ],
             [
                 'name' => 'exhibit',
                 'department' => 'AVLCI',
                 'description' => 'AVLCI',
+                'property_id' => $property->id,
             ],
             [
                 'name' => 'employees',
                 'department' => 'AVLCI',
                 'description' => 'AVLCI',
+                'property_id' => $property->id,
             ]
         ];
 
