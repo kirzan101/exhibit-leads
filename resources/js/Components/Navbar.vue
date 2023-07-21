@@ -23,6 +23,14 @@
                     </li>
                     <li
                         class="nav-item"
+                        v-if="check_access('confirms', 'read')"
+                    >
+                        <Link class="nav-link" href="/assigned-confirmers"
+                            >Confirm</Link
+                        >
+                    </li>
+                    <li
+                        class="nav-item"
                         v-if="check_access('employees', 'read')"
                     >
                         <Link class="nav-link" href="/employees"

@@ -88,5 +88,21 @@ class EmployeeSeeder extends Seeder
             'user_id' => $user_exhibitor->id,
             'user_group_id' => UserGroup::where('name', 'exhibit')->first()->id
         ]);
+
+        // create confirmer account
+        $user_confirmer = User::create([
+            'username' => 'confirmer',
+            'email' => 'confirmer@astoria.com.ph',
+            'password' => bcrypt('q')
+        ]);
+
+        Employee::create([
+            'first_name' => 'Confirmer',
+            'last_name' => 'Account',
+            'position' => 'Confirmer',
+            'property' => 'Astoria Plaza',
+            'user_id' => $user_confirmer->id,
+            'user_group_id' => UserGroup::where('name', 'confirmers')->first()->id
+        ]);
     }
 }

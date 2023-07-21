@@ -36,7 +36,7 @@ class LeadController extends Controller
         $leads = LeadResource::collection($this->leadService->indexLead());
         return Inertia::render('Leads/IndexLead', [
             'leads' => $leads,
-            'employees' => $this->employeeService->indexEmployee(),
+            'employees' => $this->employeeService->indexEncoder(),
             'per_page' => 5
         ]);
     }
@@ -168,7 +168,7 @@ class LeadController extends Controller
 
         return Inertia::render('Invites/IndexInvite', [
             'leads' => $leads,
-            'employees' => $this->employeeService->indexEmployee(),
+            'employees' => $this->employeeService->indexConfirmer(),
             'per_page' => 5
         ]);
     }
@@ -240,5 +240,27 @@ class LeadController extends Controller
         }
 
         return redirect()->route('invites')->with('success', 'Successfully removed from invitees!');
+    }
+
+    /**
+     * Confirm lead
+     */
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'lead_status' => 'required',
+            'confirmer_remarks' => 'required'
+        ]);
+
+        try {
+            $lead = Lead::find($request->lead_id);
+
+            $lead = $this->leadService->confirmLead($lead, $request->toArray());
+        } catch (Exception $e) {
+            return redirect()->route('assigned-confirmers.index')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully confirmed!');
     }
 }

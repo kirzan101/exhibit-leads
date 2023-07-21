@@ -44,7 +44,9 @@ return new class extends Migration
             $table->boolean('is_assigned')->default(false);
             $table->boolean('is_confirmed')->default(false);
             $table->longText('remarks')->nullable();
+            $table->longText('confirmer_remarks')->nullable();
             $table->boolean('is_invited')->default(false);
+            $table->string('lead_status')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();

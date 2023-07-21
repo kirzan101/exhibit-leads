@@ -123,7 +123,7 @@ class LeadService
         $lead->owned_gadgets = $arrayed_owned_gadgets;
 
         if ($model->contract_file) {
-            $lead->contract_file = response()->file(public_path($model->contract_file))->getFile();//$lead->getUploadedFile();
+            $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();
         }
 
         return $lead;
@@ -135,7 +135,7 @@ class LeadService
      * @param array $request
      * @return boolean
      */
-    public function modifyRemarks(array $request) : bool
+    public function modifyRemarks(array $request): bool
     {
         $lead = Lead::find($request['lead_id']);
 
@@ -152,10 +152,18 @@ class LeadService
      */
     public function indexInvitedLead(bool $invited): Collection
     {
-        $leads = Lead::where('is_invited', $invited)->orderBy('id', 'desc')->get();
-        
-        if(Auth::user()->employee->userGroup->name == 'employees') {
-            $leads = Lead::where('is_invited', $invited)->where('employee_id', Auth::user()->employee->id)->get();
+        // remove lead that is assigned to a confirmer
+        $leads = Lead::select('leads.*')
+            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '!=', 'leads.id')
+            ->where('leads.is_invited', $invited)
+            ->get();
+
+        if (Auth::user()->employee->userGroup->name == 'employees') {
+            $leads = Lead::select('leads.*')
+                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '!=', 'leads.id')
+                ->where('leads.is_invited', $invited)
+                ->where('leads.employee_id', Auth::user()->employee->id)
+                ->get();
         }
 
         return $leads;
@@ -168,10 +176,28 @@ class LeadService
      * @param bool $status
      * @return Lead
      */
-    public function inviteLead(Lead $lead, bool $status) : Lead
+    public function inviteLead(Lead $lead, bool $status): Lead
     {
         $lead = tap($lead)->update([
             'is_invited' => $status,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        return $lead;
+    }
+
+    /**
+     * Confirm the lead
+     *
+     * @param Lead $lead
+     * @param array $request
+     * @return Lead
+     */
+    public function confirmLead(Lead $lead, array $request): Lead
+    {
+        $lead = tap($lead)->update([
+            'confirmer_remarks' => $request['confirmer_remarks'],
+            'lead_status' => $request['lead_status'],
             'updated_by' => Auth::user()->id
         ]);
 

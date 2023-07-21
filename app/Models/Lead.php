@@ -42,6 +42,8 @@ class Lead extends Model
         'is_invited',
         'is_confirmed',
         'remarks',
+        'confirmer_remarks',
+        'lead_status',
         'employee_id',
         'created_by',
         'updated_by',
@@ -55,6 +57,15 @@ class Lead extends Model
     public function getFullName()
     {
         return sprintf('%s %s, %s %s', $this->title, $this->last_name, $this->first_name, $this->middle_name);
+    }
+
+    public function getMobileNumber()
+    {
+        if($this->mobile_number_two == null) {
+            return $this->mobile_number_one;
+        }
+
+        return sprintf('%s/%s', $this->mobile_number_one, $this->mobile_number_two);
     }
 
     /**
@@ -85,6 +96,20 @@ class Lead extends Model
     public function getFileName()
     {
         return ltrim(strstr($this->contract_file, "/"), '/');
+    }
+
+    public function getAssignedConfirmer()
+    {
+        $confirmer = Employee::select('employees.*')
+            ->join('assigned_confirmers', 'assigned_confirmers.employee_id', '=', 'employees.id')
+            ->where('assigned_confirmers.lead_id', $this->id)
+            ->first();
+
+        if($confirmer) {
+            return $confirmer->getFullName();
+        }
+
+        return '-';
     }
 
     /**

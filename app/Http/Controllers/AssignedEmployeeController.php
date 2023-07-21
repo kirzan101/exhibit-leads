@@ -167,7 +167,7 @@ class AssignedEmployeeController extends Controller
             'lead_ids' => 'required|array'
         ]);
 
-        $result = $this->assignedEmployeeService->removedAssgined($request);
+        $result = $this->assignedEmployeeService->removedAssigned($request);
 
         if (!$result) {
             return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');

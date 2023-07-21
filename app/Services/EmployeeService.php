@@ -17,7 +17,7 @@ class EmployeeService
      *
      * @return Collection
      */
-    public function indexEmployee() : Collection
+    public function indexEmployee(): Collection
     {
         // $employee = Employee::all();
         $employee = Employee::where('user_group_id', '!=', '1')->orderBy('id', 'desc')->get(); // remove admin accounts
@@ -31,7 +31,7 @@ class EmployeeService
      * @param array $request
      * @return Employee
      */
-    public function createEmployee(array $request) : Employee
+    public function createEmployee(array $request): Employee
     {
         // dd($request['password']);
         // generate username
@@ -63,7 +63,7 @@ class EmployeeService
      * @param Employee $employee
      * @return Employee
      */
-    public function updateEmployee(array $request, Employee $employee) : Employee
+    public function updateEmployee(array $request, Employee $employee): Employee
     {
         $user = User::find($request['user_id']);
         $user->update([
@@ -88,11 +88,11 @@ class EmployeeService
      * @param Employee $employee
      * @return boolean
      */
-    public function deleteEmployee(Employee $employee) : bool
+    public function deleteEmployee(Employee $employee): bool
     {
         $user_id = $employee->user_id;
         $result = $employee->delete();
-        
+
         $user = User::find($user_id);
         $user->delete();
 
@@ -105,7 +105,7 @@ class EmployeeService
      * @param Employee $employee
      * @return Employee
      */
-    public function showEmployee(Employee $employee) : Employee
+    public function showEmployee(Employee $employee): Employee
     {
         return $employee;
     }
@@ -116,7 +116,7 @@ class EmployeeService
      * @param integer $id
      * @return boolean
      */
-    public function resetPassword(int $id) : bool
+    public function resetPassword(int $id): bool
     {
         $employee = Employee::find($id);
 
@@ -128,7 +128,7 @@ class EmployeeService
 
         return $result;
     }
-    
+
     /**
      * update employee service
      *
@@ -136,14 +136,39 @@ class EmployeeService
      * @param Employee $employee
      * @return Employee
      */
-    public function updatePassword(array $request, int $id) : bool
+    public function updatePassword(array $request, int $id): bool
     {
         $user = User::find($id);
-        
+
         $result = $user->update([
             'password' => bcrypt($request['password']),
         ]);
 
         return $result;
+    }
+
+    /**
+     * Index of confirmers
+     *
+     * @return Collection
+     */
+    public function indexConfirmer(): Collection
+    {
+        $confirmers = Employee::query()
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->where('user_groups.name', 'confirmers')
+            ->get();
+
+        return $confirmers;
+    }
+
+    public function indexEncoder(): Collection
+    {
+        $encoders = Employee::query()
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->where('user_groups.name', 'employees')
+            ->get();
+
+        return $encoders;
     }
 }

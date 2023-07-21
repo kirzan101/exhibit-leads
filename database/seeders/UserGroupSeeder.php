@@ -35,6 +35,12 @@ class UserGroupSeeder extends Seeder
                 'department' => 'AVLCI',
                 'description' => 'AVLCI',
                 'property_id' => $property->id,
+            ],
+            [
+                'name' => 'confirmers',
+                'department' => 'AVLCI',
+                'description' => 'AVLCI',
+                'property_id' => $property->id,
             ]
         ];
 

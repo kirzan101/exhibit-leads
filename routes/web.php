@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignedConfirmerController;
 use App\Http\Controllers\AssignedEmployeeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
@@ -38,13 +39,21 @@ Route::middleware('auth')->group(function () {
     Route::resource('contracts', ContractController::class);
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
-    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'delete', 'reassigneEmployee', 'show']]);
+    Route::post('remarks', [LeadController::class, 'remarks']);
 
+    // assign employee
+    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'delete', 'reassignEmployee', 'show']]);
     Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
     Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
     Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);
-    Route::post('remarks', [LeadController::class, 'remarks']);
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
+
+    //assign confirmer
+    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'delete', 'reassignConfirmer', 'show']]);
+    Route::get('assigned-confirmers/{id}', [AssignedConfirmerController::class, 'show']);
+    Route::post('assign-confirmer', [AssignedConfirmerController::class, 'store']);
+    Route::post('reassign-confirmer', [AssignedConfirmerController::class, 'reassignConfirmer']);
+    Route::post('remove-assign-confirmer', [AssignedConfirmerController::class, 'removeAssignment']);
 
     Route::get('/', function () {
         return inertia('Welcome');

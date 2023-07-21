@@ -105,7 +105,7 @@ class AssignedEmployeeService
      * @param array $request
      * @return boolean
      */
-    public function removedAssgined(array $request) : bool
+    public function removedAssigned(array $request) : bool
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
