@@ -22,7 +22,7 @@ class AssignedEmployeeFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_ids' => 'required|array',
+            'lead_ids' => 'required|array',
             'employee_id' => 'required|exists:employees,id'
         ];
     }
