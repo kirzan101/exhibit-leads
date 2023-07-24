@@ -42,7 +42,7 @@ return new class extends Migration
             $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
             $table->boolean('is_assigned')->default(false);
-            $table->boolean('is_confirmed')->default(false);
+            $table->boolean('is_confirm_assigned')->default(false);
             $table->longText('remarks')->nullable();
             $table->longText('confirmer_remarks')->nullable();
             $table->boolean('is_invited')->default(false);

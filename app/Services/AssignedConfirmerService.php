@@ -17,11 +17,11 @@ class AssignedConfirmerService
      */
     public function indexLeadsOfAssignedConfirmer(): Collection
     {
-        // $assigned_employees = Lead::where('is_confirmed', true)->where('is_invited', false)->get();
+        // $assigned_employees = Lead::where('is_confirm_assigned', true)->where('is_invited', false)->get();
 
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
-            ->where('leads.is_confirmed', false)
+            ->where('leads.is_confirm_assigned', true)
             ->where('leads.is_invited', true)
             ->get();
 
@@ -110,7 +110,7 @@ class AssignedConfirmerService
 
                 // update lead information
                 $lead->update([
-                    'is_confirmed' => false,
+                    'is_confirm_assigned' => false,
                     'confirmer_remarks' => null,
                     'updated_by' => Auth::user()->employee->id
                 ]);
@@ -131,7 +131,7 @@ class AssignedConfirmerService
     {
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
-            ->where('leads.is_confirmed', false)
+            ->where('leads.is_confirm_assigned', true)
             ->where('leads.is_invited', true)
             ->where('assigned_confirmers.employee_id', Auth::user()->employee->id)
             ->get();

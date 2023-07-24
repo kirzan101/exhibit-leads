@@ -155,18 +155,13 @@ class LeadService
     public function indexInvitedLead(bool $invited): Collection
     {
         // remove lead that is assigned to a confirmer
-        $leads = Lead::select('leads.*')
-            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
-            ->where('leads.is_invited', $invited)
-            ->where('assigned_confirmers.lead_id', '!=', 'leads.id')
+        $leads = Lead::where('is_invited', $invited)
+            ->where('is_confirm_assigned', false)
             ->get();
-
         if (Auth::user()->employee->userGroup->name == 'employees') {
-            $leads = Lead::select('leads.*')
-                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
-                ->where('leads.is_invited', $invited)
-                ->where('leads.employee_id', Auth::user()->employee->id)
-                ->where('assigned_confirmers.lead_id', '!=', 'leads.id')
+            $leads = Lead::where('is_invited', $invited)
+                ->where('is_confirm_assigned', false)
+                ->where('employee_id', Auth::user()->employee->id)
                 ->get();
         }
 
@@ -202,6 +197,7 @@ class LeadService
         $lead = tap($lead)->update([
             'confirmer_remarks' => $request['confirmer_remarks'],
             'lead_status' => $request['lead_status'],
+            'is_confirm_assigned' => true,
             'updated_by' => Auth::user()->id
         ]);
 
