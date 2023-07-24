@@ -61,6 +61,8 @@ class LeadService
             'other_gadgets' => $request['other_gadgets'],
             'spouse_occupation' => $request['spouse_occupation'],
             'nature_of_business' => $request['nature_of_business'],
+            'presentation_date' => $request['presentation_date'],
+            'exhibit_code' => $request['exhibit_code'],
             'property_id' => $request['property_id'],
             'created_by' => Auth::user()->employee->id
         ]);
@@ -154,15 +156,17 @@ class LeadService
     {
         // remove lead that is assigned to a confirmer
         $leads = Lead::select('leads.*')
-            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '!=', 'leads.id')
+            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
             ->where('leads.is_invited', $invited)
+            ->where('assigned_confirmers.lead_id', '!=', 'leads.id')
             ->get();
 
         if (Auth::user()->employee->userGroup->name == 'employees') {
             $leads = Lead::select('leads.*')
-                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '!=', 'leads.id')
+                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
                 ->where('leads.is_invited', $invited)
                 ->where('leads.employee_id', Auth::user()->employee->id)
+                ->where('assigned_confirmers.lead_id', '!=', 'leads.id')
                 ->get();
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\LeadFormRequest;
 use App\Http\Resources\LeadResource;
 use App\Models\Lead;
@@ -37,6 +38,7 @@ class LeadController extends Controller
         return Inertia::render('Leads/IndexLead', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEncoder(),
+            'occupation_list' => Helper::occupationList(),
             'per_page' => 5
         ]);
     }
@@ -169,6 +171,7 @@ class LeadController extends Controller
         return Inertia::render('Invites/IndexInvite', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
+            'occupation_list' => Helper::occupationList(),
             'per_page' => 5
         ]);
     }
@@ -195,6 +198,7 @@ class LeadController extends Controller
         return Inertia::render('Leads/PaginateLead', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
+            'occupation_list' => Helper::occupationList(),
             'per_page' => 5
         ]);
     }

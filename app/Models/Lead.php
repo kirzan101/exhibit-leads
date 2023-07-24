@@ -44,6 +44,8 @@ class Lead extends Model
         'remarks',
         'confirmer_remarks',
         'lead_status',
+        'exhibit_code',
+        'presentation_date',
         'employee_id',
         'created_by',
         'updated_by',

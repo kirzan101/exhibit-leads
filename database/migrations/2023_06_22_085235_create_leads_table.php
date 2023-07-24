@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('alias')->nullable();
             $table->string('suffix')->nullable();
-            $table->string('birth_date');
+            $table->date('birth_date');
             $table->string('address');
             $table->string('secondary_address')->nullable();
             $table->string('nationality');
@@ -47,6 +47,8 @@ return new class extends Migration
             $table->longText('confirmer_remarks')->nullable();
             $table->boolean('is_invited')->default(false);
             $table->string('lead_status')->nullable();
+            $table->string('exhibit_code')->nullable();
+            $table->date('presentation_date')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\AssignedConfirmerFormRequest;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedConfirmer;
@@ -51,6 +52,7 @@ class AssignedConfirmerController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'properties' => $this->propertyService->indexProperty(),
+            'status_list' => Helper::leadStatus(),
             'per_page' => 5
         ]);
     }

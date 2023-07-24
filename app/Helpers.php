@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Helper
@@ -20,7 +21,7 @@ class Helper
      */
     public static function uploadFile($file, Lead $lead): bool
     {
-        $file_name = time().'_'.$file->getClientOriginalName();
+        $file_name = time() . '_' . $file->getClientOriginalName();
         $file->move(public_path('uploads'), $file_name);
         $file_path = 'uploads/' . $file_name;
 
@@ -109,7 +110,7 @@ class Helper
      * @param [type] $type
      * @return boolean
      */
-    public static function checkAccess($module, $type) : bool
+    public static function checkAccess($module, $type): bool
     {
         $permission = Auth::user()->employee->userGroup->user_group_permissions->map(function ($item, $key) {
             return $item->permission;
@@ -118,12 +119,82 @@ class Helper
         return $permission->contains('type', $type);
     }
 
-    public static function clearNotifications() : string
+    /**
+     * clear notifications in sesssion
+     *
+     * @return string
+     */
+    public static function clearNotifications(): string
     {
         session()->forget('success');
         session()->forget('error');
         session()->forget('message');
 
         return "successfully cleared";
+    }
+
+    /**
+     * Array of lead statuses
+     *
+     * @return array
+     */
+    public static function leadStatus(): array
+    {
+        $statuses = [
+            [
+                'name' => 'Qualified',
+                'code' => 'Q'
+            ],
+            [
+                'name' => 'Not Qualified',
+                'code' => 'NQ'
+            ],
+            [
+                'name' => 'Not Interested',
+                'code' => 'NI'
+            ],
+            [
+                'name' => 'Not Answering',
+                'code' => 'NA'
+            ],
+            [
+                'name' => 'Already Attended',
+                'code' => 'AA'
+            ],
+            [
+                'name' => 'Not yet in Service',
+                'code' => 'NIS'
+            ],
+            [
+                'name' => 'On the Spot',
+                'code' => 'OTS'
+            ],
+            [
+                'name' => 'No such person',
+                'code' => 'NSP'
+            ],
+            [
+                'name' => 'Wrong Number',
+                'code' => 'WN'
+            ],
+        ];
+
+        return $statuses;
+    }
+
+    /**
+     * list all the distinct occupations
+     *
+     * @return void
+     */
+    public static function occupationList()
+    {
+        $occupations = DB::table('leads')
+            ->select('occupation')
+            ->groupBy('occupation')
+            ->get()
+            ->toArray();
+
+        return $occupations;
     }
 }

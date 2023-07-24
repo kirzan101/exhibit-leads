@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
     Route::post('remarks', [LeadController::class, 'remarks']);
+    Route::post('confirm', [LeadController::class, 'confirm']);
 
     // assign employee
     Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'delete', 'reassignEmployee', 'show']]);

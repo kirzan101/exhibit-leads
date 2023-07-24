@@ -519,6 +519,48 @@
                         </b-form-group>
                     </b-col>
                 </b-row>
+                <b-row>
+                    <b-col sm="6">
+                        <b-form-group
+                            label="Presentation date"
+                            label-for="presentation-date"
+                            label-class="required"
+                        >
+                            <b-form-input
+                                type="date"
+                                id="presentation-date"
+                                v-model="form.presentation_date"
+                                :state="errors.presentation_date ? false : null"
+                                required
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.presentation_date ? false : null"
+                            >
+                                {{ errors.presentation_date }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="6">
+                        <b-form-group
+                            label="Exhibit Code"
+                            label-for="exhibit-code"
+                            label-class="required"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="exhibit-code"
+                                v-model="form.exhibit_code"
+                                :state="errors.exhibit_code ? false : null"
+                                required
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.exhibit_code ? false : null"
+                            >
+                                {{ errors.exhibit_code }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
                 <hr style="width: 50%" />
                 <div class="text-center">
                     <!-- <b-button type="submit" variant="success">Submit</b-button> -->
@@ -596,6 +638,8 @@ export default {
                 nature_of_business: this.lead.nature_of_business,
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
+                presentation_date: this.lead.presentation_date,
+                exhibit_code: this.lead.exhibit_code
             }),
             titles: [
                 { text: "-- select --", value: null },

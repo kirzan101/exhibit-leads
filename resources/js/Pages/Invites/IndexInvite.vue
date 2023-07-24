@@ -141,6 +141,7 @@
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
+                :occupation_list="occupation_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -162,6 +163,7 @@ export default {
         leads: Array,
         employees: Array,
         per_page: Number,
+        occupation_list: Array,
     },
     data() {
         return {
@@ -176,6 +178,7 @@ export default {
                 // },
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
+                { key: "occupation", label: "Occupation", sortable: true },
                 { key: "address", label: "Address", sortable: true },
                 // {
                 //     key: "is_assigned",

@@ -132,6 +132,7 @@
                 :items="leads"
                 :per_page="per_page"
                 :properties="properties"
+                :status_list="status_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -156,6 +157,7 @@ export default {
         employees: Array,
         properties: Array,
         per_page: Number,
+        status_list: Array,
     },
     data() {
         return {
@@ -174,6 +176,7 @@ export default {
                     sortable: true,
                 },
                 { key: "address", label: "Address", sortable: true },
+                { key: "property.name", label: "Property", sortable: true },
                 {
                 key: "assigned_confirmer",
                     label: "Assigned To",
@@ -232,7 +235,7 @@ export default {
 
             this.$bvModal.hide("assign-modal");
 
-            router.post("/reassign-employee", this.form);
+            router.post("/reassign-confirmer", this.form);
             this.selected_confirmer = "";
             this.selected_lead = [];
         },
@@ -241,7 +244,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/remove-assign", this.form);
+            router.post("/remove-assign-confirmer", this.form);
             this.selected_confirmer = "";
             this.selected_lead = [];
         },

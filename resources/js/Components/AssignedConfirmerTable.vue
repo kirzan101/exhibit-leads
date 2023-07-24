@@ -154,6 +154,7 @@
 
             <!-- Add Confirm modal -->
             <b-modal id="confirm-modal" title="Confirm">
+                <p class="mt-2 mb-2">Remarks:</p>
                 <b-form-textarea
                     id="textarea"
                     v-model="remarks"
@@ -161,6 +162,11 @@
                     rows="3"
                     max-rows="6"
                 ></b-form-textarea>
+                <p class="mt-2 mb-2">Lead status:</p>
+                <b-form-select
+                    v-model="lead_status"
+                    :options="lead_status_options"
+                ></b-form-select>
                 <br />
                 <template #modal-footer>
                     <b-button
@@ -172,7 +178,7 @@
                     <b-button
                         variant="success"
                         type="button"
-                        @click="modifyRemarks"
+                        @click="confirmLead"
                         >Submit</b-button
                     >
                 </template>
@@ -194,6 +200,7 @@ export default {
         fields: Array,
         per_page: Number,
         properties: Array,
+        status_list: Array,
     },
     data() {
         return {
@@ -215,10 +222,12 @@ export default {
             selected_confirmer_ids: [],
             checkedAll: false,
             remarks: "",
+            lead_status: "",
             selected_row_id: null,
             form: {
                 remarks: "",
                 lead_id: "",
+                lead_status: "",
             },
             property_id: null,
             invite_form: {
@@ -229,6 +238,15 @@ export default {
                 { value: null, text: "-- select --" },
                 ...this.properties.map((item) => {
                     return { value: item.id, text: item.name };
+                }),
+            ],
+            lead_status_options: [
+                { value: null, text: "-- select --" },
+                ...this.status_list.map((item) => {
+                    return {
+                        value: item.code,
+                        text: item.name + " " + "(" + item.code + ")",
+                    };
                 }),
             ],
         };
@@ -258,8 +276,10 @@ export default {
         },
         assignedLeads() {
             // filter property
-            if(this.property_id) {
-                return this.items.filter((item) => item.property_id == this.property_id)
+            if (this.property_id) {
+                return this.items.filter(
+                    (item) => item.property_id == this.property_id
+                );
             }
 
             return this.items;
@@ -310,11 +330,13 @@ export default {
             // console.log(event.currentTarget);
             this.selected_confirmer_ids = data;
         },
-        modifyRemarks() {
+        confirmLead() {
             this.form.lead_id = this.selected_row_id;
-            this.form.remarks = this.remarks;
-            router.post("/remarks", this.form);
+            this.form.confirmer_remarks = this.remarks;
+            this.form.lead_status = this.lead_status;
+            router.post("/confirm", this.form);
             this.remarks = "";
+            this.lead_status = "";
             this.$bvModal.hide("confirm-modal");
         },
         selectedLead(data) {

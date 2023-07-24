@@ -154,7 +154,7 @@ class EmployeeService
      */
     public function indexConfirmer(): Collection
     {
-        $confirmers = Employee::query()
+        $confirmers = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
             ->where('user_groups.name', 'confirmers')
             ->get();
@@ -164,7 +164,7 @@ class EmployeeService
 
     public function indexEncoder(): Collection
     {
-        $encoders = Employee::query()
+        $encoders = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
             ->where('user_groups.name', 'employees')
             ->get();

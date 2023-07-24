@@ -32,22 +32,21 @@
                 </b-col>
 
                 <b-col lg="6" class="my-1">
-                    <!-- <b-form-group
-                        label="Is Assigned"
-                        label-for="initial-sort-select"
+                    <b-form-group
+                        label="Occupation"
+                        label-for="occupation-select"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
                         class="mb-0"
                     >
                         <b-form-select
-                            id="initial-sort-select"
-                            v-model="filterOn"
-                            :options="['all', true, false]"
+                            id="occupation-select"
+                            v-model="additional_filter.occupation"
+                            :options="occupation_options"
                             size="sm"
                         ></b-form-select>
-                    </b-form-group> -->
-                    &nbsp;
+                    </b-form-group>
                 </b-col>
 
                 <b-col sm="5" md="6" class="my-1">
@@ -84,7 +83,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="items"
+                :items="leadList"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -159,6 +158,7 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
+        occupation_list: Array
     },
     data() {
         return {
@@ -178,6 +178,15 @@ export default {
             },
             selected_ids: [],
             checkedAll: false,
+            additional_filter: {
+                occupation: null
+            },
+            occupation_options: [
+                { value: null, text: "-- select --" },
+                ...this.occupation_list.map((item) => {
+                    return { value: item.occupation, text: item.occupation };
+                }),
+            ],
         };
     },
     watch: {
@@ -194,10 +203,18 @@ export default {
                     return { text: f.label, value: f.key };
                 });
         },
+        leadList() {
+            // filter property
+            if(this.additional_filter.occupation) {
+                return this.items.filter((item) => item.occupation == this.additional_filter.occupation)
+            }
+
+            return this.items;
+        },
     },
     mounted() {
         // Set the initial number of items
-        this.totalRows = this.items.length;
+        this.totalRows = this.leadList.length;
     },
     methods: {
         info(item, index, button) {
@@ -217,7 +234,7 @@ export default {
         select() {
             this.selected_ids = [];
             if (this.checkedAll) {
-                for (let i in this.items
+                for (let i in this.leadList
                     .filter((item) => item.is_assigned == false)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
