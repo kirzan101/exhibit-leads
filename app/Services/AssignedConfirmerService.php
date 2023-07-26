@@ -23,6 +23,7 @@ class AssignedConfirmerService
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
             ->where('leads.is_confirm_assigned', true)
             ->where('leads.is_invited', true)
+            ->whereNull('confirmer_remarks')
             ->get();
 
         return $assigned_leads;
@@ -38,12 +39,20 @@ class AssignedConfirmerService
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
+                $lead = Lead::find($lead);
+
+                $lead = tap($lead)->update([
+                    'is_confirm_assigned' => true,
+                    'updated_by' => Auth::user()->employee->id
+                ]);
+
                 AssignedConfirmer::create([
-                    'lead_id' => $lead,
+                    'lead_id' => $lead->getKey(),
                     'employee_id' => $request['employee_id'],
                     'created_by' => Auth::user()->employee->id,
                 ]);
             }
+
         } catch (Exception $ex) {
             return false;
         }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Assigned for Confirmation</title>
+            <title>Confirmed</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -29,49 +29,61 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">Assigned for Confirmation | <Link class="btn btn-success" type="button" href="/confirmed">View confirmed</Link></div>
                     <div class="col-sm-6">
-                        <div v-if="selected_lead.length > 0">
-                            <div v-if="check_access('assigns', 'create')">
-                                <b-button
-                                    class="btn btn-danger mx-1 my-1"
-                                    v-b-modal.remove-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    >Remove</b-button
-                                >
-                                <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    v-b-modal.assign-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    >Re-assign</b-button
-                                >
-                            </div>
+                        Confirmed | <Link class="btn btn-secondary" type="button" href="/assigned-confirmers">Back</Link>
+                    </div>
+                    <div class="col-sm-6">
+                        <div v-if="check_access('invites', 'create')">
+                            <b-button
+                                class="btn btn-danger m-1"
+                                v-b-modal.remove-modal
+                                style="float: right"
+                                align-v="end"
+                                v-if="selected_lead.length > 0"
+                                >Remove</b-button
+                            >
+                            <b-button
+                                class="btn btn-danger m-1"
+                                v-b-modal.remove-modal
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                v-else
+                                >Remove</b-button
+                            >
                         </div>
-                        <div v-else>
-                            <div v-if="check_access('assigns', 'create')">
+                        <!-- remove invitee -->
+                        <b-modal title="Notice:" id="remove-modal">
+                            <p>Remove to confirmed?</p>
+                            <template #modal-footer>
                                 <b-button
-                                    class="btn btn-danger mx-1 my-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    >Remove</b-button
+                                    variant="danger"
+                                    type="button"
+                                    @click="$bvModal.hide('remove-modal')"
+                                    >Close</b-button
                                 >
                                 <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    >Re-assign</b-button
+                                    variant="success"
+                                    type="button"
+                                    @click="submitRemove()"
+                                    v-if="selected_employee != ''"
+                                    >Yes</b-button
                                 >
-                            </div>
-                        </div>
-                        <!-- Reassign modal start -->
-                        <b-modal title="Reassign to Confirmer" id="assign-modal">
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    disabled
+                                    v-else
+                                    >Yes</b-button
+                                >
+                            </template>
+                        </b-modal>
+
+                        <!-- assign to confirmer -->
+                        <b-modal title="Assign to Confirmer" id="assign-modal">
                             <b-form @submit.prevent="submitAssigned">
                                 <b-form-select
-                                    v-model="selected_confirmer"
+                                    v-model="selected_employee"
                                     :options="employeeList"
                                     size="sm"
                                     class="mt-3"
@@ -88,7 +100,7 @@
                                     variant="success"
                                     type="button"
                                     @click="submitAssigned()"
-                                    v-if="selected_confirmer != ''"
+                                    v-if="selected_employee != ''"
                                     >Submit</b-button
                                 >
                                 <b-button
@@ -100,39 +112,17 @@
                                 >
                             </template>
                         </b-modal>
-                        <!-- Reassign modal end -->
-
-                        <!-- Remove modal start -->
-                        <b-modal title="Notice:" id="remove-modal">
-                            <h5>Remove Assigned?</h5>
-                            <template #modal-footer>
-                                <b-button
-                                    variant="danger"
-                                    type="button"
-                                    @click="$bvModal.hide('remove-modal')"
-                                    >Close</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
-                                    @click="submitRemove()"
-                                    >Submit</b-button
-                                >
-                            </template>
-                        </b-modal>
-                        <!-- Remove modal End -->
                     </div>
                 </div>
             </h5>
 
             <br />
 
-            <AssignedConfirmerTable
+            <LeadTable
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
-                :properties="properties"
-                :status_list="status_list"
+                :occupation_list="occupation_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -143,21 +133,18 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import AssignedEmployeeTable from "../../Components/AssignedEmployeeTable.vue";
-import AssignedConfirmerTable from "../../Components/AssignedConfirmerTable.vue";
+import LeadTable from "../../Components/LeadTable.vue";
 
 export default {
     components: {
         Link,
-        AssignedEmployeeTable,
-        AssignedConfirmerTable,
+        LeadTable,
     },
     props: {
         leads: Array,
         employees: Array,
-        properties: Array,
         per_page: Number,
-        status_list: Array,
+        occupation_list: Array,
     },
     data() {
         return {
@@ -170,45 +157,36 @@ export default {
                 //     sortable: true,
                 //     sortDirection: "desc",
                 // },
-                {
-                    key: "lead_full_name",
-                    label: "Lead name",
-                    sortable: true,
-                },
+                { key: "first_name", label: "First name", sortable: true },
+                { key: "last_name", label: "Last name", sortable: true },
+                { key: "occupation", label: "Occupation", sortable: true },
                 { key: "address", label: "Address", sortable: true },
-                { key: "property.name", label: "Property", sortable: true },
+                // {
+                //     key: "is_assigned",
+                //     label: "Is Assigned",
+                //     sortable: false,
+                //     formatter: (value, key, item) => {
+                //         return value ? "Yes" : "No";
+                //     },
+                // },
+                // { key: "actions", label: "Actions" },
                 {
-                key: "assigned_confirmer_name",
-                    label: "Assigned To",
+                    key: "assigned_confirmer_name",
+                    label: "Assigned Confirmer",
                     sortable: true,
                 },
-                { key: "presentation_date", label: "Presentation Date", sortable: true },
-                {
-                key: "mobile_number",
-                    label: "Mobile number",
-                    sortable: false,
-                },
-                { key: "actions", label: "Actions" },
             ],
-            selected_confirmer: "",
             selected_lead: [],
-            selected_lead_confirmer_id: [],
             form: {
-                employee_id: "",
                 lead_ids: [],
             },
-            remarks: "",
-            leads_selected: [],
-            checked_all: false,
+            assign_form: {
+                lead_ids: [],
+                employee_id: ''
+            },
             alert: false,
+            selected_employee: '',
         };
-    },
-    watch: {
-        showDismissibleAlert() {
-            this.$page.props.flash.error = "";
-            this.$page.props.flash.success = "";
-            this.$page.props.flash.message = "";
-        },
     },
     computed: {
         employeeList() {
@@ -227,27 +205,23 @@ export default {
         getSelectedLead(data) {
             this.selected_lead = data;
         },
-        getSelectedEmployee(data) {
-            this.selected_lead_confirmer_id = data;
-        },
-        submitAssigned() {
-            this.form.employee_id = this.selected_confirmer;
-            this.form.lead_ids = this.selected_lead;
-
-            this.$bvModal.hide("assign-modal");
-
-            router.post("/reassign-confirmer", this.form);
-            this.selected_confirmer = "";
-            this.selected_lead = [];
-        },
         submitRemove() {
             this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/remove-assign-confirmer", this.form);
-            this.selected_confirmer = "";
+            router.post("/confirmed/remove", this.form);
             this.selected_lead = [];
+        },
+        submitAssigned() {
+            this.assign_form.lead_ids = this.selected_lead;
+            this.assign_form.employee_id = this.selected_employee;
+
+            this.$bvModal.hide("assign-modal");
+
+            router.post("/assign-confirmer", this.assign_form);
+            this.selected_lead = [];
+            this.selected_employee = ''
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

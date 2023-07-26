@@ -40,7 +40,8 @@ class Lead extends Model
         'contract_file',
         'is_assigned',
         'is_invited',
-        'is_confirmed',
+        'is_showed',
+        'is_confirm_assigned',
         'remarks',
         'confirmer_remarks',
         'lead_status',
@@ -98,6 +99,30 @@ class Lead extends Model
     public function getFileName()
     {
         return ltrim(strstr($this->contract_file, "/"), '/');
+    }
+
+    public function assignedConfirmer()
+    {
+        return $this->hasOne(AssignedConfirmer::class);
+    }
+
+    public function assignedEmployee()
+    {
+        return $this->hasOne(AssignedEmployee::class);
+    }
+
+    public function getAssignedEmployee()
+    {
+        $confirmer = Employee::select('employees.*')
+            ->join('assigned_employees', 'assigned_employees.employee_id', '=', 'employees.id')
+            ->where('assigned_employees.lead_id', $this->id)
+            ->first();
+
+        if($confirmer) {
+            return $confirmer->getFullName();
+        }
+
+        return '-';
     }
 
     public function getAssignedConfirmer()

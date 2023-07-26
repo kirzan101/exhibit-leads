@@ -36,7 +36,9 @@ class LeadFactory extends Factory
             'nature_of_business' => fake()->bs(),
             'property_id' => 1,
             'created_by' => 1,
-            'is_assigned' => false
+            'is_assigned' => false,
+            'presentation_date' => fake()->dateTimeBetween(now(), "+5 days"),
+            'exhibit_code' => fake()->randomElement(['Sales Deck', 'Palawan', 'Bora']),
         ];
     }
 }

@@ -16,7 +16,7 @@
                         <b-card-text
                             >Add lead information</b-card-text
                         >
-                        <Link href="/leads" class="btn btn-success" v-if="check_access('leads', 'read')">Go to leads</Link>
+                        <Link href="/leads" class="btn btn-info" v-if="check_access('leads', 'read')">Go to leads</Link>
                         <b-btn variant="success" disabled v-else>Go to leads</b-btn>
                     </b-card>
 
@@ -28,6 +28,16 @@
                         >
                         <Link href="/assigned-employees" class="btn btn-info" v-if="check_access('assigns', 'read')">Go to assign</Link>
                         <b-btn variant="info" disabled v-else>Go to assign</b-btn>
+                    </b-card>
+
+                    <b-card
+                        title="Confirm lead"
+                    >
+                        <b-card-text
+                            >Mark the leads as confirmed</b-card-text
+                        >
+                        <Link href="/assigned-confirmers" class="btn btn-info" v-if="check_access('confirms', 'read')">Go to confirm</Link>
+                        <b-btn variant="info" disabled v-else>Go to confirm</b-btn>
                     </b-card>
                 </b-card-group>
             </div>

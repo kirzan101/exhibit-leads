@@ -154,10 +154,10 @@ class LeadService
      */
     public function indexInvitedLead(bool $invited): Collection
     {
-        // remove lead that is assigned to a confirmer
         $leads = Lead::where('is_invited', $invited)
             ->where('is_confirm_assigned', false)
             ->get();
+
         if (Auth::user()->employee->userGroup->name == 'employees') {
             $leads = Lead::where('is_invited', $invited)
                 ->where('is_confirm_assigned', false)
@@ -199,6 +199,63 @@ class LeadService
             'lead_status' => $request['lead_status'],
             'is_confirm_assigned' => true,
             'updated_by' => Auth::user()->id
+        ]);
+
+        return $lead;
+    }
+
+    /**
+     * remove confirm status
+     *
+     * @param Lead $lead
+     * @return Lead
+     */
+    public function removeConfirmLead(Lead $lead): Lead
+    {
+        $lead = tap($lead)->update([
+            'confirmer_remarks' => null,
+            'lead_status' => null,
+            'is_confirm_assigned' => false,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        return $lead;
+    }
+
+    /**
+     * index of invited lead service
+     *
+     * @return void
+     */
+    public function indexConfirmedLead(): Collection
+    {
+        $leads = Lead::where('is_invited', true)
+            ->where('is_confirm_assigned', true)
+            ->whereNotNull('confirmer_remarks')
+            ->get();
+        if (Auth::user()->employee->userGroup->name == 'employees') {
+            $leads = Lead::where('is_invited', true)
+                ->where('is_confirm_assigned', true)
+                ->whereNotNull('confirmer_remarks')
+                ->where('employee_id', Auth::user()->employee->id)
+                ->get();
+        }
+
+        return $leads;
+    }
+
+    /**
+     * Mark lead as showed
+     *
+     * @param array $request
+     * @return void
+     */
+    public function showed(array $request) {
+        $lead = Lead::find($request['lead_id']);
+
+        $lead = tap($lead)->update([
+            'is_showed' => $request['status'],
+            'updated_by' => Auth::user()->employee->id
         ]);
 
         return $lead;

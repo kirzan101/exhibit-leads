@@ -69,6 +69,13 @@ Route::middleware('auth')->group(function () {
     Route::post('invites', [LeadController::class, 'invite']);
     Route::post('invites/cancel', [LeadController::class, 'inviteCancel']);
 
+    //confirm
+    Route::get('/confirmed', [LeadController::class, 'indexConfirmed'])->name('confirmed');
+    Route::get('/confirmed/remove', [LeadController::class, 'removeConfirmed']);
+
+    //mark as no show
+    Route::post('/showed', [LeadController::class, 'showedLead']);
+
     Route::get('paginate', [LeadController::class, 'indexPaginate']);
 
     Route::get('/usergroups', [UserGroupController::class, 'index']);

@@ -3,6 +3,7 @@
         <b-container fluid>
             <!-- User Interface controls -->
             <b-row>
+                <!-- first filter -->
                 <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Filter"
@@ -49,6 +50,40 @@
                     </b-form-group>
                 </b-col>
 
+                <!-- Second filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Start to"
+                        label-for="start-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="start-to"
+                            v-model="start_to"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="End to"
+                        label-for="end-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="end-to"
+                            v-model="end_to"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -222,7 +257,7 @@ export default {
             selected_confirmer_ids: [],
             checkedAll: false,
             remarks: "",
-            lead_status: "",
+            lead_status: null,
             selected_row_id: null,
             form: {
                 remarks: "",
@@ -249,6 +284,8 @@ export default {
                     };
                 }),
             ],
+            start_to: "",
+            end_to: "",
         };
     },
     watch: {
@@ -267,7 +304,7 @@ export default {
     },
     computed: {
         sortOptions() {
-            // Create an options list from our fields99
+            // Create an options list from our fields
             return this.fields
                 .filter((f) => f.sortable)
                 .map((f) => {
@@ -280,6 +317,15 @@ export default {
                 return this.items.filter(
                     (item) => item.property_id == this.property_id
                 );
+            }
+
+            if (this.start_to != "" && this.end_to != "") {
+                return this.items.filter((item) => {
+                    const itemDate = new Date(item.presentation_date);
+                    const start = new Date(this.start_to);
+                    const end = new Date(this.end_to);
+                    return itemDate >= start && itemDate <= end;
+                });
             }
 
             return this.items;

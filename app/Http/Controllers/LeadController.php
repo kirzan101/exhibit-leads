@@ -157,7 +157,7 @@ class LeadController extends Controller
     }
 
     /**
-     * Display a listing of the resource
+     * Display a listing of the invite leads
      *
      * @param Request $request
      * @return void
@@ -204,7 +204,7 @@ class LeadController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Add invite status to a leads
      */
     public function invite(Request $request)
     {
@@ -225,7 +225,7 @@ class LeadController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * remove invite status to a lead
      */
     public function inviteCancel(Request $request)
     {
@@ -266,5 +266,72 @@ class LeadController extends Controller
         }
 
         return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully confirmed!');
+    }
+
+    /**
+     * remove confirm status in leads
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function removeConfirmed(Request $request)
+    {
+        $request->validate([
+            'lead_ids' => 'required|array'
+        ]);
+
+        try {
+            foreach ($request->lead_ids as $lead_id) {
+                $lead = Lead::find($lead_id);
+
+                $lead = $this->leadService->removeConfirmLead($lead, $request->toArray());
+            }
+        } catch (Exception $e) {
+            return redirect()->route('assigned-confirmers.index')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully confirmed!');
+    }
+
+    /**
+     * Display the list of leads that has a confirmed status
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function indexConfirmed(Request $request)
+    {
+        $leads = LeadResource::collection($this->leadService->indexConfirmedLead());
+
+        return Inertia::render('Confirmeds/IndexConfirmed', [
+            'leads' => $leads,
+            'employees' => $this->employeeService->indexConfirmer(),
+            'occupation_list' => Helper::occupationList(),
+            'per_page' => 5
+        ]);
+    }
+
+    /**
+     * set the lead as showed
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function showedLead(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'status' => 'required'
+        ]);
+
+        try {
+            
+            $this->leadService->showed($request->toArray());
+
+        } catch (Exception $e) {
+            return redirect()->route('confirmed')->with('error', 'Unsuccessful to mark as showed!');
+        }
+
+        return redirect()->route('confirmed')->with('success', 'Successfully mark as showed!');
     }
 }

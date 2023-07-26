@@ -67,7 +67,7 @@ class AssignedConfirmerController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->assignedConfirmerService->createAssignedConfirmer($request->validated());
+            $this->assignedConfirmerService->createAssignedConfirmer($request->toArray());
         } catch (Exception $ex) {
 
             DB::rollBack();

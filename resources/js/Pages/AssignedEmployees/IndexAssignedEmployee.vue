@@ -177,6 +177,9 @@ export default {
                     label: "Assigned To",
                     sortable: true,
                 },
+                {
+                    key: "assigned_employee.created_at", label: "Assigned Date", sortable: false
+                },
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
@@ -260,6 +263,11 @@ export default {
             this.$page.props.flash.error = null;
             this.$page.props.flash.message = null;
         },
+        formatedDate(date) {
+            let formatted_date = new Date(date);
+
+            return formatted_date.getDate();
+        }
     },
 };
 </script>

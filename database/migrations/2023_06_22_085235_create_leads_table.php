@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('alias')->nullable();
             $table->string('suffix')->nullable();
-            $table->date('birth_date');
+            $table->date('birth_date')->nullable();
             $table->string('address');
             $table->string('secondary_address')->nullable();
             $table->string('nationality');
@@ -42,6 +42,7 @@ return new class extends Migration
             $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
             $table->boolean('is_assigned')->default(false);
+            $table->boolean('is_showed')->default(false);
             $table->boolean('is_confirm_assigned')->default(false);
             $table->longText('remarks')->nullable();
             $table->longText('confirmer_remarks')->nullable();
