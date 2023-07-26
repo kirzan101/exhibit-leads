@@ -14,7 +14,7 @@ class Employee extends Model
         'middle_name',
         'last_name',
         'position',
-        'property',
+        'property_id',
         'user_id',
         'user_group_id',
     ];
@@ -44,5 +44,25 @@ class Employee extends Model
      */
     public function userGroup() {
         return $this->belongsTo(UserGroup::class);
+    }
+
+    /**
+     * associate property to employee
+     *
+     * @return void
+     */
+    public function property()
+    {
+        return $this->belongsTo(Property::class);
+    }
+
+    /**
+     * get the associated list of employee venue
+     *
+     * @return void
+     */
+    public function employeeVenue()
+    {
+        return $this->hasMany(EmployeeVenue::class);
     }
 }

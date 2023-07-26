@@ -182,6 +182,42 @@ class Helper
         return $statuses;
     }
 
+    public static function leadConfirmerStatus() : array
+    {
+        $statuses = [
+            [
+                'name' => 'Confirm',
+                'code' => 'C'
+            ],
+            [
+                'name' => 'Not confirm',
+                'code' => 'NC'
+            ],
+            [
+                'name' => 'Can\'t come or cancelled',
+                'code' => 'CC'
+            ],
+            [
+                'name' => 'Not interested',
+                'code' => 'NI'
+            ],
+            [
+                'name' => 'No Show',
+                'code' => 'NS'
+            ],
+            [
+                'name' => 'Cannot be reached',
+                'code' => 'CBR'
+            ],
+            [
+                'name' => 'Reschedule',
+                'code' => 'R'
+            ],
+        ];
+
+        return $statuses;
+    }
+
     /**
      * list all the distinct occupations
      *

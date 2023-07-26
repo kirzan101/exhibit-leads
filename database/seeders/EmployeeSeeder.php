@@ -20,7 +20,7 @@ class EmployeeSeeder extends Seeder
                 'first_name' => 'Admin',
                 'last_name' => 'Account',
                 'position' => 'Administrator',
-                'property' => 'Astoria Plaza',
+                'property_id' => 1,
                 'user_id' => 1,
                 'user_group_id' => 1
             ],
@@ -28,7 +28,7 @@ class EmployeeSeeder extends Seeder
                 'first_name' => 'Christian',
                 'last_name' => 'Escamilla',
                 'position' => 'Administrator',
-                'property' => 'Astoria Plaza',
+                'property_id' => 1,
                 'user_id' => 1,
                 'user_group_id' => 1
             ]
@@ -68,7 +68,7 @@ class EmployeeSeeder extends Seeder
             'first_name' => 'Employee',
             'last_name' => 'Account',
             'position' => 'Employee',
-            'property' => 'Astoria Plaza',
+            'property_id' => 1,
             'user_id' => $user_emp->id,
             'user_group_id' => UserGroup::where('name', 'employees')->first()->id
         ]);
@@ -84,7 +84,7 @@ class EmployeeSeeder extends Seeder
             'first_name' => 'Exhibitor',
             'last_name' => 'Account',
             'position' => 'Exhibitor',
-            'property' => 'Astoria Plaza',
+            'property_id' => 1,
             'user_id' => $user_exhibitor->id,
             'user_group_id' => UserGroup::where('name', 'exhibit')->first()->id
         ]);
@@ -100,7 +100,7 @@ class EmployeeSeeder extends Seeder
             'first_name' => 'Confirmer',
             'last_name' => 'Account',
             'position' => 'Confirmer',
-            'property' => 'Astoria Plaza',
+            'property_id' => 1,
             'user_id' => $user_confirmer->id,
             'user_group_id' => UserGroup::where('name', 'confirmers')->first()->id
         ]);
