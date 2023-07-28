@@ -50,8 +50,12 @@ class LeadFormRequest extends FormRequest
             'nature_of_business' => 'required|min:2',
             'property_id' => 'required|exists:properties,id',
             'contract_file' => 'nullable|file|mimes:png,jpg,jpeg',
-            'exhibit_code' => 'required|min:2',
+            'source' => 'required|min:2',
             'presentation_date' => 'required|date_format:Y-m-d',
+            'refer_by' => 'nullable|min:2',
+            'holiday_consultant' => 'nullable|min:2',
+            'membership_type' => 'nullable|min:2',
+            'venue_id' => 'required|exists:venues,id'
         ];
     }
 }

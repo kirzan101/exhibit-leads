@@ -64,6 +64,11 @@ class LeadService
             'presentation_date' => $request['presentation_date'],
             'exhibit_code' => $request['exhibit_code'],
             'property_id' => $request['property_id'],
+            'refer_by' => $request['refer_by'],
+            'holiday_consultant' => $request['holiday_consultant'],
+            'membership_type' => $request['membership_type'],
+            'is_confidential' => $request['is_confidential'],
+            'venue_id' => $request['venue_id'],
             'created_by' => Auth::user()->employee->id
         ]);
 

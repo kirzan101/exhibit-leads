@@ -9,6 +9,7 @@ use App\Models\Lead;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
+use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,12 +20,14 @@ class LeadController extends Controller
     private LeadService $leadService;
     private EmployeeService $employeeService;
     private PropertyService $propertyService;
+    private VenueService $venueService;
 
-    public function __construct(LeadService $leadService, EmployeeService $employeeService, PropertyService $propertyService)
+    public function __construct(LeadService $leadService, EmployeeService $employeeService, PropertyService $propertyService, VenueService $venueService)
     {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
+        $this->venueService = $venueService;
     }
 
     /**
@@ -51,7 +54,9 @@ class LeadController extends Controller
         $this->authorize('create', Lead::class);
 
         return Inertia::render('Leads/CreateLead', [
-            'properties' => $this->propertyService->indexProperty()
+            'properties' => $this->propertyService->indexProperty(),
+            'lead_sources' => Helper::leadSource(),
+            'venues' => $this->venueService->indexVenueService()
         ]);
     }
 
@@ -89,7 +94,9 @@ class LeadController extends Controller
 
         return Inertia::render('Leads/ShowLead', [
             'lead' => new LeadResource($lead),
-            'properties' => $this->propertyService->indexProperty()
+            'properties' => $this->propertyService->indexProperty(),
+            'lead_sources' => Helper::leadSource(),
+            'venues' => $this->venueService->indexVenueService()
         ]);
     }
 
@@ -104,7 +111,9 @@ class LeadController extends Controller
 
         return Inertia::render('Leads/EditLead', [
             'lead' => new LeadResource($lead),
-            'properties' => $this->propertyService->indexProperty()
+            'properties' => $this->propertyService->indexProperty(),
+            'lead_sources' => Helper::leadSource(),
+            'venues' => $this->venueService->indexVenueService()
         ]);
     }
 
@@ -253,7 +262,7 @@ class LeadController extends Controller
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
-            'lead_status' => 'required',
+            'lead_sources' => 'required',
             'confirmer_remarks' => 'required'
         ]);
 

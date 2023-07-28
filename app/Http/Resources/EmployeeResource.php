@@ -20,7 +20,10 @@ class EmployeeResource extends JsonResource
             'last_name' => $this->last_name,
             'position' => $this->position,
             'property' => $this->property,
+            'user_group_id' => $this->user_group_id,
+            'property_id' => $this->property_id,
             'user_group' => $this->userGroup,
+            'employee_venues' => $this->employeeVenue,
             'user' => $this->user,
             'full_name' => $this->getFullName(),
             'id' => (int) $this->getKey()

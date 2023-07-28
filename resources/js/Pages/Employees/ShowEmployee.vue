@@ -98,15 +98,15 @@
                         >
                             <b-form-select
                                 id="property-location"
-                                v-model="form.property"
-                                :state="errors.property ? false : null"
+                                v-model="form.property_id"
+                                :state="errors.property_id ? false : null"
                                 :options="property_locations"
                                 :disabled="true"
                             ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="errors.property ? false : null"
+                                :state="errors.property_id ? false : null"
                             >
-                                {{ errors.property }}
+                                {{ errors.property_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -159,6 +159,38 @@
                         </b-form-group>
                     </b-col>
                 </b-row>
+                <b-row>
+                    <b-col sm="12">
+                        <b-form-group>
+                            <template #label>
+                                <b class="required">Choose your venues:</b
+                                ><br />
+                                <b-form-checkbox
+                                    v-model="allSelected"
+                                    aria-describedby="venues"
+                                    aria-controls="venues"
+                                    @change="toggleAll"
+                                    :disabled="true"
+                                >
+                                    {{
+                                        allSelected
+                                            ? "Un-select All"
+                                            : "Select All"
+                                    }}
+                                </b-form-checkbox>
+                            </template>
+
+                            <div class="ml-3">
+                                <b-form-checkbox-group
+                                    v-model="selected"
+                                    :options="venue_options"
+                                    :disabled="true"
+                                    name="flavour-1a"
+                                ></b-form-checkbox-group>
+                            </div>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
             </b-form>
         </div>
     </b-container>
@@ -175,6 +207,8 @@ export default {
         employee: Object,
         user: Object,
         user_groups: Array,
+        properties: Array,
+        venues: Array
     },
     data() {
         return {
@@ -183,21 +217,49 @@ export default {
                 middle_name: this.employee.middle_name,
                 last_name: this.employee.last_name,
                 position: this.employee.position,
-                property: this.employee.property,
+                property_id: this.employee.property_id,
                 email: this.user.email,
                 user_group_id: this.employee.user_group_id
             },
             property_locations: [
                 { text: "-- select --", value: null },
-                "Astoria Plaza",
-                "Astoria Current",
-                "Astoria Greenbelt",
-                "Astoria Palawan",
-                "Astoria Boracay",
-                "Astoria Bohol",
-                "Stellar Potter's Ridge",
+                ...this.properties.map((i) => {
+                    return { text: i.name, value: i.id };
+                }),
+            ],
+            selected: this.employee.employee_venues.map((i) => {
+                return i.venue_id
+            }),
+            allSelected: false,
+            venue_options: [
+                ...this.venues.map((i) => {
+                    return { text: i.name, value: i.id, disabled: false };
+                }),
             ],
         };
+    },
+    methods: {
+        toggleAll(checked) {
+            this.selected = checked
+                ? this.venues
+                      .map((i) => {
+                          return i.id;
+                      })
+                      .slice()
+                : [];
+        },
+    },
+    watch: {
+        selected(newValue, oldValue) {
+            // Handle changes in individual flavour checkboxes
+            if (newValue.length === 0) {
+                this.allSelected = false;
+            } else if (newValue.length === this.venues.length) {
+                this.allSelected = true;
+            } else {
+                this.allSelected = false;
+            }
+        },
     },
 };
 </script>

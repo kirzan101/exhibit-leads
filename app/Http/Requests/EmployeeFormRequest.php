@@ -26,9 +26,10 @@ class EmployeeFormRequest extends FormRequest
             'middle_name' => 'nullable|min:2',
             'last_name' => 'required|min:2',
             'position' => 'required|min:2',
-            'property' => 'required|min:2',
+            'property_id' => 'required|exist:properties,id',
             'email' => 'required|email|unique:users,email,'.$this->user_id,
-            'user_group_id' => 'required|exists:user_groups,id'
+            'user_group_id' => 'required|exists:user_groups,id',
+            'venue_ids' => 'required|array'
         ];
     }
 }

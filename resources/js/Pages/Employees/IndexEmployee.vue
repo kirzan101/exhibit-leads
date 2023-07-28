@@ -73,7 +73,7 @@ export default {
                 { key: "full_name", label: "Name", sortable: true },
                 { key: "user.email", label: "Email", sortable: true },
                 { key: "position", label: "Position", sortable: true },
-                { key: "property", label: "Property", sortable: true },
+                { key: "property.name", label: "Property", sortable: true },
                 { key: "actions", label: "Actions" },
             ],
             alert: false,

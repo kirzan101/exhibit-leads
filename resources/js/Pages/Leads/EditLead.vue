@@ -104,17 +104,12 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group
-                            label="Birth date"
-                            label-for="birth-date"
-                            label-class="required"
-                        >
+                        <b-form-group label="Birth date" label-for="birth-date">
                             <b-form-input
                                 type="date"
                                 id="birth-date"
                                 v-model="form.birth_date"
                                 :state="errors.birth_date ? false : null"
-                                required
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.birth_date ? false : null"
@@ -124,17 +119,12 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group
-                            label="Gender"
-                            label-for="gender"
-                            label-class="required"
-                        >
+                        <b-form-group label="Gender" label-for="gender">
                             <b-form-select
                                 id="gender"
                                 v-model="form.gender"
                                 :state="errors.gender ? false : null"
                                 :options="genders"
-                                required
                             ></b-form-select>
                             <b-form-invalid-feedback
                                 :state="errors.gender ? false : null"
@@ -185,7 +175,6 @@
                         <b-form-group
                             label="Nationality"
                             label-for="nationality"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -204,7 +193,6 @@
                         <b-form-group
                             label="Civil Status"
                             label-for="civil-status"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="civil-status"
@@ -243,7 +231,6 @@
                         <b-form-group
                             label="Spouse Occupation"
                             label-for="spouse-occupation"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -264,7 +251,6 @@
                         <b-form-group
                             label="Company Name"
                             label-for="company-name"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -295,7 +281,6 @@
                         <b-form-group
                             label="Nature of business"
                             label-for="nature-of-business"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -392,7 +377,6 @@
                         <b-form-group
                             label="Combined monthly Income"
                             label-for="combined-monthly-income"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="combined-monthly-income"
@@ -420,7 +404,6 @@
                         <b-form-group
                             label="Internet Connection"
                             label-for="internet-connection"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="internet-connection"
@@ -443,7 +426,6 @@
                     <b-col sm="3">
                         <b-form-group
                             label="Other gadget(s) you own aside from cellphone:"
-                            label-class="required"
                         >
                             <b-form-checkbox-group
                                 id="other-gadgets"
@@ -475,7 +457,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
+                    <b-col sm="4">
                         <b-form-group
                             label="Property Location"
                             label-for="property-location"
@@ -495,7 +477,31 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="6">
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Venue"
+                            label-for="venue"
+                            label-class="required"
+                        >
+                            <b-form-select
+                                id="venue"
+                                v-model="form.venue_id"
+                                :state="
+                                    errors.venue_id ? false : null
+                                "
+                                :options="venues_options"
+                                required
+                            ></b-form-select>
+                            <b-form-invalid-feedback
+                                :state="
+                                    errors.venue_id ? false : null
+                                "
+                            >
+                                {{ errors.venue_id }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
                         <b-form-group
                             label="Contract file"
                             label-for="contract-file"
@@ -520,7 +526,25 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Membership Type"
+                            label-for="membership-type"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="membership-type"
+                                v-model="form.membership_type"
+                                :state="errors.membership_type ? false : null"
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.membership_type ? false : null"
+                            >
+                                {{ errors.membership_type }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
                         <b-form-group
                             label="Presentation date"
                             label-for="presentation-date"
@@ -540,24 +564,75 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="6">
+                    <b-col sm="4">
                         <b-form-group
-                            label="Exhibit Code"
-                            label-for="exhibit-code"
+                            label="Source"
+                            label-for="source"
                             label-class="required"
                         >
                             <b-form-input
                                 type="text"
-                                id="exhibit-code"
-                                v-model="form.exhibit_code"
-                                :state="errors.exhibit_code ? false : null"
-                                required
+                                id="source"
+                                v-model="form.source"
                             ></b-form-input>
                             <b-form-invalid-feedback
-                                :state="errors.exhibit_code ? false : null"
+                                :state="errors.source ? false : null"
                             >
-                                {{ errors.exhibit_code }}
+                                {{ errors.source }}
                             </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col sm="4">
+                        <b-form-group label="Refer By" label-for="refer-by">
+                            <b-form-input
+                                type="text"
+                                id="refer-by"
+                                v-model="form.refer_by"
+                                :state="errors.refer_by ? false : null"
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.refer_by ? false : null"
+                            >
+                                {{ errors.refer_by }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Holiday Consultant"
+                            label-for="holiday-consultant"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="holiday-consultant"
+                                v-model="form.holiday_consultant"
+                                :state="
+                                    errors.holiday_consultant ? false : null
+                                "
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="
+                                    errors.holiday_consultant ? false : null
+                                "
+                            >
+                                {{ errors.holiday_consultant }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Is Confidential?"
+                            label-for="is-confidential"
+                        >
+                            <b-form-checkbox
+                                id="is-confidential"
+                                v-model="form.is_confidential"
+                                name="is-confidential"
+                            >
+                                Yes
+                            </b-form-checkbox>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -606,6 +681,8 @@ export default {
         errors: Object,
         lead: Object,
         properties: Array,
+        lead_sources: Array,
+        venues: Array,
     },
     data() {
         return {
@@ -639,7 +716,12 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
-                exhibit_code: this.lead.exhibit_code
+                source: this.lead.source,
+                membership_type: this.lead.membership_type,
+                refer_by: this.lead.refer_by,
+                holiday_consultant: this.lead.holiday_consultant,
+                is_confidential: this.lead.is_confidential,
+                venue_id: this.lead.venue_id
             }),
             titles: [
                 { text: "-- select --", value: null },
@@ -678,8 +760,22 @@ export default {
             ],
             property_locations: [
                 { text: "-- select --", value: null },
-                ...this.properties.map(i => { return { text: i.name, value: i.id } })
+                ...this.properties.map((i) => {
+                    return { text: i.name, value: i.id };
+                }),
             ],
+            lead_source_options: [
+                { text: "-- select --", value: null },
+                ...this.lead_sources.map((i) => {
+                    return { text: i.name, value: i.name };
+                }),
+            ],
+            venues_options: [
+                { text: "-- select --", value: null },
+                ...this.venues.map((i) => {
+                    return { text: i.name, value: i.id };
+                })
+            ]
         };
     },
     methods: {
@@ -689,7 +785,7 @@ export default {
             router.post(`/leads/${this.lead.id}`, {
                 _method: "PUT",
                 forceFormData: true,
-                ...this.form
+                ...this.form,
             });
             // this.$validator.validateAll().then((success) => {
             // });

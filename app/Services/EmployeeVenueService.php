@@ -79,4 +79,17 @@ class EmployeeVenueService
 
         return $result;
     }
+
+    /**
+     * get the array of venue ids of an employee
+     *
+     * @param integer $employee_id
+     * @return array
+     */
+    public function employeeVenueIds(int $employee_id) : array
+    {
+        $venue_ids = EmployeeVenue::select('venue')->where('employee_id', $employee_id)->get();
+
+        return $venue_ids->toArray();
+    }
 }

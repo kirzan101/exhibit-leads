@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Employee;
+use App\Models\EmployeeVenue;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -104,5 +105,14 @@ class EmployeeSeeder extends Seeder
             'user_id' => $user_confirmer->id,
             'user_group_id' => UserGroup::where('name', 'confirmers')->first()->id
         ]);
+
+        //create default venue per employee
+        $employees = Employee::all();
+        foreach($employees as $employee) {
+            EmployeeVenue::create([
+                'employee_id' => $employee->id,
+                'venue_id' => 1
+            ]);
+        }
     }
 }

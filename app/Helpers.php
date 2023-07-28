@@ -182,7 +182,7 @@ class Helper
         return $statuses;
     }
 
-    public static function leadConfirmerStatus() : array
+    public static function leadConfirmerStatus(): array
     {
         $statuses = [
             [
@@ -216,6 +216,31 @@ class Helper
         ];
 
         return $statuses;
+    }
+
+    /**
+     * list the lead sources
+     *
+     * @return void
+     */
+    public static function leadSource()
+    {
+        // $lead_sources = [
+        //     [
+        //         'name' => 'EXHIBIT',
+        //     ],
+        //     [
+        //         'name' => 'ROI',
+        //     ]
+        // ];
+
+        $lead_sources = DB::table('leads')
+            ->select('source')
+            ->groupBy('source')
+            ->get()
+            ->toArray();
+
+        return $lead_sources;
     }
 
     /**

@@ -17,6 +17,7 @@ class Employee extends Model
         'property_id',
         'user_id',
         'user_group_id',
+        'venue_id'
     ];
 
     /**

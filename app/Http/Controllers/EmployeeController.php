@@ -8,7 +8,9 @@ use App\Http\Requests\ProfileFormRequest;
 use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use App\Services\EmployeeService;
+use App\Services\PropertyService;
 use App\Services\UserGroupService;
+use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +21,15 @@ class EmployeeController extends Controller
 {
     private EmployeeService $employeeService;
     private UserGroupService $userGroupService;
+    private VenueService $venueService;
+    private PropertyService $propertyService;
 
-    public function __construct(EmployeeService $employeeService, UserGroupService $userGroupService)
+    public function __construct(EmployeeService $employeeService, UserGroupService $userGroupService, VenueService $venueService, PropertyService $propertyService)
     {
         $this->employeeService = $employeeService;
         $this->userGroupService = $userGroupService;
+        $this->venueService = $venueService;
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -49,7 +55,9 @@ class EmployeeController extends Controller
         $this->authorize('create', Employee::class);
 
         return Inertia::render('Employees/CreateEmployee', [
-            'user_groups' => $this->userGroupService->indexUserGroup()
+            'user_groups' => $this->userGroupService->indexUserGroup(),
+            'venues' => $this->venueService->indexVenueService(),
+            'properties' =>$this->propertyService->indexProperty()
         ]);
     }
 
@@ -85,9 +93,11 @@ class EmployeeController extends Controller
         $this->authorize('read', Employee::class);
 
         return Inertia::render('Employees/ShowEmployee', [
-            'employee' => $this->employeeService->showEmployee($employee),
+            'employee' => new EmployeeResource($this->employeeService->showEmployee($employee)),
             'user' => $employee->user,
-            'user_groups' => $this->userGroupService->indexUserGroup()
+            'user_groups' => $this->userGroupService->indexUserGroup(),
+            'venues' => $this->venueService->indexVenueService(),
+            'properties' =>$this->propertyService->indexProperty()
         ]);
     }
 
@@ -99,9 +109,11 @@ class EmployeeController extends Controller
         $this->authorize('update', Employee::class);
 
         return Inertia::render('Employees/EditEmployee', [
-            'employee' => $this->employeeService->showEmployee($employee),
+            'employee' => new EmployeeResource($this->employeeService->showEmployee($employee)),
             'user' => $employee->user,
-            'user_groups' => $this->userGroupService->indexUserGroup()
+            'user_groups' => $this->userGroupService->indexUserGroup(),
+            'venues' => $this->venueService->indexVenueService(),
+            'properties' => $this->propertyService->indexProperty(),
         ]);
     }
 

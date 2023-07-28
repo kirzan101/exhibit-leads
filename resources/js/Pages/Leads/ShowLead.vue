@@ -491,7 +491,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
+                    <b-col sm="4">
                         <b-form-group
                             label="Property Location"
                             label-for="property-location"
@@ -511,7 +511,31 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="6">
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Venue"
+                            label-for="venue"
+                            label-class="required"
+                        >
+                            <b-form-select
+                                id="venue"
+                                v-model="form.venue_id"
+                                :state="
+                                    errors.venue_id ? false : null
+                                "
+                                :options="venues_options"
+                                :disabled="true"
+                            ></b-form-select>
+                            <b-form-invalid-feedback
+                                :state="
+                                    errors.venue_id ? false : null
+                                "
+                            >
+                                {{ errors.venue_id }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
                         <b-form-group
                             label="Contract file"
                             label-for="contract-file"
@@ -537,7 +561,26 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Membership Type"
+                            label-for="membership-type"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="membership-type"
+                                v-model="form.membership_type"
+                                :state="errors.membership_type ? false : null"
+                                readonly
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.membership_type ? false : null"
+                            >
+                                {{ errors.membership_type }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
                         <b-form-group
                             label="Presentation date"
                             label-for="presentation-date"
@@ -548,7 +591,7 @@
                                 id="presentation-date"
                                 v-model="form.presentation_date"
                                 :state="errors.presentation_date ? false : null"
-                                required
+                                readonly
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.presentation_date ? false : null"
@@ -557,24 +600,79 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="6">
+                    <b-col sm="4">
                         <b-form-group
-                            label="Exhibit Code"
-                            label-for="exhibit-code"
+                            label="Source"
+                            label-for="source"
                             label-class="required"
                         >
                             <b-form-input
                                 type="text"
-                                id="exhibit-code"
-                                v-model="form.exhibit_code"
-                                :state="errors.exhibit_code ? false : null"
-                                required
+                                id="source"
+                                v-model="form.source"
+                                readonly
                             ></b-form-input>
                             <b-form-invalid-feedback
-                                :state="errors.exhibit_code ? false : null"
+                                :state="errors.source ? false : null"
                             >
-                                {{ errors.exhibit_code }}
+                                {{ errors.source }}
                             </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col sm="4">
+                        <b-form-group label="Refer By" label-for="refer-by">
+                            <b-form-input
+                                type="text"
+                                id="refer-by"
+                                v-model="form.refer_by"
+                                :state="errors.refer_by ? false : null"
+                                readonly
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.refer_by ? false : null"
+                            >
+                                {{ errors.refer_by }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Holiday Consultant"
+                            label-for="holiday-consultant"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="holiday-consultant"
+                                v-model="form.holiday_consultant"
+                                :state="
+                                    errors.holiday_consultant ? false : null
+                                "
+                                readonly
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="
+                                    errors.holiday_consultant ? false : null
+                                "
+                            >
+                                {{ errors.holiday_consultant }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4">
+                        <b-form-group
+                            label="Is Confidential?"
+                            label-for="is-confidential"
+                        >
+                            <b-form-checkbox
+                                id="is-confidential"
+                                v-model="form.is_confidential"
+                                name="is-confidential"
+                                :disabled="true"
+                            >
+                                Yes
+                            </b-form-checkbox>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -594,6 +692,8 @@ export default {
         lead: Object,
         assigned_employee: String,
         properties: Array,
+        lead_sources: Array,
+        venues: Array,
     },
     data() {
         return {
@@ -627,7 +727,12 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
-                exhibit_code: this.lead.exhibit_code
+                source: this.lead.source,
+                membership_type: this.lead.membership_type,
+                refer_by: this.lead.refer_by,
+                holiday_consultant: this.lead.holiday_consultant,
+                is_confidential: this.lead.is_confidential,
+                venue_id: this.lead.venue_id,
             }),
             titles: [
                 { text: "-- select --", value: null },
@@ -670,6 +775,18 @@ export default {
                     return { text: i.name, value: i.id };
                 }),
             ],
+            lead_source_options: [
+                { text: "-- select --", value: null },
+                ...this.lead_sources.map((i) => {
+                    return { text: i.name, value: i.name };
+                }),
+            ],
+            venues_options: [
+                { text: "-- select --", value: null },
+                ...this.venues.map((i) => {
+                    return { text: i.name, value: i.id };
+                })
+            ]
         };
     },
 };

@@ -46,8 +46,14 @@ class Lead extends Model
         'confirmer_remarks',
         'lead_status',
         'exhibit_code',
+        'source',
         'presentation_date',
+        'refer_by',
+        'holiday_consultant',
+        'membership_type',
+        'is_confidential',
         'employee_id',
+        'venue_id',
         'created_by',
         'updated_by',
     ];
@@ -62,6 +68,11 @@ class Lead extends Model
         return sprintf('%s %s, %s %s', $this->title, $this->last_name, $this->first_name, $this->middle_name);
     }
 
+    /**
+     * get the mobile numbers
+     *
+     * @return void
+     */
     public function getMobileNumber()
     {
         if($this->mobile_number_two == null) {
@@ -72,7 +83,7 @@ class Lead extends Model
     }
 
     /**
-     * associate member to employee
+     * associate lead to employee
      *
      * @return void
      */
@@ -82,13 +93,23 @@ class Lead extends Model
     }
 
     /**
-     * associate member to a property
+     * associate lead to a property
      *
      * @return void
      */
     public function property()
     {
         return $this->belongsTo(Property::class, 'property_id');
+    }
+
+    /**
+     * associate lead to a venue
+     *
+     * @return void
+     */
+    public function venue()
+    {
+        return $this->belongsTo(Venue::class, 'venue_id');
     }
 
     /**

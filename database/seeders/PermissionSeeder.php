@@ -19,7 +19,8 @@ class PermissionSeeder extends Seeder
             'assigns',
             'usergroups',
             'invites',
-            'confirms'
+            'confirms',
+            'venues'
         ];
 
         $types = [

@@ -16,12 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('code');
             $table->string('description')->nullable();
-            $table->string('created_by');
-            $table->string('updated_by')->nullable();
             $table->timestamps();
-
-            $table->foreign('created_by')->references('id')->on('employees');
-            $table->foreign('updated_by')->references('id')->on('employees');
         });
     }
 

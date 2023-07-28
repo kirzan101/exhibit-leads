@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\Helper;
 use App\Models\Contract;
 use App\Models\Employee;
+use App\Models\EmployeeVenue;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
@@ -47,11 +48,18 @@ class EmployeeService
             'first_name' => $request['first_name'],
             'middle_name' => $request['middle_name'],
             'last_name' => $request['last_name'],
-            'property' => $request['property'],
+            'property_id' => $request['property_id'],
             'position' => $request['position'],
             'user_group_id' => $request['user_group_id'],
             'user_id' => $user->id
         ]);
+
+        foreach($request['venue_ids'] as $venue_id) {
+            EmployeeVenue::create([
+                'employee_id' => $employee->id,
+                'venue_id' => $venue_id
+            ]);
+        }
 
         return $employee;
     }
@@ -74,10 +82,17 @@ class EmployeeService
             'first_name' => $request['first_name'],
             'middle_name' => $request['middle_name'],
             'last_name' => $request['last_name'],
-            'property' => $request['property'],
+            'property_id' => $request['property_id'],
             'position' => $request['position'],
             'user_group_id' => $request['user_group_id'],
         ]);
+
+        foreach($request['venue_ids'] as $venue_id) {
+            EmployeeVenue::create([
+                'employee_id' => $employee->id,
+                'venue_id' => $venue_id
+            ]);
+        }
 
         return $employee;
     }
@@ -90,10 +105,19 @@ class EmployeeService
      */
     public function deleteEmployee(Employee $employee): bool
     {
+        // delete employee venues
+        EmployeeVenue::where('employee_id', $employee->id)->delete();
+
+        // get the user id
         $user_id = $employee->user_id;
+        
+        // delete employee record
         $result = $employee->delete();
 
+        // find user
         $user = User::find($user_id);
+
+        // delete user associated to employee
         $user->delete();
 
         return $result;
