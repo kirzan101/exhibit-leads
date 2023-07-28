@@ -201,7 +201,7 @@ class LeadService
     {
         $lead = tap($lead)->update([
             'confirmer_remarks' => $request['confirmer_remarks'],
-            'lead_status' => $request['lead_status'],
+            'lead_status_confirmer' => $request['lead_status_confirmer'],
             'is_confirm_assigned' => true,
             'updated_by' => Auth::user()->id
         ]);
@@ -219,7 +219,7 @@ class LeadService
     {
         $lead = tap($lead)->update([
             'confirmer_remarks' => null,
-            'lead_status' => null,
+            'lead_status_confirmer' => null,
             'is_confirm_assigned' => false,
             'updated_by' => Auth::user()->id
         ]);

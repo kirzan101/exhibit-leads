@@ -48,6 +48,7 @@ return new class extends Migration
             $table->longText('confirmer_remarks')->nullable();
             $table->boolean('is_invited')->default(false);
             $table->string('lead_status')->nullable();
+            $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();
             $table->string('source')->nullable();
             $table->date('presentation_date')->nullable();

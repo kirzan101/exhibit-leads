@@ -52,7 +52,7 @@ class AssignedConfirmerController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'properties' => $this->propertyService->indexProperty(),
-            'status_list' => Helper::leadStatus(),
+            'status_list' => Helper::leadConfirmerStatus(),
             'per_page' => 5
         ]);
     }
