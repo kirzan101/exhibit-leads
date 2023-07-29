@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Http\Requests\AssignedEmployeeFormRequest;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedEmployee;
@@ -48,6 +49,7 @@ class AssignedEmployeeController extends Controller
         return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
+            'status_list' => Helper::leadConfirmerStatus(),
             'per_page' => 5
         ]);
     }

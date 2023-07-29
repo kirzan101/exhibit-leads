@@ -184,6 +184,11 @@
                     rows="3"
                     max-rows="6"
                 ></b-form-textarea>
+                <p class="mt-2 mb-2">Lead status:</p>
+                <b-form-select
+                    v-model="lead_status"
+                    :options="lead_status_options"
+                ></b-form-select>
                 <br />
                 <p v-if="updated_by !== ''">
                     Last remark by: <b>{{ updated_by }}</b>
@@ -199,6 +204,14 @@
                         variant="success"
                         type="button"
                         @click="modifyRemarks"
+                        v-if="(remarks != null && remarks.length > 0) && lead_status != null"
+                        >Submit</b-button
+                    >
+                    <b-button
+                        variant="success"
+                        type="button"
+                        disabled
+                        v-else
                         >Submit</b-button
                     >
                 </template>
@@ -234,6 +247,7 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
+        status_list: Array,
     },
     data() {
         return {
@@ -255,10 +269,12 @@ export default {
             selected_employee_ids: [],
             checkedAll: false,
             remarks: "",
+            lead_status: null,
             selected_row_id: null,
             form: {
                 remarks: "",
                 lead_id: "",
+                lead_status: ""
             },
             hasRemarks: "All",
             updated_by: "",
@@ -266,6 +282,15 @@ export default {
                 status: true,
                 lead_id: "",
             },
+            lead_status_options: [
+                { value: null, text: "-- select --" },
+                ...this.status_list.map((item) => {
+                    return {
+                        value: item.code,
+                        text: item.name + " " + "(" + item.code + ")",
+                    };
+                }),
+            ],
         };
     },
     watch: {
@@ -346,6 +371,7 @@ export default {
         modifyRemarks() {
             this.form.lead_id = this.selected_row_id;
             this.form.remarks = this.remarks;
+            this.form.lead_status = this.lead_status;
             router.post("/remarks", this.form);
             this.remarks = "";
             this.$bvModal.hide("remarks-modal");

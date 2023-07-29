@@ -148,6 +148,7 @@ class LeadService
 
         return $lead->update([
             'remarks' => $request['remarks'],
+            'lead_status' => $request['lead_status'],
             'updated_by' => Auth::user()->employee->id
         ]);
     }

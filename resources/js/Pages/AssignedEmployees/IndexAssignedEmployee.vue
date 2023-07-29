@@ -131,6 +131,7 @@
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
+                :status_list="status_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -154,6 +155,7 @@ export default {
         leads: Array,
         employees: Array,
         per_page: Number,
+        status_list: Array,
     },
     data() {
         return {
