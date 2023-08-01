@@ -37,6 +37,14 @@
                             >Employees</Link
                         >
                     </li>
+                    <li
+                        class="nav-item"
+                        v-if="check_access('venues', 'read')"
+                    >
+                        <Link class="nav-link" href="/venues"
+                            >Venues</Link
+                        >
+                    </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>
 
