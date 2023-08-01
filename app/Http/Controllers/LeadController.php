@@ -155,7 +155,7 @@ class LeadController extends Controller
         $request = $request->validate([
             'lead_id' => 'required|exists:leads,id',
             'remarks' => 'required|min:2',
-            'lead_status' => 'required|min:2',
+            'lead_status' => 'required|min:1',
         ]);
 
         $result = $this->leadService->modifyRemarks($request);
