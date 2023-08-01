@@ -133,6 +133,7 @@
                 :per_page="per_page"
                 :properties="properties"
                 :status_list="status_list"
+                :venue_list="venue_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -158,6 +159,7 @@ export default {
         properties: Array,
         per_page: Number,
         status_list: Array,
+        venue_list: Array
     },
     data() {
         return {
@@ -175,8 +177,7 @@ export default {
                     label: "Lead name",
                     sortable: true,
                 },
-                { key: "address", label: "Address", sortable: true },
-                { key: "property.name", label: "Property", sortable: true },
+                { key: "venue.name", label: "Venue", sortable: true },
                 {
                 key: "assigned_confirmer_name",
                     label: "Assigned To",

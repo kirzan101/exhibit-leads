@@ -9,6 +9,7 @@ use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class VenueController extends Controller
 {
@@ -26,7 +27,10 @@ class VenueController extends Controller
     {
         $venues = $this->venueService->indexVenueService();
 
-        return VenueResource::collection($venues);
+        return Inertia::render('Venues/IndexVenue', [
+            'venues' => VenueResource::collection($venues),
+            'per_page' => 5
+        ]);
     }
 
     /**
@@ -34,7 +38,7 @@ class VenueController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Venues/CreateVenue');
     }
 
     /**
@@ -50,12 +54,12 @@ class VenueController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            return redirect()->route('venues')->with('error', $e->getMessage());
+            return redirect()->route('venues.index')->with('error', $e->getMessage());
 
         }
 
         DB::commit();
-        return redirect()->route('venues')->with('success', 'Successfully created!');
+        return redirect()->route('venues.index')->with('success', 'Successfully created!');
     }
 
     /**
@@ -65,7 +69,9 @@ class VenueController extends Controller
     {
         $venue = $this->venueService->showVenueService($venue);
 
-        return new VenueResource($venue);
+        return Inertia::render('Venues/ShowVenue', [
+            'venue' => new VenueResource($venue)
+        ]);
     }
 
     /**
@@ -73,7 +79,9 @@ class VenueController extends Controller
      */
     public function edit(Venue $venue)
     {
-        //
+        return Inertia::render('Venues/EditVenue', [
+            'venue' => new VenueResource($venue)
+        ]);
     }
 
     /**
@@ -89,12 +97,12 @@ class VenueController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             
-            return redirect()->route('venues')->with('error', $e->getMessage());
+            return redirect()->route('venues.index')->with('error', $e->getMessage());
 
         }
         DB::commit();
 
-        return redirect()->route('venues')->with('success', 'Successfully updated!');
+        return redirect()->route('venues.index')->with('success', 'Successfully updated!');
     }
 
     /**
@@ -110,11 +118,11 @@ class VenueController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            return redirect()->route('venues')->with('error', $e->getMessage());
+            return redirect()->route('venues.index')->with('error', $e->getMessage());
 
         }
         DB::commit();
         
-        return redirect()->route('venues')->with('success', 'Successfully deleted');
+        return redirect()->route('venues.index')->with('success', 'Successfully deleted');
     }
 }

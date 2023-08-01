@@ -50,6 +50,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'assigns')
             ->orWhere('module', 'invites')->get();
         $employee_permissions = Permission::where('module', 'leads')->get();
+        $confirmer_permissions = Permission::where('module', 'confirms')->get();
 
         if ($admin_permissions->count() > 0) {
             foreach ($user_groups as $user_group) {
@@ -89,6 +90,24 @@ class UserGroupSeeder extends Seeder
                     ]);
 
                     //invites permission
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'read')->first()->id
+                    ]);
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'update')->first()->id
+                    ]);
+                } else if ($usergroup->name == 'confirmers') {
+                    foreach ($confirmer_permissions as $permission) {
+                        UserGroupPermission::create([
+                            'user_group_id' => $usergroup->id,
+                            'permission_id' => $permission->id
+                        ]);
+                    }
+
+                    //invites/For Confirmation permission
                     UserGroupPermission::create([
                         'user_group_id' => $usergroup->id,
                         'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'read')->first()->id

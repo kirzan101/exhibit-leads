@@ -7,6 +7,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\UserGroupController;
+use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,6 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/showed', [LeadController::class, 'showedLead']);
 
     Route::get('paginate', [LeadController::class, 'indexPaginate']);
+
+    //venues
+    Route::resource('/venues', VenueController::class);
 
     Route::get('/usergroups', [UserGroupController::class, 'index']);
 });

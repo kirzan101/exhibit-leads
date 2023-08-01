@@ -3,7 +3,6 @@
         <b-container fluid>
             <!-- User Interface controls -->
             <b-row>
-                <!-- first filter -->
                 <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Filter"
@@ -34,56 +33,22 @@
 
                 <b-col lg="6" class="my-1">
                     <b-form-group
-                        label="Venues"
-                        label-for="venue-select"
+                        label="Occupation"
+                        label-for="occupation-select"
                         label-cols-sm="3"
                         label-align-sm="right"
                         label-size="sm"
                         class="mb-0"
                     >
                         <b-form-select
-                            id="venue-select"
-                            v-model="venue_id"
-                            :options="venue_options"
+                            id="occupation-select"
+                            v-model="additional_filter.occupation"
+                            :options="occupation_options"
                             size="sm"
                         ></b-form-select>
                     </b-form-group>
                 </b-col>
 
-                <!-- Second filter -->
-                <b-col lg="6" class="my-1">
-                    <b-form-group
-                        label="Start to"
-                        label-for="start-to"
-                        label-cols-sm="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                    >
-                        <b-form-datepicker
-                            id="start-to"
-                            v-model="start_to"
-                            class="mb-2"
-                        ></b-form-datepicker>
-                    </b-form-group>
-                </b-col>
-
-                <b-col lg="6" class="my-1">
-                    <b-form-group
-                        label="End to"
-                        label-for="end-to"
-                        label-cols-sm="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                    >
-                        <b-form-datepicker
-                            id="end-to"
-                            v-model="end_to"
-                            class="mb-2"
-                        ></b-form-datepicker>
-                    </b-form-group>
-                </b-col>
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -118,7 +83,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="assignedLeads"
+                :items="leadList"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -135,9 +100,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
-                        v-if="check_access('assigns', 'create')"
                     ></b-form-checkbox>
-                    <span v-else>&nbsp;</span>
                 </template>
 
                 <template v-slot:cell(selected)="row">
@@ -147,33 +110,44 @@
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
                             :disabled-field="row.item.is_assigned"
-                            @change="
-                                selectConfirmer($event, row.item.confirmer.id)
-                            "
-                            v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
 
-                <template #cell(name)="row">
-                    {{ row.value.first }} {{ row.value.last }}
-                </template>
-
                 <template #cell(actions)="row">
-                    <Link
-                        :href="'assigned-confirmers/' + row.item.id"
-                        class="btn m-1 btn-info"
-                        type="button"
-                        v-if="check_access('assigns', 'read')"
-                        >Show</Link
-                    >
                     <b-button
-                        v-b-modal.confirm-modal
-                        variant="success text-white"
-                        @click="selectedLead(row.item)"
+                        v-b-modal.remarks-modal
+                        variant="info text-white"
                         class="m-1"
-                        >Confirm</b-button
+                        >Show remarks</b-button
                     >
+
+                    <!-- Add Remarks modal -->
+                    <b-modal id="remarks-modal" title="Remarks">
+                        <b-form-textarea
+                            id="textarea"
+                            placeholder="Enter something..."
+                            rows="3"
+                            max-rows="6"
+                            readonly
+                            v-model="row.item.remarks"
+                        ></b-form-textarea>
+                        <p class="mt-2 mb-2">Lead status:</p>
+                        <b-form-select
+                            :disabled="true"
+                            :value="row.item.lead_status"
+                            :options="lead_status_options"
+                        ></b-form-select>
+
+                        <template #modal-footer>
+                            <b-button
+                                variant="danger"
+                                type="button"
+                                @click="$bvModal.hide('remarks-modal')"
+                                >Close</b-button
+                            >
+                        </template>
+                    </b-modal>
                 </template>
 
                 <template #row-details="row">
@@ -187,43 +161,21 @@
                 </template>
             </b-table>
 
-            <!-- Add Confirm modal -->
-            <b-modal id="confirm-modal" title="Confirm">
-                <p class="mt-2 mb-2">Remarks:</p>
-                <b-form-textarea
-                    id="textarea"
-                    v-model="remarks"
-                    placeholder="Enter something..."
-                    rows="3"
-                    max-rows="6"
-                ></b-form-textarea>
-                <p class="mt-2 mb-2">Lead status:</p>
-                <b-form-select
-                    v-model="lead_status_confirmer"
-                    :options="lead_status_options"
-                ></b-form-select>
-                <br />
-                <template #modal-footer>
-                    <b-button
-                        variant="danger"
-                        type="button"
-                        @click="$bvModal.hide('confirm-modal')"
-                        >Close</b-button
-                    >
-                    <b-button
-                        variant="success"
-                        type="button"
-                        @click="confirmLead"
-                        >Submit</b-button
-                    >
-                </template>
+            <!-- Info modal -->
+            <b-modal
+                :id="infoModal.id"
+                :title="infoModal.title"
+                ok-only
+                @hide="resetInfoModal"
+            >
+                <pre>{{ infoModal.content }}</pre>
             </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link, router } from "@inertiajs/vue2";
+import { Link } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -234,9 +186,8 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
-        properties: Array,
+        occupation_list: Array,
         status_list: Array,
-        venue_list: Array,
     },
     data() {
         return {
@@ -255,25 +206,14 @@ export default {
                 content: "",
             },
             selected_ids: [],
-            selected_confirmer_ids: [],
             checkedAll: false,
-            remarks: "",
-            lead_status_confirmer: null,
-            selected_row_id: null,
-            form: {
-                remarks: "",
-                lead_id: "",
-                lead_status_confirmer: "",
+            additional_filter: {
+                occupation: null,
             },
-            property_id: null,
-            invite_form: {
-                status: true,
-                lead_id: "",
-            },
-            property_options: [
+            occupation_options: [
                 { value: null, text: "-- select --" },
-                ...this.properties.map((item) => {
-                    return { value: item.id, text: item.name };
+                ...this.occupation_list.map((item) => {
+                    return { value: item.occupation, text: item.occupation };
                 }),
             ],
             lead_status_options: [
@@ -285,29 +225,11 @@ export default {
                     };
                 }),
             ],
-            venue_options: [
-                { value: null, text: "-- select --" },
-                ...this.venue_list.map((item) => {
-                    return { value: item.id, text: item.name };
-                }),
-            ],
-            venue_id: null,
-            start_to: "",
-            end_to: "",
         };
     },
     watch: {
         selected_ids() {
             return this.$emit("selected_lead", this.selected_ids);
-        },
-        selected_confirmer_ids() {
-            return this.$emit(
-                "selected_lead_confirmer_id",
-                this.selected_confirmer_ids
-            );
-        },
-        checkedAll() {
-            return this.$emit("checkedAll", this.checkedAll);
         },
     },
     computed: {
@@ -319,21 +241,13 @@ export default {
                     return { text: f.label, value: f.key };
                 });
         },
-        assignedLeads() {
+        leadList() {
             // filter property
-            if (this.venue_id) {
+            if (this.additional_filter.occupation) {
                 return this.items.filter(
-                    (item) => item.venue_id == this.venue_id
+                    (item) =>
+                        item.occupation == this.additional_filter.occupation
                 );
-            }
-
-            if (this.start_to != "" && this.end_to != "") {
-                return this.items.filter((item) => {
-                    const itemDate = new Date(item.presentation_date);
-                    const start = new Date(this.start_to);
-                    const end = new Date(this.end_to);
-                    return itemDate >= start && itemDate <= end;
-                });
             }
 
             return this.items;
@@ -341,7 +255,7 @@ export default {
     },
     mounted() {
         // Set the initial number of items
-        this.totalRows = this.items.length;
+        this.totalRows = this.leadList.length;
     },
     methods: {
         info(item, index, button) {
@@ -360,42 +274,13 @@ export default {
         },
         select() {
             this.selected_ids = [];
-            this.selected_confirmer_ids = [];
             if (this.checkedAll) {
-                console.log("selected all");
-                for (let i in this.items
-                    .filter((item) => item.is_assigned == true)
+                for (let i in this.leadList
+                    .filter((item) => item.is_assigned == false)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
-                    this.selected_confirmer_ids.push(
-                        this.items[i].confirmer.id
-                    );
                 }
-
-                // remove duplicate ids
-                this.selected_confirmer_ids =
-                    this.selected_confirmer_ids.filter(
-                        (item, index) =>
-                            this.selected_confirmer_ids.indexOf(item) === index
-                    );
             }
-        },
-        selectConfirmer(event, data) {
-            // console.log(event.currentTarget);
-            this.selected_confirmer_ids = data;
-        },
-        confirmLead() {
-            this.form.lead_id = this.selected_row_id;
-            this.form.confirmer_remarks = this.remarks;
-            this.form.lead_status_confirmer = this.lead_status_confirmer;
-            router.post("/confirm", this.form);
-            this.remarks = "";
-            this.lead_status_confirmer = "";
-            this.$bvModal.hide("confirm-modal");
-        },
-        selectedLead(data) {
-            this.selected_row_id = data.id;
-            this.remarks = data.confirmer_remarks;
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;
@@ -408,11 +293,6 @@ export default {
                 }));
 
             return access.some((item) => item.type === type);
-        },
-        invite() {
-            this.invite_form.lead_id = this.selected_row_id;
-            router.post("/invites", this.invite_form);
-            this.$bvModal.hide("invite-modal");
         },
     },
 };

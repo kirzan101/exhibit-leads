@@ -11,6 +11,7 @@ use App\Models\Lead;
 use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
+use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,12 +23,14 @@ class AssignedEmployeeController extends Controller
     private AssignedEmployeeService $assignedEmployeeService;
     private LeadService $leadService;
     private EmployeeService $employeeService;
+    private VenueService $venueService;
 
-    public function __construct(AssignedEmployeeService $assignedEmployeeService, LeadService $leadService, EmployeeService $employeeService)
+    public function __construct(AssignedEmployeeService $assignedEmployeeService, LeadService $leadService, EmployeeService $employeeService, VenueService $venueService)
     {
         $this->assignedEmployeeService = $assignedEmployeeService;
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
+        $this->venueService = $venueService;
     }
 
     /**
@@ -50,6 +53,8 @@ class AssignedEmployeeController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
             'status_list' => Helper::leadConfirmerStatus(),
+            'occupation_list' => Helper::occupationList(),
+            'venue_list' => $this->venueService->indexVenueService(),
             'per_page' => 5
         ]);
     }

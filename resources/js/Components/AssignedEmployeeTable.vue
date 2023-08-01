@@ -49,6 +49,82 @@
                     </b-form-group>
                 </b-col>
 
+                <!-- Second filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Start to"
+                        label-for="start-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="start-to"
+                            v-model="start_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="End to"
+                        label-for="end-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="end-to"
+                            v-model="end_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+                <!-- End Second filter -->
+
+                <!-- third filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Occupation"
+                        label-for="occupation-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="occupation-select"
+                            v-model="occupation"
+                            :options="occupation_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Venue"
+                        label-for="venue-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="venue-select"
+                            v-model="venue"
+                            :options="venue_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+                <!-- End third filter -->
+
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -124,6 +200,10 @@
                     {{ row.value.first }} {{ row.value.last }}
                 </template>
 
+                <template #cell(assigned_employee.created_at)="row">
+                    {{ formatDate(row.item.assigned_employee.created_at) }}
+                </template>
+
                 <template #cell(actions)="row">
                     <Link
                         :href="'assigned-employees/' + row.item.id"
@@ -160,7 +240,7 @@
                         variant="success"
                         @click="selectedLead(row.item)"
                         class="m-1"
-                        >Invite</b-button
+                        >Done</b-button
                     >
                 </template>
 
@@ -189,8 +269,7 @@
                     v-model="lead_status"
                     :options="lead_status_options"
                 ></b-form-select>
-                <br />
-                <p v-if="updated_by !== ''">
+                <p class="mt-3" v-if="updated_by !== ''">
                     Last remark by: <b>{{ updated_by }}</b>
                 </p>
                 <template #modal-footer>
@@ -218,7 +297,7 @@
             </b-modal>
 
             <b-modal id="invite-modal" title="Notice">
-                <p>Mark as Invited?</p>
+                <p>Mark as Done?</p>
                 <template #modal-footer>
                     <b-button
                         variant="danger"
@@ -248,6 +327,8 @@ export default {
         fields: Array,
         per_page: Number,
         status_list: Array,
+        occupation_list: Array,
+        venue_list: Array,
     },
     data() {
         return {
@@ -291,6 +372,28 @@ export default {
                     };
                 }),
             ],
+            start_to: "",
+            end_to: "",
+            occupation: null,
+            occupation_options: [
+                { value: null, text: "-- select --" },
+                ...this.occupation_list.map((item) => {
+                    return {
+                        value: item.occupation,
+                        text: item.occupation,
+                    };
+                }),
+            ],
+            venue: null,
+            venue_options: [
+                { value: null, text: "-- select --" },
+                ...this.venue_list.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.name,
+                    };
+                }),
+            ],
         };
     },
     watch: {
@@ -317,10 +420,35 @@ export default {
                 });
         },
         assignedLeads() {
+            // remarks filter
             if (this.hasRemarks == "Yes") {
                 return this.items.filter((item) => item.remarks != null);
             } else if (this.hasRemarks == "No") {
                 return this.items.filter((item) => item.remarks == null);
+            }
+
+            // assigned date filter
+            if (this.start_to != "" && this.end_to != "") {
+                return this.items.filter((item) => {
+                    const itemDate = new Date(item.assigned_employee.created_at);
+                    const start = new Date(this.start_to);
+                    const end = new Date(this.end_to);
+                    return itemDate.toLocaleDateString("en-US") >= start.toLocaleDateString("en-US") && itemDate.toLocaleDateString("en-US") <= end.toLocaleDateString("en-US");
+                });
+            }
+
+            // occupation filter
+            if (this.occupation) {
+                return this.items.filter((item) => {
+                    return item.occupation == this.occupation;
+                });
+            }
+            
+            // venue filter
+            if (this.venue) {
+                return this.items.filter((item) => {
+                    return item.venue.id == this.venue;
+                });
             }
 
             return this.items;
@@ -377,8 +505,10 @@ export default {
             this.$bvModal.hide("remarks-modal");
         },
         selectedLead(data) {
+            console.log(data, "lead_status")
             this.selected_row_id = data.id;
             this.remarks = data.remarks;
+            this.lead_status = data.lead_status;
             this.updated_by =
                 data.updated_by.length != 0
                     ? data.updated_by.last_name +
@@ -403,6 +533,12 @@ export default {
             router.post("/invites", this.invite_form);
             this.$bvModal.hide("invite-modal");
         },
+        formatDate(value) {
+
+            let date_value = new Date(value);
+
+            return date_value.toLocaleDateString("en-US") + " " + date_value.toLocaleTimeString("en-US");
+        }
     },
 };
 </script>

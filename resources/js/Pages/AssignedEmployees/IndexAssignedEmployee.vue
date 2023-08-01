@@ -132,6 +132,8 @@
                 :items="leads"
                 :per_page="per_page"
                 :status_list="status_list"
+                :occupation_list="occupation_list"
+                :venue_list="venue_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -156,6 +158,8 @@ export default {
         employees: Array,
         per_page: Number,
         status_list: Array,
+        occupation_list: Array,
+        venue_list: Array,
     },
     data() {
         return {
@@ -173,7 +177,8 @@ export default {
                     label: "Lead name",
                     sortable: true,
                 },
-                { key: "address", label: "Address", sortable: true },
+                { key: "occupation", label: "Occupation", sortable: true },
+                { key: "venue.name", label: "Venue", sortable: true },
                 {
                     key: "employee_full_name",
                     label: "Assigned To",

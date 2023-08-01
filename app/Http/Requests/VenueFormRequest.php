@@ -23,8 +23,8 @@ class VenueFormRequest extends FormRequest
     {
         return [
             'name' => 'required|min:2',
-            'code' => 'required|min:2',
-            'description' => 'required|min:2',
+            'code' => 'required|unique:venues,code,'.$this->id,
+            'description' => 'nullable|min:2',
         ];
     }
 }

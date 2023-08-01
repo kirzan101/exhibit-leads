@@ -20,9 +20,7 @@ class VenueResource extends JsonResource
             'code' => $this->code,
             'description' => $this->description,
             'created_at' => $this->created_at,
-            'created_by' => $this->createdBy(),
             'updated_at' => $this->updated_at,
-            'updated_by' => $this->updatedBy()
         ];
     }
 }

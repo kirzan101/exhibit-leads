@@ -164,10 +164,11 @@ class LeadService
             ->where('is_confirm_assigned', false)
             ->get();
 
-        if (Auth::user()->employee->userGroup->name == 'employees') {
+        // if current user is confirmer, get the same venue of leads
+        if (Auth::user()->employee->userGroup->name == 'confirmers') {
             $leads = Lead::where('is_invited', $invited)
                 ->where('is_confirm_assigned', false)
-                ->where('employee_id', Auth::user()->employee->id)
+                ->where('venue_id', Auth::user()->employee->venue_id)
                 ->get();
         }
 
@@ -229,7 +230,7 @@ class LeadService
     }
 
     /**
-     * index of invited lead service
+     * index of confirmed lead service
      *
      * @return void
      */
@@ -239,11 +240,15 @@ class LeadService
             ->where('is_confirm_assigned', true)
             ->whereNotNull('confirmer_remarks')
             ->get();
-        if (Auth::user()->employee->userGroup->name == 'employees') {
-            $leads = Lead::where('is_invited', true)
-                ->where('is_confirm_assigned', true)
+
+        if (Auth::user()->employee->userGroup->name == 'confirmers') {
+            Lead::select('leads.*')
+                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
+                ->where('leads.is_confirm_assigned', true)
+                ->where('leads.is_invited', true)
+                ->where('assigned_confirmers.employee_id', '=', Auth::user()->employee->id)
+                ->where('leads.venue_id', '=', Auth::user()->employee->venue_id)
                 ->whereNotNull('confirmer_remarks')
-                ->where('employee_id', Auth::user()->employee->id)
                 ->get();
         }
 
@@ -256,7 +261,8 @@ class LeadService
      * @param array $request
      * @return void
      */
-    public function showed(array $request) {
+    public function showed(array $request)
+    {
         $lead = Lead::find($request['lead_id']);
 
         $lead = tap($lead)->update([

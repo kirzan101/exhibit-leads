@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Invited</title>
+            <title>For Confirmation</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -29,9 +29,7 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">
-                        Invited 
-                    </div>
+                    <div class="col-sm-6">For Confirmation</div>
                     <div class="col-sm-6">
                         <div v-if="check_access('invites', 'create')">
                             <b-button
@@ -53,23 +51,43 @@
                             >
                         </div>
                         <div>
-                            <b-button
-                                class="btn btn-info m-1"
-                                v-b-modal.assign-modal
-                                style="float: right"
-                                align-v="end"
-                                v-if="selected_lead.length > 0"
-                                >Assign Confirmer</b-button
-                            >
-                            <b-button
-                                class="btn btn-info m-1"
-                                v-b-modal.assign-modal
-                                style="float: right"
-                                align-v="end"
-                                disabled
-                                v-else
-                                >Assign Confirmer</b-button
-                            >
+                            <span v-if="is_confirmer">
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.add-lead-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    v-if="selected_lead.length > 0"
+                                    >Add lead</b-button
+                                >
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    style="float: right"
+                                    align-v="end"
+                                    disabled
+                                    v-else
+                                    >Add lead</b-button
+                                >
+                            </span>
+                            <span v-else>
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    v-if="selected_lead.length > 0"
+                                    >Assign Confirmer</b-button
+                                >
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    disabled
+                                    v-else
+                                    >Assign Confirmer</b-button
+                                >
+                            </span>
                         </div>
                         <!-- remove invitee -->
                         <b-modal title="Notice:" id="remove-modal">
@@ -131,17 +149,45 @@
                                 >
                             </template>
                         </b-modal>
+
+                        <!-- add lead -->
+                        <b-modal title="Assign to Confirmer" id="add-lead-modal">
+                            <p>Add leads?</p>
+                            <template #modal-footer>
+                                <b-button
+                                    variant="danger"
+                                    type="button"
+                                    @click="$bvModal.hide('add-lead-modal')"
+                                    >Close</b-button
+                                >
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    @click="submitAssigned()"
+                                    v-if="selected_lead.length > 0"
+                                    >Submit</b-button
+                                >
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    disabled
+                                    v-else
+                                    >Submit</b-button
+                                >
+                            </template>
+                        </b-modal>
                     </div>
                 </div>
             </h5>
 
             <br />
 
-            <LeadTable
+            <ForConfirmationTable
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
                 :occupation_list="occupation_list"
+                :status_list="status_list"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -152,18 +198,21 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import LeadTable from "../../Components/LeadTable.vue";
+import ForConfirmationTable from "../../Components/ForConfirmationTable.vue"
 
 export default {
     components: {
         Link,
-        LeadTable,
+        ForConfirmationTable
     },
     props: {
         leads: Array,
         employees: Array,
         per_page: Number,
         occupation_list: Array,
+        is_confirmer: Boolean,
+        status_list: Array,
+
     },
     data() {
         return {
@@ -179,7 +228,8 @@ export default {
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
-                { key: "address", label: "Address", sortable: true },
+                { key: "lead_status", label: "Status", sortable: true },
+                { key: "venue.name", label: "Venue", sortable: true },
                 // {
                 //     key: "is_assigned",
                 //     label: "Is Assigned",
@@ -188,12 +238,12 @@ export default {
                 //         return value ? "Yes" : "No";
                 //     },
                 // },
-                // { key: "actions", label: "Actions" },
                 {
                     key: "employee_full_name",
                     label: "Assigned To",
                     sortable: true,
                 },
+                { key: "actions", label: "Actions" },
             ],
             selected_lead: [],
             form: {
@@ -201,10 +251,10 @@ export default {
             },
             assign_form: {
                 lead_ids: [],
-                employee_id: ''
+                employee_id: "",
             },
             alert: false,
-            selected_employee: '',
+            selected_employee: "",
         };
     },
     computed: {
@@ -236,11 +286,16 @@ export default {
             this.assign_form.lead_ids = this.selected_lead;
             this.assign_form.employee_id = this.selected_employee;
 
+            // if the current user is confirmer, set form employee to current loggedin employee id
+            if(this.is_confirmer) {
+                this.assign_form.employee_id = this.$page.props.auth.user.employee.id;
+            }
+
             this.$bvModal.hide("assign-modal");
 
             router.post("/assign-confirmer", this.assign_form);
             this.selected_lead = [];
-            this.selected_employee = ''
+            this.selected_employee = "";
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

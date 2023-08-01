@@ -12,6 +12,7 @@ use App\Services\AssignedConfirmerService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
+use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,13 +25,15 @@ class AssignedConfirmerController extends Controller
     private EmployeeService $employeeService;
     private LeadService $leadService;
     private PropertyService $propertyService;
+    private VenueService $venueService;
 
-    public function __construct(AssignedConfirmerService $assignedConfirmerService, EmployeeService $employeeService, LeadService $leadService, PropertyService $propertyService)
+    public function __construct(AssignedConfirmerService $assignedConfirmerService, EmployeeService $employeeService, LeadService $leadService, PropertyService $propertyService, VenueService $venueService)
     {
         $this->assignedConfirmerService = $assignedConfirmerService;
         $this->employeeService = $employeeService;
         $this->leadService = $leadService;
         $this->propertyService = $propertyService;
+        $this->venueService = $venueService;
     }
 
     /**
@@ -52,6 +55,7 @@ class AssignedConfirmerController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'properties' => $this->propertyService->indexProperty(),
+            'venue_list' => $this->venueService->indexVenueService(),
             'status_list' => Helper::leadConfirmerStatus(),
             'per_page' => 5
         ]);

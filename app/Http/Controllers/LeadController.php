@@ -12,6 +12,7 @@ use App\Services\PropertyService;
 use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -182,7 +183,9 @@ class LeadController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'occupation_list' => Helper::occupationList(),
-            'per_page' => 5
+            'per_page' => 5,
+            'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
+            'status_list' => Helper::leadStatus(),
         ]);
     }
 

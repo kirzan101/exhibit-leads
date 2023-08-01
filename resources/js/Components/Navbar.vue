@@ -19,7 +19,7 @@
                         >
                     </li>
                     <li class="nav-item" v-if="check_access('invites', 'read')">
-                        <Link class="nav-link" href="/invites">Invites</Link>
+                        <Link class="nav-link" href="/invites">For Confirmation</Link>
                     </li>
                     <li
                         class="nav-item"
