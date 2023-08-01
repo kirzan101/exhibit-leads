@@ -52,7 +52,7 @@ class AssignedEmployeeController extends Controller
         return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),
-            'status_list' => Helper::leadConfirmerStatus(),
+            'status_list' => Helper::leadStatus(),
             'occupation_list' => Helper::occupationList(),
             'venue_list' => $this->venueService->indexVenueService(),
             'per_page' => 5
