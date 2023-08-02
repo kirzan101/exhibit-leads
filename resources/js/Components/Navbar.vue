@@ -45,6 +45,14 @@
                             >Venues</Link
                         >
                     </li>
+                    <li
+                        class="nav-item"
+                        v-if="check_access('sources', 'read')"
+                    >
+                        <Link class="nav-link" href="/sources"
+                            >Sources</Link
+                        >
+                    </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
                 </b-navbar-nav>
 

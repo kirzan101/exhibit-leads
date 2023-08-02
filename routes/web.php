@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\VenueController;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,9 @@ Route::middleware('auth')->group(function () {
 
     //venues
     Route::resource('/venues', VenueController::class);
+
+    //sources
+    Route::resource('/sources', SourceController::class);
 
     Route::get('/usergroups', [UserGroupController::class, 'index']);
 });
