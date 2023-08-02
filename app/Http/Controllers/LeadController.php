@@ -266,11 +266,12 @@ class LeadController extends Controller
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
-            'lead_sources' => 'required',
+            'lead_status_confirmer' => 'required',
             'confirmer_remarks' => 'required'
         ]);
 
         try {
+            
             $lead = Lead::find($request->lead_id);
 
             $lead = $this->leadService->confirmLead($lead, $request->toArray());

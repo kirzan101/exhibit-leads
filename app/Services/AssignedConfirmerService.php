@@ -138,13 +138,13 @@ class AssignedConfirmerService
      */
     public function indexLeadsOfCurrentAssignedConfirmer(): Collection
     {
+
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
             ->where('leads.is_confirm_assigned', true)
             ->where('leads.is_invited', true)
             ->where('assigned_confirmers.employee_id', Auth::user()->employee->id)
             ->get();
-
 
         return $assigned_leads;
     }

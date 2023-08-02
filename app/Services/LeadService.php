@@ -166,9 +166,15 @@ class LeadService
 
         // if current user is confirmer, get the same venue of leads
         if (Auth::user()->employee->userGroup->name == 'confirmers') {
+
+            // get the assigned venue of employee
+            $venue_ids = Auth::user()->employee->employeeVenue->map(function (object $venue) {
+                return $venue->venue_id;
+            });
+
             $leads = Lead::where('is_invited', $invited)
                 ->where('is_confirm_assigned', false)
-                ->where('venue_id', Auth::user()->employee->venue_id)
+                ->whereIn('venue_id', $venue_ids)
                 ->get();
         }
 
@@ -243,10 +249,8 @@ class LeadService
 
         if (Auth::user()->employee->userGroup->name == 'confirmers') {
             Lead::select('leads.*')
-                ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
                 ->where('leads.is_confirm_assigned', true)
                 ->where('leads.is_invited', true)
-                ->where('assigned_confirmers.employee_id', '=', Auth::user()->employee->id)
                 ->where('leads.venue_id', '=', Auth::user()->employee->venue_id)
                 ->whereNotNull('confirmer_remarks')
                 ->get();

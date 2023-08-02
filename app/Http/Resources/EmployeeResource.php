@@ -26,7 +26,8 @@ class EmployeeResource extends JsonResource
             'employee_venues' => $this->employeeVenue,
             'user' => $this->user,
             'full_name' => $this->getFullName(),
-            'id' => (int) $this->getKey()
+            'id' => (int) $this->getKey(),
+            'venue_id' => $this->venue_id,
         ];
     }
 }

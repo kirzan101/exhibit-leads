@@ -43,7 +43,7 @@ class AssignedConfirmerController extends Controller
     {
         $this->authorize('read', AssignedConfirmer::class);
 
-        $isConfirmer = (Auth::user()->employee->userGroup->name == 'confirmer') ?? false;
+        $isConfirmer = (Auth::user()->employee->userGroup->name == 'confirmers') ?? false;
         
         $leads = LeadResource::collection($this->assignedConfirmerService->indexLeadsOfAssignedConfirmer());
 
