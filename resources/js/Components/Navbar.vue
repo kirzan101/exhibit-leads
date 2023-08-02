@@ -19,7 +19,9 @@
                         >
                     </li>
                     <li class="nav-item" v-if="check_access('invites', 'read')">
-                        <Link class="nav-link" href="/invites">For Confirmation</Link>
+                        <Link class="nav-link" href="/invites"
+                            >For Confirmation</Link
+                        >
                     </li>
                     <li
                         class="nav-item"
@@ -29,31 +31,33 @@
                             >Confirm</Link
                         >
                     </li>
-                    <li
-                        class="nav-item"
-                        v-if="check_access('employees', 'read')"
-                    >
-                        <Link class="nav-link" href="/employees"
-                            >Employees</Link
-                        >
-                    </li>
-                    <li
-                        class="nav-item"
-                        v-if="check_access('venues', 'read')"
-                    >
-                        <Link class="nav-link" href="/venues"
-                            >Venues</Link
-                        >
-                    </li>
-                    <li
-                        class="nav-item"
-                        v-if="check_access('sources', 'read')"
-                    >
-                        <Link class="nav-link" href="/sources"
-                            >Sources</Link
-                        >
-                    </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
+
+                    <b-nav-item-dropdown text="Manage" right>
+                        <li role="presentation">
+                            <Link
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                href="/employees"
+                                >Employees</Link
+                            >
+                            <Link
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                href="/venues"
+                                >Venues</Link
+                            >
+                            <Link
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                href="/sources"
+                                >Sources</Link
+                            >
+                        </li>
+                    </b-nav-item-dropdown>
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
@@ -124,6 +128,11 @@ export default {
             return this.$page.props.auth.user.full_name;
         },
     },
+    mounted() {
+        this.$root.$on("bv::dropdown::show", (bvEvent) => {
+            console.log("Dropdown is about to be shown", bvEvent);
+        });
+    },
     methods: {
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;
@@ -145,6 +154,7 @@ export default {
             // this.$refs.dropdown.hide(true)
             // event.preventDefault();
             console.log("clicked dropdown");
+            console.log(this.$refs.dropdown.hide(true));
             // console.log("clicked dropdown");
         },
     },
