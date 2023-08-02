@@ -33,19 +33,21 @@
                     </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
 
-                    <b-nav-item-dropdown text="Manage" right>
+                    <b-nav-item-dropdown ref="managedd" text="Manage" right>
                         <li role="presentation">
                             <Link
                                 role="menuitem"
+                                href="/employees"
                                 target="_self"
                                 class="dropdown-item"
-                                href="/employees"
+                                @click="closeDropDown"
                                 >Employees</Link
                             >
                             <Link
                                 role="menuitem"
                                 target="_self"
                                 class="dropdown-item"
+                                @click="closeDropDown"
                                 href="/venues"
                                 >Venues</Link
                             >
@@ -53,6 +55,7 @@
                                 role="menuitem"
                                 target="_self"
                                 class="dropdown-item"
+                                @click="closeDropDown"
                                 href="/sources"
                                 >Sources</Link
                             >
@@ -62,25 +65,7 @@
 
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
-                    <!-- <b-nav-form>
-                        <b-form-input
-                            size="sm"
-                            class="mr-sm-2"
-                            placeholder="Search"
-                        ></b-form-input>
-                        <b-button size="sm" class="my-2 my-sm-0" type="submit"
-                            >Search</b-button
-                        >
-                    </b-nav-form> -->
-
-                    <!-- <b-nav-item-dropdown text="Lang" right>
-                        <b-dropdown-item href="#">EN</b-dropdown-item>
-                        <b-dropdown-item href="#">ES</b-dropdown-item>
-                        <b-dropdown-item href="#">RU</b-dropdown-item>
-                        <b-dropdown-item href="#">FA</b-dropdown-item>
-                    </b-nav-item-dropdown> -->
-
-                    <b-nav-item-dropdown right>
+                    <b-nav-item-dropdown ref="dropdown" right>
                         <!-- Using 'button-content' slot -->
                         <template #button-content>
                             <em>{{ fullName }}</em>
@@ -128,11 +113,6 @@ export default {
             return this.$page.props.auth.user.full_name;
         },
     },
-    mounted() {
-        this.$root.$on("bv::dropdown::show", (bvEvent) => {
-            console.log("Dropdown is about to be shown", bvEvent);
-        });
-    },
     methods: {
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;
@@ -147,14 +127,8 @@ export default {
             return access.some((item) => item.type === type);
         },
         closeDropDown() {
-            // this.$refs.dropdown.hide(true);
-            this.$root.$on("bv::dropdown::hide", (bvEvent) => {
-                console.log("Dropdown is about to be shown", bvEvent);
-            });
-            // this.$refs.dropdown.hide(true)
-            // event.preventDefault();
-            console.log("clicked dropdown");
-            console.log(this.$refs.dropdown.hide(true));
+            this.$refs.dropdown.hide(true); // dropdown for user profile
+            this.$refs.managedd.hide(true); // drop down for manage
             // console.log("clicked dropdown");
         },
     },

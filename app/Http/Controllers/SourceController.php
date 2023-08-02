@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function Termwind\render;
+
 class SourceController extends Controller
 {
     private SourceService $sourceService;
@@ -121,5 +123,10 @@ class SourceController extends Controller
         }
 
         return redirect()->route('sources.index')->with('success', 'Successfully deleted!');
+    }
+
+    public function testDropDown()
+    {
+        return Inertia::render('Sources/TestDropDown');
     }
 }

@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
 
     //sources
     Route::resource('/sources', SourceController::class);
+    Route::get('/test', [SourceController::class, 'testDropDown']);
 
     Route::get('/usergroups', [UserGroupController::class, 'index']);
 });
