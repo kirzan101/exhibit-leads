@@ -31,9 +31,12 @@ class LeadService
      */
     public function createLead(array $request): Lead
     {
-        // convert array to single string
-        $owned_gadgets = implode(',', $request['owned_gadgets']);
-        $request['owned_gadgets'] = $owned_gadgets;
+        if ($request['owned_gadgets']) {
+            // convert array to single string
+            $owned_gadgets = implode(',', $request['owned_gadgets']);
+            $request['owned_gadgets'] = $owned_gadgets;
+        }
+
         $request['created_by'] = Auth::user()->employee->id;
 
         $lead = Lead::create($request);
@@ -58,8 +61,11 @@ class LeadService
      */
     public function updateLead(array $request, Lead $lead): Lead
     {
-        $owned_gadgets = implode(',', $request['owned_gadgets']);
-        $request['owned_gadgets'] = $owned_gadgets;
+        if ($request['owned_gadgets']) {
+            $owned_gadgets = implode(',', $request['owned_gadgets']);
+            $request['owned_gadgets'] = $owned_gadgets;
+        }
+
         $request['updated_by'] = Auth::user()->employee->id;
 
         $lead = tap($lead)->update($request);
@@ -88,12 +94,14 @@ class LeadService
      */
     public function showLead(Lead $model): Lead
     {
-        $owned_gadgets = $model->owned_gadgets;
-        $arrayed_owned_gadgets = explode(',', $owned_gadgets);
+        if ($model->owned_gadgets) {
+            $owned_gadgets = $model->owned_gadgets;
+            $arrayed_owned_gadgets = explode(',', $owned_gadgets);
 
-        $lead = new Lead;
-        $lead = $model;
-        $lead->owned_gadgets = $arrayed_owned_gadgets;
+            $lead = new Lead;
+            $lead = $model;
+            $lead->owned_gadgets = $arrayed_owned_gadgets;
+        }
 
         if ($model->contract_file) {
             $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();
@@ -115,6 +123,7 @@ class LeadService
         return $lead->update([
             'remarks' => $request['remarks'],
             'lead_status' => $request['lead_status'],
+            'venue_id' => $request['venue_id'],
             'updated_by' => Auth::user()->employee->id
         ]);
     }

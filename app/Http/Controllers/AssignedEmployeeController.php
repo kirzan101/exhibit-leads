@@ -48,7 +48,6 @@ class AssignedEmployeeController extends Controller
             $leads = LeadResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
         }
 
-
         return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEmployee(),

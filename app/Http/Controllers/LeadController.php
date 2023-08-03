@@ -51,7 +51,9 @@ class LeadController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
-            'per_page' => 5
+            'per_page' => 5,
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource()
         ]);
     }
 
@@ -78,10 +80,16 @@ class LeadController extends Controller
 
         try {
             DB::beginTransaction();
+            
+            if(!$request->has('owned_gadgets')) {
+                $request->merge(['owned_gadgets' => null]);
+            }
 
             // add lead
-            $this->leadService->createLead($request->validated());
+            $this->leadService->createLead($request->toArray());
+
         } catch (Exception $ex) {
+            dd($ex);
 
             DB::rollBack();
 
@@ -136,7 +144,12 @@ class LeadController extends Controller
         try {
             DB::beginTransaction();
 
+            if(!$request->has('owned_gadgets')) {
+                $request->merge(['owned_gadgets' => null]);
+            }
+
             $this->leadService->updateLead($request->validated(), $lead);
+            
         } catch (Exception $ex) {
 
             DB::rollBack();
@@ -164,6 +177,7 @@ class LeadController extends Controller
             'lead_id' => 'required|exists:leads,id',
             'remarks' => 'required|min:2',
             'lead_status' => 'required|min:1',
+            'venue_id' => 'required|exists:venues,id'
         ]);
 
         $result = $this->leadService->modifyRemarks($request);
@@ -194,6 +208,8 @@ class LeadController extends Controller
             'per_page' => 5,
             'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
             'status_list' => Helper::leadStatus(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource()
         ]);
     }
 

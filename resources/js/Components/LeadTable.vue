@@ -49,6 +49,44 @@
                     </b-form-group>
                 </b-col>
 
+                <!-- second filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Venue"
+                        label-for="venue-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="venue-select"
+                            v-model="additional_filter.venue_id"
+                            :options="venue_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Source"
+                        label-for="source-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="source-select"
+                            v-model="additional_filter.source_id"
+                            :options="source_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
+                <!-- third filter -->
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -158,7 +196,9 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
-        occupation_list: Array
+        occupation_list: Array,
+        venues: Array,
+        sources: Array,
     },
     data() {
         return {
@@ -179,7 +219,9 @@ export default {
             selected_ids: [],
             checkedAll: false,
             additional_filter: {
-                occupation: null
+                occupation: null,
+                venue_id: null,
+                source_id: null
             },
             occupation_options: [
                 { value: null, text: "-- select --" },
@@ -187,6 +229,18 @@ export default {
                     return { value: item.occupation, text: item.occupation };
                 }),
             ],
+            venue_options: [
+                { value: null, text: "-- select --" },
+                ...this.venues.map((item) => {
+                    return { value: item.id, text: item.name };
+                }),
+            ],
+            source_options: [
+                { value: null, text: "-- select --" },
+                ...this.sources.map((item) => {
+                    return { value: item.id, text: item.name };
+                }),
+            ]
         };
     },
     watch: {
@@ -207,6 +261,14 @@ export default {
             // filter property
             if(this.additional_filter.occupation) {
                 return this.items.filter((item) => item.occupation == this.additional_filter.occupation)
+            }
+
+            if(this.additional_filter.venue_id) {
+                return this.items.filter((item) => item.venue_id == this.additional_filter.venue_id)
+            }
+
+            if(this.additional_filter.source_id) {
+                return this.items.filter((item) => item.source_id == this.additional_filter.source_id)
             }
 
             return this.items;

@@ -188,6 +188,8 @@
                 :per_page="per_page"
                 :occupation_list="occupation_list"
                 :status_list="status_list"
+                :venues="venues"
+                :sources="sources"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -212,7 +214,8 @@ export default {
         occupation_list: Array,
         is_confirmer: Boolean,
         status_list: Array,
-
+        venues: Array,
+        sources: Array
     },
     data() {
         return {
@@ -225,11 +228,11 @@ export default {
                 //     sortable: true,
                 //     sortDirection: "desc",
                 // },
-                { key: "first_name", label: "First name", sortable: true },
-                { key: "last_name", label: "Last name", sortable: true },
+                { key: "lead_full_name", label: "Lead name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
                 { key: "lead_status", label: "Status", sortable: true },
                 { key: "venue.name", label: "Venue", sortable: true },
+                { key: "source.name", label: "Source", sortable: true },
                 // {
                 //     key: "is_assigned",
                 //     label: "Is Assigned",

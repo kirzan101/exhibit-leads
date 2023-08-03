@@ -269,6 +269,11 @@
                     v-model="lead_status"
                     :options="lead_status_options"
                 ></b-form-select>
+                <p class="mt-2 mb-2">Venue:</p>
+                <b-form-select
+                    v-model="venue_id"
+                    :options="venue_options"
+                ></b-form-select>
                 <p class="mt-3" v-if="updated_by !== ''">
                     Last remark by: <b>{{ updated_by }}</b>
                 </p>
@@ -283,14 +288,14 @@
                         variant="success"
                         type="button"
                         @click="modifyRemarks"
-                        v-if="(remarks != null && remarks.length > 0) && lead_status != null"
+                        v-if="
+                            remarks != null &&
+                            remarks.length > 0 &&
+                            lead_status != null
+                        "
                         >Submit</b-button
                     >
-                    <b-button
-                        variant="success"
-                        type="button"
-                        disabled
-                        v-else
+                    <b-button variant="success" type="button" disabled v-else
                         >Submit</b-button
                     >
                 </template>
@@ -355,7 +360,8 @@ export default {
             form: {
                 remarks: "",
                 lead_id: "",
-                lead_status: ""
+                lead_status: "",
+                venue_id: "",
             },
             hasRemarks: "All",
             updated_by: "",
@@ -394,6 +400,7 @@ export default {
                     };
                 }),
             ],
+            venue_id: null, //used in remarks modal
         };
     },
     watch: {
@@ -430,10 +437,17 @@ export default {
             // assigned date filter
             if (this.start_to != "" && this.end_to != "") {
                 return this.items.filter((item) => {
-                    const itemDate = new Date(item.assigned_employee.created_at);
+                    const itemDate = new Date(
+                        item.assigned_employee.created_at
+                    );
                     const start = new Date(this.start_to);
                     const end = new Date(this.end_to);
-                    return itemDate.toLocaleDateString("en-US") >= start.toLocaleDateString("en-US") && itemDate.toLocaleDateString("en-US") <= end.toLocaleDateString("en-US");
+                    return (
+                        itemDate.toLocaleDateString("en-US") >=
+                            start.toLocaleDateString("en-US") &&
+                        itemDate.toLocaleDateString("en-US") <=
+                            end.toLocaleDateString("en-US")
+                    );
                 });
             }
 
@@ -443,7 +457,7 @@ export default {
                     return item.occupation == this.occupation;
                 });
             }
-            
+
             // venue filter
             if (this.venue) {
                 return this.items.filter((item) => {
@@ -500,15 +514,17 @@ export default {
             this.form.lead_id = this.selected_row_id;
             this.form.remarks = this.remarks;
             this.form.lead_status = this.lead_status;
+            this.form.venue_id = this.venue_id;
             router.post("/remarks", this.form);
             this.remarks = "";
             this.$bvModal.hide("remarks-modal");
         },
         selectedLead(data) {
-            console.log(data, "lead_status")
+            console.log(data, "lead_status");
             this.selected_row_id = data.id;
             this.remarks = data.remarks;
             this.lead_status = data.lead_status;
+            this.venue_id = data.venue_id;
             this.updated_by =
                 data.updated_by.length != 0
                     ? data.updated_by.last_name +
@@ -534,11 +550,14 @@ export default {
             this.$bvModal.hide("invite-modal");
         },
         formatDate(value) {
-
             let date_value = new Date(value);
 
-            return date_value.toLocaleDateString("en-US") + " " + date_value.toLocaleTimeString("en-US");
-        }
+            return (
+                date_value.toLocaleDateString("en-US") +
+                " " +
+                date_value.toLocaleTimeString("en-US")
+            );
+        },
     },
 };
 </script>

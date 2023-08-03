@@ -483,7 +483,6 @@
                         <b-form-group
                             label="Venue"
                             label-for="venue"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="venue"
@@ -780,6 +779,7 @@ export default {
         submit() {
             this.$bvModal.hide("confirm-submit-modal");
 
+            this.form.owned_gadgets = [];
             router.post("/leads", this.form, {
                 forceFormData: true,
             });

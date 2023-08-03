@@ -515,7 +515,6 @@
                         <b-form-group
                             label="Venue"
                             label-for="venue"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="venue"
