@@ -345,7 +345,9 @@ class LeadController extends Controller
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'occupation_list' => Helper::occupationList(),
-            'per_page' => 5
+            'per_page' => 5,
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource()
         ]);
     }
 

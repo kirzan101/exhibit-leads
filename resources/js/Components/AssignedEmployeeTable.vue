@@ -373,7 +373,7 @@ export default {
                 { value: null, text: "-- select --" },
                 ...this.status_list.map((item) => {
                     return {
-                        value: item.code,
+                        value: item.name,
                         text: item.name + " " + "(" + item.code + ")",
                     };
                 }),

@@ -142,6 +142,10 @@ class Helper
     {
         $statuses = [
             [
+                'name' => 'Booked',
+                'code' => 'B'
+            ],
+            [
                 'name' => 'Qualified',
                 'code' => 'Q'
             ],
@@ -176,6 +180,10 @@ class Helper
             [
                 'name' => 'Wrong Number',
                 'code' => 'WN'
+            ],
+            [
+                'name' => 'Cancelled',
+                'code' => 'C'
             ],
         ];
 

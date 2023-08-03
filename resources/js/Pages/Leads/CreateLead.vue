@@ -480,10 +480,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="4">
-                        <b-form-group
-                            label="Venue"
-                            label-for="venue"
-                        >
+                        <b-form-group label="Venue" label-for="venue">
                             <b-form-select
                                 id="venue"
                                 v-model="form.venue_id"
@@ -566,7 +563,7 @@
                             label-for="source"
                             label-class="required"
                         >
-                            <b-form-select
+                            <!-- <b-form-select
                                 id="souce"
                                 v-model="form.source_id"
                                 :state="errors.source_id ? false : null"
@@ -577,7 +574,21 @@
                                 :state="errors.source_id ? false : null"
                             >
                                 {{ errors.source_id }}
-                            </b-form-invalid-feedback>
+                            </b-form-invalid-feedback> -->
+
+                            <b-input-group>
+                                <b-form-input></b-form-input>
+
+                                <template #prepend>
+                                    <b-form-select
+                                        id="souce"
+                                        v-model="form.source_id"
+                                        :state="errors.source_id ? false : null"
+                                        :options="source_options"
+                                        required
+                                    ></b-form-select>
+                                </template>
+                            </b-input-group>
                         </b-form-group>
                     </b-col>
                 </b-row>
