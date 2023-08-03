@@ -33,44 +33,10 @@ class LeadService
     {
         // convert array to single string
         $owned_gadgets = implode(',', $request['owned_gadgets']);
+        $request['owned_gadgets'] = $owned_gadgets;
+        $request['created_by'] = Auth::user()->employee->id;
 
-        $lead = Lead::create([
-            'title' => $request['title'],
-            'first_name' => $request['first_name'],
-            'middle_name' => $request['middle_name'],
-            'last_name' => $request['last_name'],
-            'alias' => $request['alias'],
-            'suffix' => $request['suffix'],
-            'birth_date' => $request['birth_date'],
-            'address' => $request['address'],
-            'secondary_address' => $request['secondary_address'],
-            'nationality' => $request['nationality'],
-            'gender' => $request['gender'],
-            'civil_status' => $request['civil_status'],
-            'company_name' => $request['company_name'],
-            'company_number' => $request['company_number'],
-            'occupation' => $request['occupation'],
-            'email' => $request['email'],
-            'mobile_number_one' => $request['mobile_number_one'],
-            'mobile_number_two' => $request['mobile_number_two'],
-            'telephone' => $request['telephone'],
-            'fax' => $request['fax'],
-            'combined_monthly_income' => $request['combined_monthly_income'],
-            'internet_connection' => $request['internet_connection'],
-            'owned_gadgets' => $owned_gadgets,
-            'other_gadgets' => $request['other_gadgets'],
-            'spouse_occupation' => $request['spouse_occupation'],
-            'nature_of_business' => $request['nature_of_business'],
-            'presentation_date' => $request['presentation_date'],
-            'exhibit_code' => $request['exhibit_code'],
-            'property_id' => $request['property_id'],
-            'refer_by' => $request['refer_by'],
-            'holiday_consultant' => $request['holiday_consultant'],
-            'membership_type' => $request['membership_type'],
-            'is_confidential' => $request['is_confidential'],
-            'venue_id' => $request['venue_id'],
-            'created_by' => Auth::user()->employee->id
-        ]);
+        $lead = Lead::create($request);
 
         if ($request['contract_file']) {
             $result = Helper::uploadFile($request['contract_file'], $lead);

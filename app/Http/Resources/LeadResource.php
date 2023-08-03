@@ -60,6 +60,7 @@ class LeadResource extends JsonResource
             'presentation_date' => $this->presentation_date,
             'exhibit_code' => $this->exhibit_code,
             'source' => $this->source,
+            'source_id' => $this->source_id,
             'refer_by' => $this->refer_by,
             'holiday_consultant' => $this->holiday_consultant,
             'membership_type' => $this->membership_type,

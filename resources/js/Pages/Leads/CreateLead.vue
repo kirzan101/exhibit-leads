@@ -488,16 +488,12 @@
                             <b-form-select
                                 id="venue"
                                 v-model="form.venue_id"
-                                :state="
-                                    errors.venue_id ? false : null
-                                "
+                                :state="errors.venue_id ? false : null"
                                 :options="venues_options"
                                 required
                             ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="
-                                    errors.venue_id ? false : null
-                                "
+                                :state="errors.venue_id ? false : null"
                             >
                                 {{ errors.venue_id }}
                             </b-form-invalid-feedback>
@@ -571,15 +567,17 @@
                             label-for="source"
                             label-class="required"
                         >
-                            <b-form-input
-                                type="text"
-                                id="source"
-                                v-model="form.source"
-                            ></b-form-input>
+                            <b-form-select
+                                id="souce"
+                                v-model="form.source_id"
+                                :state="errors.source_id ? false : null"
+                                :options="source_options"
+                                required
+                            ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="errors.source ? false : null"
+                                :state="errors.source_id ? false : null"
                             >
-                                {{ errors.source }}
+                                {{ errors.source_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -681,8 +679,8 @@ export default {
     props: {
         errors: Object,
         properties: Array,
-        lead_sources: Array,
         venues: Array,
+        sources: Array,
     },
     data() {
         return {
@@ -716,7 +714,7 @@ export default {
                 property_id: null,
                 contract_file: null,
                 presentation_date: null,
-                source: null,
+                source_id: null,
                 membership_type: null,
                 refer_by: null,
                 holiday_consultant: null,
@@ -764,18 +762,18 @@ export default {
                     return { text: i.name, value: i.id };
                 }),
             ],
-            lead_source_options: [
-                { text: "-- select --", value: null },
-                ...this.lead_sources.map((i) => {
-                    return { text: i.name, value: i.name };
-                }),
-            ],
             venues_options: [
                 { text: "-- select --", value: null },
                 ...this.venues.map((i) => {
                     return { text: i.name, value: i.id };
-                })
-            ]
+                }),
+            ],
+            source_options: [
+                { text: "-- select --", value: null },
+                ...this.sources.map((i) => {
+                    return { text: i.name, value: i.id };
+                }),
+            ],
         };
     },
     methods: {

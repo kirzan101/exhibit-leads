@@ -50,7 +50,7 @@ class LeadFormRequest extends FormRequest
             'nature_of_business' => 'required|min:2',
             'property_id' => 'required|exists:properties,id',
             'contract_file' => 'nullable|file|mimes:png,jpg,jpeg',
-            'source' => 'required|min:2',
+            'source_id' => 'required|exists:sources,id',
             'presentation_date' => 'required|date_format:Y-m-d',
             'refer_by' => 'nullable|min:2',
             'holiday_consultant' => 'nullable|min:2',

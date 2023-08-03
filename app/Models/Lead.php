@@ -11,29 +11,29 @@ class Lead extends Model
 
     protected $fillable = [
         'first_name',
-        'middle_name', //x
+        'middle_name',
         'last_name',
         'title',
-        'alias', //x
-        'suffix', //x
+        'alias',
+        'suffix',
         'birth_date',
         'address',
-        'secondary_address', //x
+        'secondary_address',
         'nationality',
         'gender',
         'civil_status',
-        'company_name', //x
-        'company_number', //x
+        'company_name',
+        'company_number',
         'occupation',
         'email',
         'mobile_number_one',
-        'mobile_number_two', //x
-        'telephone', //x
-        'fax', //x
+        'mobile_number_two',
+        'telephone',
+        'fax',
         'combined_monthly_income',
         'internet_connection',
         'owned_gadgets',
-        'other_gadgets', //x
+        'other_gadgets',
         'spouse_occupation',
         'nature_of_business',
         'property_id',
@@ -47,7 +47,7 @@ class Lead extends Model
         'lead_status',
         'lead_status_confirmer',
         'exhibit_code',
-        'source',
+        'source_id',
         'presentation_date',
         'refer_by',
         'holiday_consultant',
@@ -123,16 +123,41 @@ class Lead extends Model
         return ltrim(strstr($this->contract_file, "/"), '/');
     }
 
+    /**
+     * associate assigned confirmer to lead
+     *
+     * @return void
+     */
     public function assignedConfirmer()
     {
         return $this->hasOne(AssignedConfirmer::class);
     }
 
+    /**
+     * associate assigned employee to lead
+     *
+     * @return void
+     */
     public function assignedEmployee()
     {
         return $this->hasOne(AssignedEmployee::class);
     }
 
+    /**
+     * associate lead to source
+     *
+     * @return void
+     */
+    public function source()
+    {
+        return $this->belongsTo(Source::class, 'source_id');
+    }
+
+    /**
+     * ge the assigned employee full name
+     *
+     * @return void
+     */
     public function getAssignedEmployee()
     {
         $confirmer = Employee::select('employees.*')
@@ -147,6 +172,11 @@ class Lead extends Model
         return '-';
     }
 
+    /**
+     * get the assigned confirmer full name
+     *
+     * @return void
+     */
     public function getAssignedConfirmer()
     {
         $confirmer = Employee::select('employees.*')

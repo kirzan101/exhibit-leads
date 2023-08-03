@@ -50,7 +50,7 @@ return new class extends Migration
             $table->string('lead_status')->nullable();
             $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();
-            $table->string('source')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
             $table->date('presentation_date')->nullable();
             $table->string('refer_by')->nullable();
             $table->string('holiday_consultant')->nullable();
@@ -63,6 +63,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('venue_id')->references('id')->on('venues');
+            $table->foreign('source_id')->references('id')->on('sources');
             $table->foreign('property_id')->references('id')->on('properties');
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('created_by')->references('id')->on('employees');

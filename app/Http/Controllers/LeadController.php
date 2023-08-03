@@ -9,6 +9,7 @@ use App\Models\Lead;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
+use App\Services\SourceService;
 use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
@@ -22,13 +23,20 @@ class LeadController extends Controller
     private EmployeeService $employeeService;
     private PropertyService $propertyService;
     private VenueService $venueService;
+    private SourceService $sourceService;
 
-    public function __construct(LeadService $leadService, EmployeeService $employeeService, PropertyService $propertyService, VenueService $venueService)
-    {
+    public function __construct(
+        LeadService $leadService,
+        EmployeeService $employeeService,
+        PropertyService $propertyService,
+        VenueService $venueService,
+        SourceService $sourceService
+    ) {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
+        $this->sourceService = $sourceService;
     }
 
     /**
@@ -56,8 +64,8 @@ class LeadController extends Controller
 
         return Inertia::render('Leads/CreateLead', [
             'properties' => $this->propertyService->indexProperty(),
-            'lead_sources' => Helper::leadSource(),
-            'venues' => $this->venueService->indexVenueService()
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
         ]);
     }
 
@@ -96,8 +104,8 @@ class LeadController extends Controller
         return Inertia::render('Leads/ShowLead', [
             'lead' => new LeadResource($lead),
             'properties' => $this->propertyService->indexProperty(),
-            'lead_sources' => Helper::leadSource(),
-            'venues' => $this->venueService->indexVenueService()
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
         ]);
     }
 
@@ -113,8 +121,8 @@ class LeadController extends Controller
         return Inertia::render('Leads/EditLead', [
             'lead' => new LeadResource($lead),
             'properties' => $this->propertyService->indexProperty(),
-            'lead_sources' => Helper::leadSource(),
-            'venues' => $this->venueService->indexVenueService()
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
         ]);
     }
 
@@ -271,7 +279,7 @@ class LeadController extends Controller
         ]);
 
         try {
-            
+
             $lead = Lead::find($request->lead_id);
 
             $lead = $this->leadService->confirmLead($lead, $request->toArray());
@@ -341,7 +349,6 @@ class LeadController extends Controller
         try {
 
             $this->leadService->showed($request->toArray());
-
         } catch (Exception $e) {
             return redirect()->route('confirmed')->with('error', 'Unsuccessful to mark as showed!');
         }

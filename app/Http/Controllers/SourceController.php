@@ -124,9 +124,4 @@ class SourceController extends Controller
 
         return redirect()->route('sources.index')->with('success', 'Successfully deleted!');
     }
-
-    public function testDropDown()
-    {
-        return Inertia::render('Sources/TestDropDown');
-    }
 }
