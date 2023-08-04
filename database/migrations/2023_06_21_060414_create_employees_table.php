@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('property_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('user_group_id');
+            $table->unsignedBigInteger('exhibitor_id')->nullable();
             $table->timestamps();
 
             $table->foreign('property_id')->references('id')->on('properties');

@@ -17,6 +17,7 @@ class Employee extends Model
         'property_id',
         'user_id',
         'user_group_id',
+        'exhibitor_id',
     ];
 
     /**
@@ -64,5 +65,15 @@ class Employee extends Model
     public function employeeVenue()
     {
         return $this->hasMany(EmployeeVenue::class);
+    }
+
+    /**
+     * associate employee to the employee exhibitor
+     *
+     * @return void
+     */
+    public function exhibitor()
+    {
+        return $this->belongsTo(Employee::class, 'exhibitor_id');
     }
 }

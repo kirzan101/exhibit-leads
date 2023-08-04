@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\Lead;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -233,18 +234,9 @@ class Helper
      */
     public static function leadSource()
     {
-        // $lead_sources = [
-        //     [
-        //         'name' => 'EXHIBIT',
-        //     ],
-        //     [
-        //         'name' => 'ROI',
-        //     ]
-        // ];
-
         $lead_sources = DB::table('leads')
-            ->select('source')
-            ->groupBy('source')
+            ->select(DB::raw("CONCAT('source_prefix','source') AS source"))
+            ->groupBy('source_prefix', 'source')
             ->get()
             ->toArray();
 
@@ -265,5 +257,34 @@ class Helper
             ->toArray();
 
         return $occupations;
+    }
+
+    public static function sourcePrefix() : array
+    {
+        $prefix = [
+            [
+                'name' => 'LSR',
+            ],
+            [
+                'name' => 'ALM',
+            ],
+            [
+                'name' => 'PRJ',
+            ],
+            [
+                'name' => 'ROI',
+            ],
+            [
+                'name' => 'NMB',
+            ],
+            [
+                'name' => 'BROI',
+            ],
+            [
+                'name' => 'BNMB',
+            ]
+        ];
+
+        return $prefix;
     }
 }

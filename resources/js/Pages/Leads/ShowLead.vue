@@ -1,14 +1,15 @@
 <template>
     <b-container fluid>
         <Head>
-            <title>Leads | Details</title>
+            <title>Leads | Show</title>
         </Head>
         <h5>
-            Lead Details |
+            Edit Show |
             <Link class="btn btn-secondary" href="/leads">Back</Link>
         </h5>
+        <span class="note">Note: Fields that has "*" is required</span>
         <div class="p-1">
-            <b-form>
+            <b-form @submit.prevent="submit">
                 <b-row>
                     <b-col sm="3">
                         <b-form-group
@@ -106,11 +107,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group
-                            label="Birth date"
-                            label-for="birth-date"
-                            label-class="required"
-                        >
+                        <b-form-group label="Birth date" label-for="birth-date">
                             <b-form-input
                                 type="date"
                                 id="birth-date"
@@ -126,11 +123,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group
-                            label="Gender"
-                            label-for="gender"
-                            label-class="required"
-                        >
+                        <b-form-group label="Gender" label-for="gender">
                             <b-form-select
                                 id="gender"
                                 v-model="form.gender"
@@ -188,14 +181,13 @@
                         <b-form-group
                             label="Nationality"
                             label-for="nationality"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
                                 id="nationality"
                                 v-model="form.nationality"
                                 :state="errors.nationality ? false : null"
-                                readonly
+                                :disabled="true"
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.nationality ? false : null"
@@ -208,7 +200,6 @@
                         <b-form-group
                             label="Civil Status"
                             label-for="civil-status"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="civil-status"
@@ -248,7 +239,6 @@
                         <b-form-group
                             label="Spouse Occupation"
                             label-for="spouse-occupation"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -270,7 +260,6 @@
                         <b-form-group
                             label="Company Name"
                             label-for="company-name"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -303,7 +292,6 @@
                         <b-form-group
                             label="Nature of business"
                             label-for="nature-of-business"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="text"
@@ -368,7 +356,7 @@
                                 id="mobile-number-one"
                                 v-model="form.mobile_number_one"
                                 :state="errors.mobile_number_one ? false : null"
-                                readonly
+                                :disabled="true"
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.mobile_number_one ? false : null"
@@ -406,7 +394,6 @@
                         <b-form-group
                             label="Combined monthly Income"
                             label-for="combined-monthly-income"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="combined-monthly-income"
@@ -434,7 +421,6 @@
                         <b-form-group
                             label="Internet Connection"
                             label-for="internet-connection"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="internet-connection"
@@ -457,7 +443,6 @@
                     <b-col sm="3">
                         <b-form-group
                             label="Other gadget(s) you own aside from cellphone:"
-                            label-class="required"
                         >
                             <b-form-checkbox-group
                                 id="other-gadgets"
@@ -512,10 +497,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="4">
-                        <b-form-group
-                            label="Venue"
-                            label-for="venue"
-                        >
+                        <b-form-group label="Venue" label-for="venue">
                             <b-form-select
                                 id="venue"
                                 v-model="form.venue_id"
@@ -541,16 +523,15 @@
                                 :state="errors.contract_file ? false : null"
                                 placeholder="Choose an image"
                                 accept="image/png, image/jpg, image/jpeg"
-                                :disabled="true"
+                                readonly
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
-                                <b v-if="lead.contract_file_name == null">{{
+                                <b>{{
                                     form.contract_file
                                         ? form.contract_file.name
                                         : ""
                                 }}</b>
-                                <b v-else>{{ lead.contract_file_name }}</b>
                             </div>
                         </b-form-group>
                     </b-col>
@@ -579,7 +560,6 @@
                         <b-form-group
                             label="Presentation date"
                             label-for="presentation-date"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="date"
@@ -601,17 +581,30 @@
                             label-for="source"
                             label-class="required"
                         >
-                            <b-form-select
-                                id="souce"
-                                v-model="form.source_id"
-                                :state="errors.source_id ? false : null"
-                                :options="source_options"
-                                :disabled="true"
-                            ></b-form-select>
+                            <b-input-group>
+                                <b-form-input v-model="form.source" readonly></b-form-input>
+
+                                <template #prepend>
+                                    <b-form-select
+                                        id="source"
+                                        v-model="form.source_prefix"
+                                        :state="errors.source_prefix ? false : null"
+                                        :options="source_options"
+                                        :disabled="true"
+                                    ></b-form-select>
+                                </template>
+                            </b-input-group>
                             <b-form-invalid-feedback
-                                :state="errors.source_id ? false : null"
+                                :state="errors.source ? false : null"
+                                v-if="!form.source_prefix"
                             >
-                                {{ errors.source_id }}
+                                {{ errors.source_prefix }}
+                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback
+                                :state="errors.source ? false : null"
+                                v-else
+                            >
+                                {{ errors.source }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -723,7 +716,8 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
-                source_id: this.lead.source_id,
+                source: this.lead.source,
+                source_prefix: this.lead.source_prefix,
                 membership_type: this.lead.membership_type,
                 refer_by: this.lead.refer_by,
                 holiday_consultant: this.lead.holiday_consultant,
@@ -780,7 +774,7 @@ export default {
             source_options: [
                 { text: "-- select --", value: null },
                 ...this.sources.map((i) => {
-                    return { text: i.name, value: i.id };
+                    return { text: i.name, value: i.name };
                 }),
             ],
         };

@@ -97,7 +97,7 @@ class AssignedEmployeeController extends Controller
         $lead = Lead::where('id', $id)->where('is_assigned', true)->first();
 
         if ($lead) {
-            $employee = Employee::find($lead->employee_id);
+            $employee = $lead->assignedEmployee->employee;
             return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
                 'lead' => $this->leadService->showLead($lead),
                 'assigned_employee' => ($employee) ? $employee->getFullName() : '-'

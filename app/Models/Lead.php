@@ -38,22 +38,23 @@ class Lead extends Model
         'nature_of_business',
         'property_id',
         'contract_file',
-        'is_assigned',
+        'is_booker_assigned',
         'is_invited',
         'is_showed',
         'is_confirm_assigned',
+        'is_exhibitor_assigned',
         'remarks',
         'confirmer_remarks',
         'lead_status',
         'lead_status_confirmer',
         'exhibit_code',
-        'source_id',
+        'source_prefix',
+        'source',
         'presentation_date',
         'refer_by',
         'holiday_consultant',
         'membership_type',
         'is_confidential',
-        'employee_id',
         'venue_id',
         'created_by',
         'updated_by',
@@ -83,14 +84,9 @@ class Lead extends Model
         return sprintf('%s/%s', $this->mobile_number_one, $this->mobile_number_two);
     }
 
-    /**
-     * associate lead to employee
-     *
-     * @return void
-     */
-    public function employee()
+    public function getSource()
     {
-        return $this->belongsTo(Employee::class);
+        return sprintf('%s-%s', $this->source_prefix, $this->source);
     }
 
     /**

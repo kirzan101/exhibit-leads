@@ -180,7 +180,7 @@ export default {
                 { key: "occupation", label: "Occupation", sortable: true },
                 { key: "venue.name", label: "Venue", sortable: true },
                 {
-                    key: "employee_full_name",
+                    key: "assigned_employee_name",
                     label: "Assigned To",
                     sortable: true,
                 },

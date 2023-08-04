@@ -563,32 +563,32 @@
                             label-for="source"
                             label-class="required"
                         >
-                            <!-- <b-form-select
-                                id="souce"
-                                v-model="form.source_id"
-                                :state="errors.source_id ? false : null"
-                                :options="source_options"
-                                required
-                            ></b-form-select>
-                            <b-form-invalid-feedback
-                                :state="errors.source_id ? false : null"
-                            >
-                                {{ errors.source_id }}
-                            </b-form-invalid-feedback> -->
-
                             <b-input-group>
-                                <b-form-input></b-form-input>
+                                <b-form-input v-if="form.source_prefix" v-model="form.source" :state="errors.source ? false : null"></b-form-input>
+                                <b-form-input v-else readonly></b-form-input>
 
                                 <template #prepend>
                                     <b-form-select
-                                        id="souce"
-                                        v-model="form.source_id"
-                                        :state="errors.source_id ? false : null"
+                                        id="source"
+                                        v-model="form.source_prefix"
+                                        :state="errors.source_prefix ? false : null"
                                         :options="source_options"
                                         required
                                     ></b-form-select>
                                 </template>
                             </b-input-group>
+                            <b-form-invalid-feedback
+                                :state="errors.source ? false : null"
+                                v-if="!form.source_prefix"
+                            >
+                                {{ errors.source_prefix }}
+                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback
+                                :state="errors.source ? false : null"
+                                v-else
+                            >
+                                {{ errors.source }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -724,7 +724,8 @@ export default {
                 property_id: null,
                 contract_file: null,
                 presentation_date: null,
-                source_id: null,
+                source_prefix: null,
+                source: null,
                 membership_type: null,
                 refer_by: null,
                 holiday_consultant: null,
@@ -781,7 +782,7 @@ export default {
             source_options: [
                 { text: "-- select --", value: null },
                 ...this.sources.map((i) => {
-                    return { text: i.name, value: i.id };
+                    return { text: i.name, value: i.name };
                 }),
             ],
         };

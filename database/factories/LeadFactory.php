@@ -36,11 +36,11 @@ class LeadFactory extends Factory
             'nature_of_business' => fake()->bs(),
             'property_id' => 1,
             'created_by' => 1,
-            'is_assigned' => false,
             'presentation_date' => fake()->dateTimeBetween(now(), "+5 days"),
             'exhibit_code' => fake()->randomElement(['Sales Deck', 'Palawan', 'Bora']),
             'venue_id' => fake()->numberBetween(1, 3),
-            'source_id' => fake()->numberBetween(1, 3)
+            'source_prefix' => fake()->randomElement(['LSR', 'ALM', 'PRJ', 'ROI']),
+            'source' => fake()->randomElement(['AA', 'BB', 'CC', 'DD', 'EE'])
         ];
     }
 }

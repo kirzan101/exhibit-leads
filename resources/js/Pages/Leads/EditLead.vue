@@ -110,6 +110,7 @@
                                 id="birth-date"
                                 v-model="form.birth_date"
                                 :state="errors.birth_date ? false : null"
+                                required
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.birth_date ? false : null"
@@ -125,6 +126,7 @@
                                 v-model="form.gender"
                                 :state="errors.gender ? false : null"
                                 :options="genders"
+                                required
                             ></b-form-select>
                             <b-form-invalid-feedback
                                 :state="errors.gender ? false : null"
@@ -478,10 +480,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="4">
-                        <b-form-group
-                            label="Venue"
-                            label-for="venue"
-                        >
+                        <b-form-group label="Venue" label-for="venue">
                             <b-form-select
                                 id="venue"
                                 v-model="form.venue_id"
@@ -510,12 +509,11 @@
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
-                                <b v-if="lead.contract_file_name == null">{{
+                                <b>{{
                                     form.contract_file
                                         ? form.contract_file.name
                                         : ""
                                 }}</b>
-                                <b v-else>{{ lead.contract_file_name }}</b>
                             </div>
                         </b-form-group>
                     </b-col>
@@ -565,17 +563,31 @@
                             label-for="source"
                             label-class="required"
                         >
-                            <b-form-select
-                                id="souce"
-                                v-model="form.source_id"
-                                :state="errors.source_id ? false : null"
-                                :options="source_options"
-                                required
-                            ></b-form-select>
+                            <b-input-group>
+                                <b-form-input v-if="form.source_prefix" v-model="form.source" :state="errors.source ? false : null"></b-form-input>
+                                <b-form-input v-else readonly></b-form-input>
+
+                                <template #prepend>
+                                    <b-form-select
+                                        id="source"
+                                        v-model="form.source_prefix"
+                                        :state="errors.source_prefix ? false : null"
+                                        :options="source_options"
+                                        required
+                                    ></b-form-select>
+                                </template>
+                            </b-input-group>
                             <b-form-invalid-feedback
-                                :state="errors.source_id ? false : null"
+                                :state="errors.source ? false : null"
+                                v-if="!form.source_prefix"
                             >
-                                {{ errors.source_id }}
+                                {{ errors.source_prefix }}
+                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback
+                                :state="errors.source ? false : null"
+                                v-else
+                            >
+                                {{ errors.source }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -713,7 +725,8 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
-                source_id: this.lead.source_id,
+                source: this.lead.source,
+                source_prefix: this.lead.source_prefix,
                 membership_type: this.lead.membership_type,
                 refer_by: this.lead.refer_by,
                 holiday_consultant: this.lead.holiday_consultant,
@@ -770,7 +783,7 @@ export default {
             source_options: [
                 { text: "-- select --", value: null },
                 ...this.sources.map((i) => {
-                    return { text: i.name, value: i.id };
+                    return { text: i.name, value: i.name };
                 }),
             ],
         };

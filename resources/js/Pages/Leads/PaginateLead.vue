@@ -140,14 +140,6 @@ export default {
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "address", label: "Address", sortable: true },
-                // {
-                //     key: "is_assigned",
-                //     label: "Is Assigned",
-                //     sortable: false,
-                //     formatter: (value, key, item) => {
-                //         return value ? "Yes" : "No";
-                //     },
-                // },
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",

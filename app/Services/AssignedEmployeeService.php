@@ -20,9 +20,13 @@ class AssignedEmployeeService
      */
     public function indexAssignedEmployee(): Collection
     {
-        $assigned_employees = Lead::where('is_assigned', true)->where('is_invited', false)->get();
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', true)
+            ->where('leads.is_invited', false)
+            ->get();
 
-        return $assigned_employees;
+        return $assigned_leads;
     }
 
     /**
@@ -43,8 +47,7 @@ class AssignedEmployeeService
 
                 $lead = Lead::find($lead);
                 $lead->update([
-                    'is_assigned' => true,
-                    'employee_id' => $request['employee_id'],
+                    'is_booker_assigned' => true,
                     'updated_by' => Auth::user()->employee->id
                 ]);
             }
@@ -74,8 +77,7 @@ class AssignedEmployeeService
 
                 $lead = Lead::find($lead);
                 $lead->update([
-                    'is_assigned' => true,
-                    'employee_id' => $request['employee_id'],
+                    'is_booker_assigned' => true,
                     'updated_by' => Auth::user()->employee->id
                 ]);
             }
@@ -111,11 +113,13 @@ class AssignedEmployeeService
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
                 $lead->update([
-                    'is_assigned' => false,
-                    'employee_id' => null,
+                    'is_booker_assigned' => false,
                     'remarks' => null,
                     'updated_by' => Auth::user()->employee->id
                 ]);
+
+                $assigned_employee = AssignedEmployee::where('lead_id', $lead->id);
+                $assigned_employee->delee();
             }
         } catch (Exception $ex) {
             return false;
@@ -131,8 +135,13 @@ class AssignedEmployeeService
      */
     public function indexCurrentAssignedEmployee(): Collection
     {
-        $assigned_employees = Lead::where('is_assigned', true)->where('is_invited', false)->where('employee_id', Auth::user()->employee->id)->get();
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', true)
+            ->where('leads.is_invited', false)
+            ->where('assigned_employee.employee_id', Auth::user()->employee->id)
+            ->get();
 
-        return $assigned_employees;
+        return $assigned_leads;
     }
 }

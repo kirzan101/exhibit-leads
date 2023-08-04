@@ -41,6 +41,12 @@ class UserGroupSeeder extends Seeder
                 'department' => 'AVLCI',
                 'description' => 'AVLCI',
                 'property_id' => $property->id,
+            ],
+            [
+                'name' => 'exhibit-admin',
+                'department' => 'AVLCI',
+                'description' => 'AVLCI',
+                'property_id' => $property->id,
             ]
         ];
 
@@ -63,7 +69,7 @@ class UserGroupSeeder extends Seeder
                             'permission_id' => $permission->id
                         ]);
                     }
-                } else if ($usergroup->name == 'exhibit') {
+                } else if ($usergroup->name == 'exhibit' || $usergroup->name == 'exhibit-admin') {
                     foreach ($exhibit_permissions as $permission) {
                         UserGroupPermission::create([
                             'user_group_id' => $usergroup->id,

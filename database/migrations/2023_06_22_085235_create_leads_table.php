@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('nature_of_business')->nullable();
             $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
-            $table->boolean('is_assigned')->default(false);
+            $table->boolean('is_booker_assigned')->default(false);
             $table->boolean('is_showed')->default(false);
             $table->boolean('is_confirm_assigned')->default(false);
             $table->longText('remarks')->nullable();
@@ -50,22 +50,21 @@ return new class extends Migration
             $table->string('lead_status')->nullable();
             $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();
-            $table->unsignedBigInteger('source_id')->nullable();
+            $table->string('source_prefix')->nullable();
+            $table->string('source')->nullable();
             $table->date('presentation_date')->nullable();
             $table->string('refer_by')->nullable();
             $table->string('holiday_consultant')->nullable();
             $table->string('membership_type')->nullable();
             $table->boolean('is_confidential')->default(false);
-            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->boolean('is_exhibitor_assigned')->default(false);
             $table->unsignedBigInteger('venue_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
 
             $table->foreign('venue_id')->references('id')->on('venues');
-            $table->foreign('source_id')->references('id')->on('sources');
             $table->foreign('property_id')->references('id')->on('properties');
-            $table->foreign('employee_id')->references('id')->on('employees');
             $table->foreign('created_by')->references('id')->on('employees');
             $table->foreign('updated_by')->references('id')->on('employees');
         });

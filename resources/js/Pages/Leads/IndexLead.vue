@@ -133,25 +133,11 @@ export default {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
-                // {
-                //     key: "id",
-                //     label: "Id",
-                //     sortable: true,
-                //     sortDirection: "desc",
-                // },
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
-                { key: "source.name", label: "Source", sortable: true },
+                { key: "source", label: "Source", sortable: true },
                 { key: "venue.name", label: "Venue", sortable: true },
-                // {
-                //     key: "is_assigned",
-                //     label: "Is Assigned",
-                //     sortable: false,
-                //     formatter: (value, key, item) => {
-                //         return value ? "Yes" : "No";
-                //     },
-                // },
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",

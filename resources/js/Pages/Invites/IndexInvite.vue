@@ -242,7 +242,7 @@ export default {
                 //     },
                 // },
                 {
-                    key: "employee_full_name",
+                    key: "assigned_employee_name",
                     label: "Assigned To",
                     sortable: true,
                 },

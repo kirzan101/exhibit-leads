@@ -15,53 +15,26 @@ class SourceSeeder extends Seeder
     {
         $sources = [
             [
-                'name' => 'ROI-KR'
+                'name' => 'LSR',
             ],
             [
-                'name' => 'NMB-KR'
+                'name' => 'ALM',
             ],
             [
-                'name' => 'ROI-Dodie'
+                'name' => 'PRJ',
             ],
             [
-                'name' => 'NMB-Dodie'
+                'name' => 'ROI',
             ],
             [
-                'name' => 'ROI-Elson'
+                'name' => 'NMB',
             ],
             [
-                'name' => 'NMB-Elson'
+                'name' => 'BROI',
             ],
             [
-                'name' => 'ROI-Oliver'
-            ],
-            [
-                'name' => 'NMB-Oliver'
-            ],
-            [
-                'name' => 'BROIJ'
-            ],
-            [
-                'name' => 'BNMBJ'
-            ],
-            [
-                'name' => 'BROII'
-            ],
-            [
-                'name' => 'BNMBI'
-            ],
-            [
-                'name' => 'BROIM'
-            ],
-            [
-                'name' => 'BNMBM'
-            ],
-            [
-                'name' => 'BROIV'
-            ],
-            [
-                'name' => 'BNMBV'
-            ],
+                'name' => 'BNMB',
+            ]
         ];
 
         foreach($sources as $source) {
