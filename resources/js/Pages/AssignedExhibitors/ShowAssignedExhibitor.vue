@@ -4,7 +4,7 @@
             <title>Leads | Show</title>
         </Head>
         <h5>
-            Show Lead |
+            Show |
             <Link class="btn btn-secondary" href="/leads">Back</Link>
         </h5>
         <span class="note">Note: Fields that has "*" is required</span>
@@ -683,6 +683,7 @@ export default {
         properties: Array,
         venues: Array,
         sources: Array,
+        assigned_exhibitor: String,
     },
     data() {
         return {

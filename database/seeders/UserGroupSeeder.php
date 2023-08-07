@@ -54,9 +54,18 @@ class UserGroupSeeder extends Seeder
         $exhibit_permissions = Permission::where('module', 'leads')
             ->orWhere('module', 'employees')
             ->orWhere('module', 'assigns')
-            ->orWhere('module', 'invites')->get();
+            ->orWhere('module', 'invites')
+            ->orWhere('module', 'sources')
+            ->orWhere('module', 'venues')
+            ->get();
         $employee_permissions = Permission::where('module', 'leads')->get();
         $confirmer_permissions = Permission::where('module', 'confirms')->get();
+        $exhibit_admin_permissions = Permission::where('module', 'leads')
+            ->orWhere('module', 'employees')
+            ->orWhere('module', 'assign-exhibitors')
+            ->orWhere('module', 'sources')
+            ->orWhere('module', 'venues')
+            ->get();
 
         if ($admin_permissions->count() > 0) {
             foreach ($user_groups as $user_group) {
@@ -69,8 +78,15 @@ class UserGroupSeeder extends Seeder
                             'permission_id' => $permission->id
                         ]);
                     }
-                } else if ($usergroup->name == 'exhibit' || $usergroup->name == 'exhibit-admin') {
+                } else if ($usergroup->name == 'exhibit') {
                     foreach ($exhibit_permissions as $permission) {
+                        UserGroupPermission::create([
+                            'user_group_id' => $usergroup->id,
+                            'permission_id' => $permission->id
+                        ]);
+                    }
+                } else if ($usergroup->name == 'exhibit-admin') {
+                    foreach ($exhibit_admin_permissions as $permission) {
                         UserGroupPermission::create([
                             'user_group_id' => $usergroup->id,
                             'permission_id' => $permission->id

@@ -23,7 +23,7 @@ class AssignedEmployee extends Model
      */
     public function employee()
     {
-        $this->belongsTo(Employee::class, 'employee_id');
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
     /**
@@ -33,7 +33,7 @@ class AssignedEmployee extends Model
      */
     public function lead()
     {
-        $this->belongsTo(Lead::class, 'lead_id');
+        return $this->belongsTo(Lead::class, 'lead_id');
     }
 
     /**
@@ -43,7 +43,7 @@ class AssignedEmployee extends Model
      */
     public function createdBy()
     {
-        $this->belongsTo(Employee::class, 'created_by');
+        return $this->belongsTo(Employee::class, 'created_by');
     }
 
     /**
@@ -53,6 +53,6 @@ class AssignedEmployee extends Model
      */
     public function updatedBy()
     {
-        $this->belongsTo(Employee::class, 'updated_by');
+        return $this->belongsTo(Employee::class, 'updated_by');
     }
 }

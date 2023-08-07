@@ -33,6 +33,63 @@
 
                 <b-col lg="6" class="my-1">
                     <b-form-group
+                        label="Assigned to"
+                        label-for="exhibitors-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="exhibitors-select"
+                            v-model="exhibitor_id"
+                            :options="exhibitor_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
+                <!-- Second filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Start to"
+                        label-for="start-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="start-to"
+                            v-model="start_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="End to"
+                        label-for="end-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="end-to"
+                            v-model="end_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+                <!-- End Second filter -->
+
+                <!-- third filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
                         label="Occupation"
                         label-for="occupation-select"
                         label-cols-sm="3"
@@ -42,14 +99,13 @@
                     >
                         <b-form-select
                             id="occupation-select"
-                            v-model="additional_filter.occupation"
+                            v-model="occupation"
                             :options="occupation_options"
                             size="sm"
                         ></b-form-select>
                     </b-form-group>
                 </b-col>
 
-                <!-- second filter -->
                 <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Venue"
@@ -61,32 +117,14 @@
                     >
                         <b-form-select
                             id="venue-select"
-                            v-model="additional_filter.venue_id"
+                            v-model="venue"
                             :options="venue_options"
                             size="sm"
                         ></b-form-select>
                     </b-form-group>
                 </b-col>
+                <!-- End third filter -->
 
-                <b-col lg="6" class="my-1">
-                    <b-form-group
-                        label="Source"
-                        label-for="source-select"
-                        label-cols-sm="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                    >
-                        <b-form-select
-                            id="source-select"
-                            v-model="additional_filter.source_id"
-                            :options="source_options"
-                            size="sm"
-                        ></b-form-select>
-                    </b-form-group>
-                </b-col>
-
-                <!-- third filter -->
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -121,7 +159,7 @@
 
             <!-- Main table element -->
             <b-table
-                :items="leadList"
+                :items="assignedLeads"
                 :fields="fields"
                 :current-page="currentPage"
                 :per-page="perPage"
@@ -138,7 +176,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
-                        v-if="check_access('assigns', 'create') || check_access('assign-exhibitors', 'create')"
+                        v-if="check_access('assigns', 'create')"
                     ></b-form-checkbox>
                     <span v-else>&nbsp;</span>
                 </template>
@@ -149,15 +187,31 @@
                             v-model="selected_ids"
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
-                            :disabled-field="row.item.is_booker_assigned"
-                            v-if="check_access('assigns', 'create') || check_access('assign-exhibitors', 'create')"
+                            :disabled-field="row.item.is_assigned"
+                            @change="
+                                selectEmployee($event, row.item.employee.id)
+                            "
+                            v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
 
+                <template #cell(name)="row">
+                    {{ row.value.first }} {{ row.value.last }}
+                </template>
+
+                <template #cell(assigned_exhibitor.created_at)="row">
+                    {{ formatDate(row.item.assigned_exhibitor.created_at) }}
+                </template>
+
                 <template #cell(actions)="row">
-                    <Link v-if="check_access('leads', 'read')" :href="'leads/' + row.item.id" class="btn mx-1 my-1 btn-info" type="button">Show</Link>
-                    <Link v-if="check_access('leads', 'update')" :href="'leads/' + row.item.id + '/edit'" class="btn mx-1 my-1 btn-warning text-white" type="button">Edit</Link>
+                    <Link
+                        :href="'assigned-exhibitors/' + row.item.id"
+                        class="btn m-1 btn-info"
+                        type="button"
+                        v-if="check_access('assign-exhibitors', 'read')"
+                        >Show</Link
+                    >
                 </template>
 
                 <template #row-details="row">
@@ -170,22 +224,12 @@
                     </b-card>
                 </template>
             </b-table>
-
-            <!-- Info modal -->
-            <b-modal
-                :id="infoModal.id"
-                :title="infoModal.title"
-                ok-only
-                @hide="resetInfoModal"
-            >
-                <pre>{{ infoModal.content }}</pre>
-            </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -196,9 +240,10 @@ export default {
         items: Array,
         fields: Array,
         per_page: Number,
+        status_list: Array,
         occupation_list: Array,
-        venues: Array,
-        sources: Array,
+        venue_list: Array,
+        employees: Array,
     },
     data() {
         return {
@@ -210,65 +255,121 @@ export default {
             sortDesc: false,
             sortDirection: "asc",
             filter: null,
-            filterOn: ['is_booker_assigned'],
+            filterOn: ["is_assigned"],
             infoModal: {
                 id: "info-modal",
                 title: "",
                 content: "",
             },
             selected_ids: [],
+            selected_employee_ids: [],
             checkedAll: false,
-            additional_filter: {
-                occupation: null,
-                venue_id: null,
-                source_id: null
-            },
+            remarks: "",
+            lead_status: null,
+            selected_row_id: null,
+            updated_by: "",
+            lead_status_options: [
+                { value: null, text: "-- select --" },
+                ...this.status_list.map((item) => {
+                    return {
+                        value: item.name,
+                        text: item.name + " " + "(" + item.code + ")",
+                    };
+                }),
+            ],
+            start_to: "",
+            end_to: "",
+            occupation: null,
             occupation_options: [
                 { value: null, text: "-- select --" },
                 ...this.occupation_list.map((item) => {
-                    return { value: item.occupation, text: item.occupation };
+                    return {
+                        value: item.occupation,
+                        text: item.occupation,
+                    };
                 }),
             ],
+            venue: null,
             venue_options: [
                 { value: null, text: "-- select --" },
-                ...this.venues.map((item) => {
-                    return { value: item.id, text: item.name };
+                ...this.venue_list.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.name,
+                    };
                 }),
             ],
-            source_options: [
+            exhibitor_options: [
                 { value: null, text: "-- select --" },
-                ...this.sources.map((item) => {
-                    return { value: item.id, text: item.name };
+                ...this.employees.map((exhibitor) => {
+                    return {
+                        value: exhibitor.id,
+                        text: exhibitor.last_name + ", " + exhibitor.first_name,
+                    };
                 }),
-            ]
+            ],
+            exhibitor_id: null,
         };
     },
     watch: {
         selected_ids() {
-            return this.$emit('selected_lead', this.selected_ids);
-        }
+            return this.$emit("selected_lead", this.selected_ids);
+        },
+        selected_employee_ids() {
+            return this.$emit(
+                "selected_lead_employee_id",
+                this.selected_employee_ids
+            );
+        },
+        checkedAll() {
+            return this.$emit("checkedAll", this.checkedAll);
+        },
     },
     computed: {
         sortOptions() {
-            // Create an options list from our fields
+            // Create an options list from our fields99
             return this.fields
                 .filter((f) => f.sortable)
                 .map((f) => {
                     return { text: f.label, value: f.key };
                 });
         },
-        leadList() {
-            // filter property
-            if(this.additional_filter.occupation) {
-                return this.items.filter((item) => item.occupation == this.additional_filter.occupation)
+        assignedLeads() {
+            // assigned date filter
+            if (this.start_to != "" && this.end_to != "") {
+                return this.items.filter((item) => {
+                    const itemDate = new Date(
+                        item.assigned_employee.created_at
+                    );
+                    const start = new Date(this.start_to);
+                    const end = new Date(this.end_to);
+                    return (
+                        itemDate.toLocaleDateString("en-US") >=
+                            start.toLocaleDateString("en-US") &&
+                        itemDate.toLocaleDateString("en-US") <=
+                            end.toLocaleDateString("en-US")
+                    );
+                });
             }
 
-            if(this.additional_filter.venue_id) {
-                return this.items.filter((item) => item.venue_id == this.additional_filter.venue_id)
+            // occupation filter
+            if (this.occupation) {
+                return this.items.filter((item) => {
+                    return item.occupation == this.occupation;
+                });
             }
 
-            if(this.additional_filter.source_id) {
-                return this.items.filter((item) => item.source_id == this.additional_filter.source_id)
+            // venue filter
+            if (this.venue) {
+                return this.items.filter((item) => {
+                    return item.venue.id == this.venue;
+                });
+            }
+
+            if (this.exhibitor_id) {
+                return this.items.filter((item) => {
+                    return item.assigned_exhibitor.id == this.exhibitor_id;
+                });
             }
 
             return this.items;
@@ -276,7 +377,7 @@ export default {
     },
     mounted() {
         // Set the initial number of items
-        this.totalRows = this.leadList.length;
+        this.totalRows = this.items.length;
     },
     methods: {
         info(item, index, button) {
@@ -295,23 +396,47 @@ export default {
         },
         select() {
             this.selected_ids = [];
+            this.selected_employee_ids = [];
             if (this.checkedAll) {
-                for (let i in this.leadList
-                    .filter((item) => item.is_booker_assigned == false)
+                console.log("selected all");
+                for (let i in this.items
+                    .filter((item) => item.is_assigned == true)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
+                    this.selected_employee_ids.push(this.items[i].employee.id);
                 }
+
+                // remove duplicate ids
+                this.selected_employee_ids = this.selected_employee_ids.filter(
+                    (item, index) =>
+                        this.selected_employee_ids.indexOf(item) === index
+                );
             }
+        },
+        selectEmployee(event, data) {
+            // console.log(event.currentTarget);
+            this.selected_employee_ids = data;
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;
 
-            let access = permissions.filter(item => item.module === module).map(element => ({
-                module: element.module,
-                type: element.type
-            }))
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
 
-            return access.some(item => item.type === type);
+            return access.some((item) => item.type === type);
+        },
+        formatDate(value) {
+            let date_value = new Date(value);
+
+            return (
+                date_value.toLocaleDateString("en-US") +
+                " " +
+                date_value.toLocaleTimeString("en-US")
+            );
         },
     },
 };

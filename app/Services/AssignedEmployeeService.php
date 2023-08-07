@@ -78,6 +78,7 @@ class AssignedEmployeeService
                 $lead = Lead::find($lead);
                 $lead->update([
                     'is_booker_assigned' => true,
+                    'remarks' => null,
                     'updated_by' => Auth::user()->employee->id
                 ]);
             }
@@ -98,7 +99,24 @@ class AssignedEmployeeService
      */
     public function deleteAssignedEmployee(AssignedEmployee $assignedEmployee): bool
     {
-        return $assignedEmployee->delete;
+        try {
+
+            // update lead
+            $lead = Lead::find($assignedEmployee->lead_id);
+            $lead->update([
+                'is_booker_assigned' => false,
+                'remarks' => null,
+                'updated_by' => Auth::user()->employee->id
+            ]);
+
+            // delete record here
+            $assignedEmployee->delete;
+
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -119,7 +137,7 @@ class AssignedEmployeeService
                 ]);
 
                 $assigned_employee = AssignedEmployee::where('lead_id', $lead->id);
-                $assigned_employee->delee();
+                $assigned_employee->delete();
             }
         } catch (Exception $ex) {
             return false;

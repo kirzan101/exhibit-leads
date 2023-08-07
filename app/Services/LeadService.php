@@ -33,7 +33,7 @@ class LeadService
                 ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
                 ->where('leads.is_booker_assigned', false)
                 ->where('leads.is_exhibitor_assigned', true)
-                ->where('assigned_exhibitor.employee_id', '=', Auth::user()->employee->id)
+                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
                 ->orderBy('leads.id', 'desc')
                 ->get();
         } else if(Auth::user()->employee->userGroup->name == 'employees' || Auth::user()->employee->userGroup->name == 'confirmers') {
@@ -42,7 +42,7 @@ class LeadService
                 ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
                 ->where('leads.is_booker_assigned', false)
                 ->where('leads.is_exhibitor_assigned', true)
-                ->where('assigned_exhibitor.employee_id', '=', Auth::user()->employee->exhibitor_id)
+                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->exhibitor_id)
                 ->orderBy('leads.id', 'desc')
                 ->get();
         }

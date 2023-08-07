@@ -39,57 +39,130 @@
                         >
                     </div>
                     <div class="col-sm-6">
-                        <div v-if="check_access('assigns', 'create')">
-                            <b-button
-                                class="btn btn-info"
-                                v-b-modal.assign-modal
-                                style="float: right"
-                                align-v="end"
-                                v-if="selected_lead.length > 0"
-                                >Assign</b-button
-                            >
-                            <b-button
-                                class="btn btn-info"
-                                v-b-modal.assign-modal
-                                style="float: right"
-                                align-v="end"
-                                disabled
-                                v-else
-                                >Assign</b-button
-                            >
-                        </div>
-                        <b-modal title="Assign to Employee" id="assign-modal">
-                            <b-form @submit.prevent="submitAssigned">
-                                <b-form-select
-                                    v-model="selected_employee"
-                                    :options="employeeList"
-                                    size="sm"
-                                    class="mt-3"
-                                ></b-form-select>
-                            </b-form>
-                            <template #modal-footer>
+                        <div
+                            v-if="
+                                user_group == 'exhibit' || user_group == 'admin'
+                            "
+                        >
+                            <!-- Assign Employee -->
+                            <div v-if="check_access('assigns', 'create')">
                                 <b-button
-                                    variant="danger"
-                                    type="button"
-                                    @click="$bvModal.hide('assign-modal')"
-                                    >Close</b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    v-if="selected_lead.length > 0"
+                                    >Assign</b-button
                                 >
                                 <b-button
-                                    variant="success"
-                                    type="button"
-                                    @click="submitAssigned()"
-                                    v-if="selected_employee != ''"
-                                    >Submit</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-modal
+                                    style="float: right"
+                                    align-v="end"
                                     disabled
                                     v-else
-                                    >Submit</b-button
+                                    >Assign</b-button
                                 >
-                            </template>
-                        </b-modal>
+                            </div>
+                            <b-modal
+                                title="Assign to Employee"
+                                id="assign-modal"
+                            >
+                                <b-form @submit.prevent="submitAssigned">
+                                    <b-form-select
+                                        v-model="selected_employee"
+                                        :options="employeeList"
+                                        size="sm"
+                                        class="mt-3"
+                                    ></b-form-select>
+                                </b-form>
+                                <template #modal-footer>
+                                    <b-button
+                                        variant="danger"
+                                        type="button"
+                                        @click="$bvModal.hide('assign-modal')"
+                                        >Close</b-button
+                                    >
+                                    <b-button
+                                        variant="success"
+                                        type="button"
+                                        @click="submitAssigned()"
+                                        v-if="selected_employee != ''"
+                                        >Submit</b-button
+                                    >
+                                    <b-button
+                                        variant="success"
+                                        type="button"
+                                        disabled
+                                        v-else
+                                        >Submit</b-button
+                                    >
+                                </template>
+                            </b-modal>
+                        </div>
+
+                        <div
+                            v-if="
+                                user_group == 'exhibit-admin' ||
+                                user_group == 'admin'
+                            "
+                        >
+                            <!-- Exhibitor assign -->
+                            <div v-if="check_access('assign-exhibitors', 'create')">
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-exhibitor-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    v-if="selected_lead.length > 0"
+                                    >Assign Exhibitor</b-button
+                                >
+                                <b-button
+                                    class="btn btn-info m-1"
+                                    v-b-modal.assign-exhibitor-modal
+                                    style="float: right"
+                                    align-v="end"
+                                    disabled
+                                    v-else
+                                    >Assign Exhibitor</b-button
+                                >
+                            </div>
+                            <b-modal
+                                title="Assign to Employee"
+                                id="assign-exhibitor-modal"
+                            >
+                                <b-form @submit.prevent="submitAssigned">
+                                    <b-form-select
+                                        v-model="selected_exhibitor"
+                                        :options="exhibitorList"
+                                        size="sm"
+                                        class="mt-3"
+                                    ></b-form-select>
+                                </b-form>
+                                <template #modal-footer>
+                                    <b-button
+                                        variant="danger"
+                                        type="button"
+                                        @click="$bvModal.hide('assign-exhibitor-modal')"
+                                        >Close</b-button
+                                    >
+                                    <b-button
+                                        variant="success"
+                                        type="button"
+                                        @click="submitAssignedExhibitor()"
+                                        v-if="selected_exhibitor != ''"
+                                        >Submit</b-button
+                                    >
+                                    <b-button
+                                        variant="success"
+                                        type="button"
+                                        disabled
+                                        v-else
+                                        >Submit</b-button
+                                    >
+                                </template>
+                            </b-modal>
+                        </div>
                     </div>
                 </div>
             </h5>
@@ -126,7 +199,8 @@ export default {
         per_page: Number,
         occupation_list: Array,
         venues: Array,
-        sources: Array
+        sources: Array,
+        exhibitors: Array,
     },
     data() {
         return {
@@ -141,6 +215,7 @@ export default {
                 { key: "actions", label: "Actions" },
             ],
             selected_employee: "",
+            selected_exhibitor: "",
             selected_lead: [],
             form: {
                 employee_id: "",
@@ -158,6 +233,17 @@ export default {
                 };
             });
         },
+        exhibitorList() {
+            return this.exhibitors.map((employee) => {
+                return {
+                    value: employee.id,
+                    text: employee.last_name + ", " + employee.first_name,
+                };
+            });
+        },
+        user_group() {
+            return this.$page.props.auth.user.employee.user_group.name;
+        },
     },
     methods: {
         updatedPerPage(value) {
@@ -174,6 +260,16 @@ export default {
 
             router.post("/assign-employee", this.form);
             this.selected_employee = "";
+            this.selected_lead = [];
+        },
+        submitAssignedExhibitor() {
+            this.form.employee_id = this.selected_exhibitor;
+            this.form.lead_ids = this.selected_lead;
+
+            this.$bvModal.hide("assign-exhibitor-modal");
+
+            router.post("/assign-exhibitor", this.form);
+            this.selected_exhibitor = "";
             this.selected_lead = [];
         },
         check_access(module, type) {

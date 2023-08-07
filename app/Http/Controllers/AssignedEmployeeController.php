@@ -108,27 +108,13 @@ class AssignedEmployeeController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AssignedEmployee $assignedEmployee)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(AssignedEmployeeFormRequest $request, AssignedEmployee $assignedEmployee)
     {
         $this->authorize('update', AssignedEmployee::class);
 
-        try {
-            DB::beginTransaction();
-
-            $this->assignedEmployeeService->updateAssignedEmployee($request->validated(), $assignedEmployee);
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        $this->assignedEmployeeService->updateAssignedEmployee($request->validated(), $assignedEmployee);
 
         return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned');
     }

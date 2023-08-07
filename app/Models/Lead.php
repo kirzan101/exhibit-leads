@@ -140,6 +140,16 @@ class Lead extends Model
     }
 
     /**
+     * associate assigned exhibitor to lead
+     *
+     * @return void
+     */
+    public function assignedExhibitor()
+    {
+        return $this->hasOne(AssignedExhibitor::class);
+    }
+
+    /**
      * associate lead to source
      *
      * @return void
@@ -182,6 +192,25 @@ class Lead extends Model
 
         if($confirmer) {
             return $confirmer->getFullName();
+        }
+
+        return '-';
+    }
+
+    /**
+     * get the assigned exhibitor full name
+     *
+     * @return void
+     */
+    public function getAssignedExhibitor()
+    {
+        $exhibitor = Employee::select('employees.*')
+            ->join('assigned_exhibitors', 'assigned_exhibitors.employee_id', '=', 'employees.id')
+            ->where('assigned_exhibitors.lead_id', $this->id)
+            ->first();
+
+        if($exhibitor) {
+            return $exhibitor->getFullName();
         }
 
         return '-';

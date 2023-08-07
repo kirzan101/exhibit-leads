@@ -21,7 +21,8 @@ class PermissionSeeder extends Seeder
             'invites',
             'confirms',
             'venues',
-            'sources'
+            'sources',
+            'assign-exhibitors'
         ];
 
         $types = [

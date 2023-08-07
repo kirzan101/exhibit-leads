@@ -195,4 +195,14 @@ class EmployeeService
 
         return $encoders;
     }
+
+    public function indexExhibitor(): Collection
+    {
+        $exhibitors = Employee::select('employees.*')
+        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+        ->where('user_groups.name', 'exhibit')
+        ->get();
+
+        return $exhibitors;
+    }
 }

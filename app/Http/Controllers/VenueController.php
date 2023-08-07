@@ -25,6 +25,8 @@ class VenueController extends Controller
      */
     public function index()
     {
+        $this->authorize('read', Venue::class);
+
         $venues = $this->venueService->indexVenueService();
 
         return Inertia::render('Venues/IndexVenue', [
@@ -38,6 +40,8 @@ class VenueController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Venue::class);
+
         return Inertia::render('Venues/CreateVenue');
     }
 
@@ -46,6 +50,8 @@ class VenueController extends Controller
      */
     public function store(VenueFormRequest $request)
     {
+        $this->authorize('create', Venue::class);
+
         try {
             DB::beginTransaction();
 
@@ -67,6 +73,8 @@ class VenueController extends Controller
      */
     public function show(Venue $venue)
     {
+        $this->authorize('read', Venue::class);
+
         $venue = $this->venueService->showVenueService($venue);
 
         return Inertia::render('Venues/ShowVenue', [
@@ -79,6 +87,8 @@ class VenueController extends Controller
      */
     public function edit(Venue $venue)
     {
+        $this->authorize('update', Venue::class);
+
         return Inertia::render('Venues/EditVenue', [
             'venue' => new VenueResource($venue)
         ]);
@@ -89,6 +99,8 @@ class VenueController extends Controller
      */
     public function update(VenueFormRequest $request, Venue $venue)
     {
+        $this->authorize('update', Venue::class);
+
         try {
             DB::beginTransaction();
 
@@ -110,6 +122,8 @@ class VenueController extends Controller
      */
     public function destroy(Venue $venue)
     {
+        $this->authorize('delete', Venue::class);
+
         try {
             DB::beginTransaction();
 

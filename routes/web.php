@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AssignedConfirmerController;
 use App\Http\Controllers\AssignedEmployeeController;
+use App\Http\Controllers\AssignedExhibitorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\VenueController;
+use App\Models\AssignedExhibitor;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,18 +47,25 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm', [LeadController::class, 'confirm']);
 
     // assign employee
-    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'delete', 'reassignEmployee', 'show']]);
+    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit']]);
     Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
     Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
     Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
 
     //assign confirmer
-    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'delete', 'reassignConfirmer', 'show']]);
+    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show']]);
     Route::get('assigned-confirmers/{id}', [AssignedConfirmerController::class, 'show']);
     Route::post('assign-confirmer', [AssignedConfirmerController::class, 'store']);
     Route::post('reassign-confirmer', [AssignedConfirmerController::class, 'reassignConfirmer']);
     Route::post('remove-assign-confirmer', [AssignedConfirmerController::class, 'removeAssignment']);
+
+    //assign exhibitor
+    Route::resource('assigned-exhibitors', AssignedExhibitorController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'edit']]);
+    Route::get('assigned-exhibitors/{id}', [AssignedExhibitorController::class, 'show']);
+    Route::post('assign-exhibitor', [AssignedExhibitorController::class, 'store']);
+    Route::post('reassign-exhibitor', [AssignedExhibitorController::class, 'reassignExhibitor']);
+    Route::post('remove-assign-exhibitor', [AssignedExhibitorController::class, 'removeAssignment']);
 
     Route::get('/', function () {
         return inertia('Welcome');

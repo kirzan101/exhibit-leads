@@ -13,6 +13,16 @@
                     <li class="nav-item" v-if="check_access('leads', 'read')">
                         <Link class="nav-link" href="/leads">Leads</Link>
                     </li>
+
+                    <li
+                        class="nav-item"
+                        v-if="check_access('assign-exhibitors', 'read')"
+                    >
+                        <Link class="nav-link" href="/assigned-exhibitors"
+                            >Assigned Exhibitor</Link
+                        >
+                    </li>
+
                     <li class="nav-item" v-if="check_access('assigns', 'read')">
                         <Link class="nav-link" href="/assigned-employees"
                             >Assign</Link
@@ -36,6 +46,7 @@
                     <b-nav-item-dropdown ref="managedd" text="Manage" right>
                         <li role="presentation">
                             <Link
+                                v-if="check_access('employees', 'read')"
                                 role="menuitem"
                                 href="/employees"
                                 target="_self"
@@ -44,6 +55,7 @@
                                 >Employees</Link
                             >
                             <Link
+                                v-if="check_access('venues', 'read')"
                                 role="menuitem"
                                 target="_self"
                                 class="dropdown-item"
@@ -52,6 +64,7 @@
                                 >Venues</Link
                             >
                             <Link
+                                v-if="check_access('sources', 'read')"
                                 role="menuitem"
                                 target="_self"
                                 class="dropdown-item"

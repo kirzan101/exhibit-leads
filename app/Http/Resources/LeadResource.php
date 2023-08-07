@@ -56,6 +56,8 @@ class LeadResource extends JsonResource
             'assigned_confirmer' => $this->assignedConfirmer,
             'assigned_employee' => new AssignedEmployeeResource($this->assignedEmployee),
             'assigned_employee_name' => $this->getAssignedEmployee(),
+            'assigned_exhibitor' => $this->assignedExhibitor,
+            'assigned_exhibitor_name' => $this->getAssignedExhibitor(),
             'presentation_date' => $this->presentation_date,
             'exhibit_code' => $this->exhibit_code,
             'source_complete' => $this->getSource(),

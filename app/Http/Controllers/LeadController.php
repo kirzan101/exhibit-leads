@@ -53,7 +53,8 @@ class LeadController extends Controller
             'occupation_list' => Helper::occupationList(),
             'per_page' => 5,
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => $this->sourceService->indexSource()
+            'sources' => $this->sourceService->indexSource(),
+            'exhibitors' => $this->employeeService->indexExhibitor()
         ]);
     }
 
@@ -347,7 +348,7 @@ class LeadController extends Controller
             'occupation_list' => Helper::occupationList(),
             'per_page' => 5,
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => $this->sourceService->indexSource()
+            'sources' => $this->sourceService->indexSource(),
         ]);
     }
 
