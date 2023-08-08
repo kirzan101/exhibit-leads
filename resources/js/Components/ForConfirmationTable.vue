@@ -79,7 +79,7 @@
                     >
                         <b-form-select
                             id="source-select"
-                            v-model="additional_filter.source_id"
+                            v-model="additional_filter.source_name"
                             :options="source_options"
                             size="sm"
                         ></b-form-select>
@@ -137,6 +137,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
+                        v-if="check_access('confirms', 'create')"
                     ></b-form-checkbox>
                 </template>
 
@@ -146,21 +147,30 @@
                             v-model="selected_ids"
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
-                            :disabled-field="row.item.is_assigned"
+                            :disabled-field="row.item.is_done"
+                            v-if="check_access('confirms', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>
 
                 <template #cell(actions)="row">
+                    <Link
+                        :href="'assigned-exhibitors/' + row.item.id"
+                        class="btn m-1 btn-info"
+                        type="button"
+                        v-if="check_access('confirms', 'read')"
+                        >Show</Link
+                    >
+
                     <b-button
                         v-b-modal.remarks-modal
-                        variant="info text-white"
+                        variant="warning text-white"
                         class="m-1"
-                        >Show remarks</b-button
+                        >Remarks</b-button
                     >
 
                     <!-- Add Remarks modal -->
-                    <b-modal id="remarks-modal" title="Remarks">
+                    <b-modal id="remarks-modal" title="Booker Remarks">
                         <b-form-textarea
                             id="textarea"
                             placeholder="Enter something..."
@@ -169,7 +179,7 @@
                             readonly
                             v-model="row.item.remarks"
                         ></b-form-textarea>
-                        <p class="mt-2 mb-2">Lead status:</p>
+                        <p class="mt-2 mb-2">Booker Lead status:</p>
                         <b-form-select
                             :disabled="true"
                             :value="row.item.lead_status"
@@ -185,6 +195,14 @@
                             >
                         </template>
                     </b-modal>
+
+                    <b-button
+                        v-b-modal.confirm-modal
+                        variant="success text-white"
+                        @click="selectedLead(row.item)"
+                        class="m-1"
+                        >Confirm</b-button
+                    >
                 </template>
 
                 <template #row-details="row">
@@ -238,7 +256,7 @@ export default {
             sortDesc: false,
             sortDirection: "asc",
             filter: null,
-            filterOn: ["is_assigned"],
+            filterOn: ["is_done"],
             infoModal: {
                 id: "info-modal",
                 title: "",
@@ -249,7 +267,7 @@ export default {
             additional_filter: {
                 occupation: null,
                 venue_id: null,
-                source_id: null
+                source_name: null
             },
             occupation_options: [
                 { value: null, text: "-- select --" },
@@ -261,8 +279,8 @@ export default {
                 { value: null, text: "-- select --" },
                 ...this.status_list.map((item) => {
                     return {
-                        value: item.code,
-                        text: item.name + " " + "(" + item.code + ")",
+                        value: item.name,
+                        text: item.name,
                     };
                 }),
             ],
@@ -275,7 +293,7 @@ export default {
             source_options: [
                 { value: null, text: "-- select --" },
                 ...this.sources.map((item) => {
-                    return { value: item.id, text: item.name };
+                    return { value: item.source, text: item.source };
                 }),
             ]
         };
@@ -307,8 +325,8 @@ export default {
                 return this.items.filter((item) => item.venue_id == this.additional_filter.venue_id)
             }
 
-            if(this.additional_filter.source_id) {
-                return this.items.filter((item) => item.source_id == this.additional_filter.source_id)
+            if(this.additional_filter.source_name) {
+                return this.items.filter((item) => item.source_complete == this.additional_filter.source_name)
             }
 
             return this.items;
@@ -337,7 +355,7 @@ export default {
             this.selected_ids = [];
             if (this.checkedAll) {
                 for (let i in this.leadList
-                    .filter((item) => item.is_assigned == false)
+                    .filter((item) => item.is_done == false)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
                 }

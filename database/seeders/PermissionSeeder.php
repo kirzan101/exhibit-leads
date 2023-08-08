@@ -18,7 +18,6 @@ class PermissionSeeder extends Seeder
             'employees',
             'assigns',
             'usergroups',
-            'invites',
             'confirms',
             'venues',
             'sources',

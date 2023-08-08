@@ -191,18 +191,15 @@ class LeadController extends Controller
     }
 
     /**
-     * Display a listing of the invite leads
+     * Display a listing of the done leads
      *
-     * @param Request $request
      * @return void
      */
-    public function indexInvite(Request $request)
+    public function indexDoneLead()
     {
-        $invited = true;
+        $leads = LeadResource::collection($this->leadService->indexDoneLead());
 
-        $leads = LeadResource::collection($this->leadService->indexInvitedLead($invited));
-
-        return Inertia::render('Invites/IndexInvite', [
+        return Inertia::render('Done/IndexDone', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'occupation_list' => Helper::occupationList(),
@@ -210,7 +207,7 @@ class LeadController extends Controller
             'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
             'status_list' => Helper::leadStatus(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => $this->sourceService->indexSource()
+            'sources' => Helper::leadSource()
         ]);
     }
 
@@ -242,9 +239,9 @@ class LeadController extends Controller
     }
 
     /**
-     * Add invite status to a leads
+     * Add done status to a leads
      */
-    public function invite(Request $request)
+    public function done(Request $request)
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
@@ -254,18 +251,18 @@ class LeadController extends Controller
         try {
             $lead = Lead::find($request->lead_id);
 
-            $lead = $this->leadService->inviteLead($lead, $request->status);
+            $lead = $this->leadService->done($lead, $request->status);
         } catch (Exception $e) {
             return redirect()->route('assigned-employees.index')->with('error', $e->getMessage());
         }
 
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully invited!');
+        return redirect()->route('assigned-employees.index')->with('success', 'Successfully Done!');
     }
 
     /**
-     * remove invite status to a lead
+     * remove done status to a lead
      */
-    public function inviteCancel(Request $request)
+    public function cancelDone(Request $request)
     {
         $request->validate([
             'lead_ids' => 'required|array'
@@ -275,13 +272,13 @@ class LeadController extends Controller
             foreach ($request->lead_ids as $lead_id) {
                 $lead = Lead::find($lead_id);
 
-                $lead = $this->leadService->inviteLead($lead, false);
+                $lead = $this->leadService->done($lead, false);
             }
         } catch (Exception $e) {
-            return redirect()->route('invites')->with('error', $e->getMessage());
+            return redirect()->route('done')->with('error', $e->getMessage());
         }
 
-        return redirect()->route('invites')->with('success', 'Successfully removed from invitees!');
+        return redirect()->route('done')->with('success', 'Successfully removed from done!');
     }
 
     /**

@@ -23,7 +23,7 @@ class AssignedEmployeeService
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
             ->where('leads.is_booker_assigned', true)
-            ->where('leads.is_invited', false)
+            ->where('leads.is_done', false)
             ->get();
 
         return $assigned_leads;
@@ -158,7 +158,7 @@ class AssignedEmployeeService
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
             ->where('leads.is_booker_assigned', true)
-            ->where('leads.is_invited', false)
+            ->where('leads.is_done', false)
             ->where('assigned_employee.employee_id', Auth::user()->employee->id)
             ->get();
 

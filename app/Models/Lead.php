@@ -39,7 +39,7 @@ class Lead extends Model
         'property_id',
         'contract_file',
         'is_booker_assigned',
-        'is_invited',
+        'is_done',
         'is_showed',
         'is_confirm_assigned',
         'is_exhibitor_assigned',

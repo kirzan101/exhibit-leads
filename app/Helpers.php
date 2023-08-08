@@ -235,7 +235,7 @@ class Helper
     public static function leadSource()
     {
         $lead_sources = DB::table('leads')
-            ->select(DB::raw("CONCAT('source_prefix','source') AS source"))
+            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"))
             ->groupBy('source_prefix', 'source')
             ->get()
             ->toArray();

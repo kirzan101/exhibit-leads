@@ -187,9 +187,9 @@
                             v-model="selected_ids"
                             :value="row.item.id"
                             :id="row.item.id + '-' + row.item.last_name"
-                            :disabled-field="row.item.is_assigned"
+                            :disabled-field="row.item.is_exhibitor_assigned"
                             @change="
-                                selectEmployee($event, row.item.employee.id)
+                                selectEmployee($event, row.item.assigned_exhibitor.employee_id)
                             "
                             v-if="check_access('assigns', 'create')"
                         ></b-form-checkbox>
@@ -255,7 +255,7 @@ export default {
             sortDesc: false,
             sortDirection: "asc",
             filter: null,
-            filterOn: ["is_assigned"],
+            filterOn: ["is_exhibitor_assigned"],
             infoModal: {
                 id: "info-modal",
                 title: "",
@@ -368,7 +368,7 @@ export default {
 
             if (this.exhibitor_id) {
                 return this.items.filter((item) => {
-                    return item.assigned_exhibitor.id == this.exhibitor_id;
+                    return item.assigned_exhibitor.employee_id == this.exhibitor_id;
                 });
             }
 
@@ -398,12 +398,11 @@ export default {
             this.selected_ids = [];
             this.selected_employee_ids = [];
             if (this.checkedAll) {
-                console.log("selected all");
                 for (let i in this.items
-                    .filter((item) => item.is_assigned == true)
+                    .filter((item) => item.is_exhibitor_assigned == true)
                     .slice(0, this.perPage)) {
                     this.selected_ids.push(this.items[i].id);
-                    this.selected_employee_ids.push(this.items[i].employee.id);
+                    this.selected_employee_ids.push(this.items[i].assigned_exhibitor.employee_id);
                 }
 
                 // remove duplicate ids

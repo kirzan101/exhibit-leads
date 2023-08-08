@@ -159,13 +159,13 @@ class LeadService
     }
 
     /**
-     * index of invited lead service
+     * index of done lead service
      *
      * @return void
      */
-    public function indexInvitedLead(bool $invited): Collection
+    public function indexDoneLead(): Collection
     {
-        $leads = Lead::where('is_invited', $invited)
+        $leads = Lead::where('is_done', true)
             ->where('is_confirm_assigned', false)
             ->get();
 
@@ -177,7 +177,7 @@ class LeadService
                 return $venue->venue_id;
             });
 
-            $leads = Lead::where('is_invited', $invited)
+            $leads = Lead::where('is_done', true)
                 ->where('is_confirm_assigned', false)
                 ->whereIn('venue_id', $venue_ids)
                 ->get();
@@ -187,16 +187,16 @@ class LeadService
     }
 
     /**
-     * Add invite status on lead service
+     * Add done status on lead service
      *
      * @param Lead $lead
      * @param bool $status
      * @return Lead
      */
-    public function inviteLead(Lead $lead, bool $status): Lead
+    public function done(Lead $lead, bool $status): Lead
     {
         $lead = tap($lead)->update([
-            'is_invited' => $status,
+            'is_done' => $status,
             'updated_by' => Auth::user()->id
         ]);
 

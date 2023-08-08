@@ -75,11 +75,11 @@ class AssignedConfirmerController extends Controller
         } catch (Exception $ex) {
 
             DB::rollBack();
-            return redirect()->route('invites')->with('error', $ex->getMessage());
+            return redirect()->route('done')->with('error', $ex->getMessage());
         }
 
         DB::commit();
-        return redirect()->route('invites')->with('success', 'Successfully assigned!');
+        return redirect()->route('done')->with('success', 'Successfully assigned!');
     }
 
     /**

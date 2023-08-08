@@ -44,7 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
     Route::post('remarks', [LeadController::class, 'remarks']);
-    Route::post('confirm', [LeadController::class, 'confirm']);
 
     // assign employee
     Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);
@@ -75,12 +74,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [EmployeeController::class, 'profile'])->name('profile');
     Route::put('/profile/edit', [EmployeeController::class, 'profileEdit']);
 
-    // invites
-    Route::get('invites', [LeadController::class, 'indexInvite'])->name('invites');
-    Route::post('invites', [LeadController::class, 'invite']);
-    Route::post('invites/cancel', [LeadController::class, 'inviteCancel']);
+    // confirm
+    Route::post('confirm', [LeadController::class, 'confirm']);
+    Route::get('confirms', [LeadController::class, 'indexDoneLead'])->name('confirms');
+    Route::post('done', [LeadController::class, 'done']);
+    Route::post('done/cancel', [LeadController::class, 'cancelDone']);
 
-    //confirm
+    //confirmed
     Route::get('/confirmed', [LeadController::class, 'indexConfirmed'])->name('confirmed');
     Route::get('/confirmed/remove', [LeadController::class, 'removeConfirmed']);
 

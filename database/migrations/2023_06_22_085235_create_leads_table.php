@@ -46,7 +46,7 @@ return new class extends Migration
             $table->boolean('is_confirm_assigned')->default(false);
             $table->longText('remarks')->nullable();
             $table->longText('confirmer_remarks')->nullable();
-            $table->boolean('is_invited')->default(false);
+            $table->boolean('is_done')->default(false);
             $table->string('lead_status')->nullable();
             $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();

@@ -28,17 +28,12 @@
                             >Assign</Link
                         >
                     </li>
-                    <li class="nav-item" v-if="check_access('invites', 'read')">
-                        <Link class="nav-link" href="/invites"
-                            >For Confirmation</Link
-                        >
-                    </li>
                     <li
                         class="nav-item"
                         v-if="check_access('confirms', 'read')"
                     >
-                        <Link class="nav-link" href="/assigned-confirmers"
-                            >Confirm</Link
+                        <Link class="nav-link" href="/confirms"
+                            >Confirms</Link
                         >
                     </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
