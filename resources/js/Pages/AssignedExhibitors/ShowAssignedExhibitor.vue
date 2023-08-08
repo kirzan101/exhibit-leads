@@ -1,11 +1,11 @@
 <template>
     <b-container fluid>
         <Head>
-            <title>Leads | Show</title>
+            <title>Assigned Exhibitor | Show Lead</title>
         </Head>
         <h5>
-            Show |
-            <Link class="btn btn-secondary" href="/leads">Back</Link>
+            Show Lead |
+            <Link class="btn btn-secondary" href="/assigned-exhibitors">Back</Link>
         </h5>
         <span class="note">Note: Fields that has "*" is required</span>
         <div class="p-1">
