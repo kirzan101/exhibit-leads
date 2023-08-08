@@ -228,7 +228,7 @@ export default {
 
             this.$bvModal.hide("assign-modal");
 
-            router.post("/reassign-employee", this.form);
+            router.post("/reassign-exhibitor", this.form);
             this.selected_employee = "";
             this.selected_lead = [];
         },
@@ -237,7 +237,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/remove-assign", this.form);
+            router.post("/remove-assign-exhibitor", this.form);
             this.selected_employee = "";
             this.selected_lead = [];
         },

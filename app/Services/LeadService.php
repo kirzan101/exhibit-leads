@@ -19,26 +19,29 @@ class LeadService
      */
     public function indexLead(): Collection
     {
-        $lead = Lead::where('is_booker_assigned', false)->orderBy('id', 'desc')->get();
+        $leads = Lead::where('is_booker_assigned', false)
+            ->where('is_exhibitor_assigned', false)
+            ->orderBy('id', 'desc')
+            ->get();
 
         if (Auth::user()->employee->userGroup->name == 'exhibit-admin') {
             // get all the unassigned leads
-            $lead = Lead::where('is_booker_assigned', false)
+            $leads = Lead::where('is_booker_assigned', false)
                 ->where('is_exhibitor_assigned', false)
                 ->orderBy('id', 'desc')
                 ->get();
-        } else if(Auth::user()->employee->userGroup->name == 'exhibit') {
+        } else if (Auth::user()->employee->userGroup->name == 'exhibit') {
             // get the list of leads that assigned to the exhibitor
-            $lead = Lead::select('leads.*')
+            $leads = Lead::select('leads.*')
                 ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
                 ->where('leads.is_booker_assigned', false)
                 ->where('leads.is_exhibitor_assigned', true)
                 ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
                 ->orderBy('leads.id', 'desc')
                 ->get();
-        } else if(Auth::user()->employee->userGroup->name == 'employees' || Auth::user()->employee->userGroup->name == 'confirmers') {
+        } else if (Auth::user()->employee->userGroup->name == 'employees' || Auth::user()->employee->userGroup->name == 'confirmers') {
             // get the list of leads that assigned to the exhibitor of the employee
-            $lead = Lead::select('leads.*')
+            $leads = Lead::select('leads.*')
                 ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
                 ->where('leads.is_booker_assigned', false)
                 ->where('leads.is_exhibitor_assigned', true)
@@ -47,7 +50,7 @@ class LeadService
                 ->get();
         }
 
-        return $lead;
+        return $leads;
     }
 
     /**
