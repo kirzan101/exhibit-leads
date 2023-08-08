@@ -62,25 +62,27 @@ class AssignedEmployeeService
      * update assigned employee service
      *
      * @param array $request
-     * @param AssignedEmployee $assignedEmployee
      * @return AssignedEmployee
      */
-    public function updateAssignedEmployee(array $request, AssignedEmployee $assignedEmployee): bool
+    public function updateAssignedEmployee(array $request): bool
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
-                AssignedEmployee::create([
-                    'lead_id' => $lead,
-                    'employee_id' => $request['employee_id'],
-                    'created_by' => Auth::user()->employee->id,
-                ]);
+                $assignedEmployee = AssignedEmployee::where('lead_id', $lead)->first();
 
-                $lead = Lead::find($lead);
-                $lead->update([
-                    'is_booker_assigned' => true,
-                    'remarks' => null,
-                    'updated_by' => Auth::user()->employee->id
-                ]);
+                if ($assignedEmployee) {
+                    $assignedEmployee->update([
+                        'employee_id' => $request['employee_id'],
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+
+                    // update the record in lead
+                    $lead = Lead::find($lead);
+                    $lead->update([
+                        'is_exhibitor_assigned' => true,
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+                }
             }
         } catch (Exception $ex) {
             return false;

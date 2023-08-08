@@ -178,6 +178,7 @@ export default {
                     sortable: true,
                 },
                 { key: "occupation", label: "Occupation", sortable: true },
+                { key: "mobile_number", label: "Mobile Number", sortable: false },
                 { key: "venue.name", label: "Venue", sortable: true },
                 {
                     key: "assigned_employee_name",

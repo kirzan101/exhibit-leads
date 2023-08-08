@@ -47,21 +47,21 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm', [LeadController::class, 'confirm']);
 
     // assign employee
-    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit']]);
+    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);
     Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
     Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
     Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
 
     //assign confirmer
-    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show']]);
+    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'update', 'create']]);
     Route::get('assigned-confirmers/{id}', [AssignedConfirmerController::class, 'show']);
     Route::post('assign-confirmer', [AssignedConfirmerController::class, 'store']);
     Route::post('reassign-confirmer', [AssignedConfirmerController::class, 'reassignConfirmer']);
     Route::post('remove-assign-confirmer', [AssignedConfirmerController::class, 'removeAssignment']);
 
     //assign exhibitor
-    Route::resource('assigned-exhibitors', AssignedExhibitorController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'edit']]);
+    Route::resource('assigned-exhibitors', AssignedExhibitorController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'edit', 'update', 'create']]);
     Route::get('assigned-exhibitors/{id}', [AssignedExhibitorController::class, 'show']);
     Route::post('assign-exhibitor', [AssignedExhibitorController::class, 'store']);
     Route::post('reassign-exhibitor', [AssignedExhibitorController::class, 'reassignExhibitor']);

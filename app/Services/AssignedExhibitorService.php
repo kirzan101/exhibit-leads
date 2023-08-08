@@ -64,17 +64,21 @@ class AssignedExhibitorService
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
-                AssignedExhibitor::create([
-                    'lead_id' => $lead,
-                    'employee_id' => $request['employee_id'],
-                    'created_by' => Auth::user()->employee->id,
-                ]);
+                $assignedExhibitor = AssignedExhibitor::where('lead_id', $lead)->first();
 
-                $lead = Lead::find($lead);
-                $lead->update([
-                    'is_exhibitor_assigned' => true,
-                    'updated_by' => Auth::user()->employee->id
-                ]);
+                if ($assignedExhibitor) {
+                    $assignedExhibitor->update([
+                        'employee_id' => $request['employee_id'],
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+
+                    // update the record in lead
+                    $lead = Lead::find($lead);
+                    $lead->update([
+                        'is_exhibitor_assigned' => true,
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+                }
             }
         } catch (Exception $e) {
             return false;
@@ -112,7 +116,7 @@ class AssignedExhibitorService
      * @param array $request
      * @return boolean
      */
-    public function removedAssignedExhibitor(array $request) : bool
+    public function removedAssignedExhibitor(array $request): bool
     {
         try {
             foreach ($request['lead_ids'] as $lead) {

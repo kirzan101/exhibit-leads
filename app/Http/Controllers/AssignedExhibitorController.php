@@ -65,14 +65,6 @@ class AssignedExhibitorController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $this->authorize('create', AssignedExhibitor::class);
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(AssignedExhibitorFormRequest $request)
@@ -130,13 +122,11 @@ class AssignedExhibitorController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * reassigned leads to another exhibitor
+     *
+     * @param AssignedExhibitorFormRequest $request
+     * @return void
      */
-    public function destroy(AssignedExhibitor $assignedExhibitor)
-    {
-        $this->authorize('delete', AssignedExhibitor::class);
-    }
-
     public function reassignExhibitor(AssignedExhibitorFormRequest $request)
     {
         $this->authorize('create', AssignedExhibitor::class);
@@ -144,7 +134,7 @@ class AssignedExhibitorController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->assignedExhibitorService->createAssignedExhbitor($request->toArray());
+            $this->assignedExhibitorService->updateAssignedExhibitor($request->toArray());
         } catch (Exception $ex) {
 
             DB::rollBack();

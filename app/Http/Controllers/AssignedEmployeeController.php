@@ -59,14 +59,6 @@ class AssignedEmployeeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(AssignedEmployeeFormRequest $request)
@@ -108,25 +100,11 @@ class AssignedEmployeeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * reasssign lead to a different employee
+     *
+     * @param AssignedEmployeeFormRequest $request
+     * @return void
      */
-    public function update(AssignedEmployeeFormRequest $request, AssignedEmployee $assignedEmployee)
-    {
-        $this->authorize('update', AssignedEmployee::class);
-
-        $this->assignedEmployeeService->updateAssignedEmployee($request->validated(), $assignedEmployee);
-
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AssignedEmployee $assignedEmployee)
-    {
-        //
-    }
-
     public function reassignEmployee(AssignedEmployeeFormRequest $request)
     {
         $this->authorize('create', AssignedEmployee::class);
@@ -134,7 +112,7 @@ class AssignedEmployeeController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->assignedEmployeeService->createAssignedEmployee($request->validated());
+            $this->assignedEmployeeService->updateAssignedEmployee($request->validated());
         } catch (Exception $ex) {
 
             DB::rollBack();

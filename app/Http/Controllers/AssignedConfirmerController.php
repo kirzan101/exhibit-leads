@@ -103,24 +103,6 @@ class AssignedConfirmerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(AssignedConfirmerFormRequest $request)
-    {
-        $this->authorize('update', AssignedEmployee::class);
-
-        try {
-            DB::beginTransaction();
-
-            $this->assignedConfirmerService->updateAssignedConfirmer($request->toArray());
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned');
-    }
-
-    /**
      * reassign leads to another confirmer
      *
      * @param AssignedConfirmerFormRequest $request
@@ -133,7 +115,7 @@ class AssignedConfirmerController extends Controller
         try {
             DB::beginTransaction();
 
-            $this->assignedConfirmerService->createAssignedConfirmer($request->toArray());
+            $this->assignedConfirmerService->updateAssignedConfirmer($request->toArray());
         } catch (Exception $ex) {
 
             DB::rollBack();
