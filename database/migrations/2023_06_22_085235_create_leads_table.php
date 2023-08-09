@@ -41,13 +41,14 @@ return new class extends Migration
             $table->string('nature_of_business')->nullable();
             $table->unsignedBigInteger('property_id');
             $table->string('contract_file')->nullable();
-            $table->boolean('is_booker_assigned')->default(false);
-            $table->boolean('is_showed')->default(false);
-            $table->boolean('is_confirm_assigned')->default(false);
-            $table->longText('remarks')->nullable();
-            $table->longText('confirmer_remarks')->nullable();
             $table->boolean('is_done')->default(false);
+            $table->boolean('is_done_confirmed')->default(false);
+            $table->boolean('is_booker_assigned')->default(false);
+            $table->boolean('is_confirm_assigned')->default(false);
+            $table->boolean('is_exhibitor_assigned')->default(false);
+            $table->longText('remarks')->nullable();
             $table->string('lead_status')->nullable();
+            $table->longText('confirmer_remarks')->nullable();
             $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();
             $table->string('source_prefix')->nullable();
@@ -57,7 +58,7 @@ return new class extends Migration
             $table->string('holiday_consultant')->nullable();
             $table->string('membership_type')->nullable();
             $table->boolean('is_confidential')->default(false);
-            $table->boolean('is_exhibitor_assigned')->default(false);
+            $table->boolean('is_showed')->default(false);
             $table->unsignedBigInteger('venue_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Http\Requests\LeadFormRequest;
 use App\Http\Resources\LeadResource;
+use App\Models\AssignedEmployee;
 use App\Models\Lead;
+use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
@@ -24,19 +26,22 @@ class LeadController extends Controller
     private PropertyService $propertyService;
     private VenueService $venueService;
     private SourceService $sourceService;
+    private AssignedEmployeeService $assignedEmployeeService;
 
     public function __construct(
         LeadService $leadService,
         EmployeeService $employeeService,
         PropertyService $propertyService,
         VenueService $venueService,
-        SourceService $sourceService
+        SourceService $sourceService,
+        AssignedEmployeeService $assignedEmployeeService
     ) {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
         $this->sourceService = $sourceService;
+        $this->assignedEmployeeService = $assignedEmployeeService;
     }
 
     /**
@@ -81,14 +86,13 @@ class LeadController extends Controller
 
         try {
             DB::beginTransaction();
-            
-            if(!$request->has('owned_gadgets')) {
+
+            if (!$request->has('owned_gadgets')) {
                 $request->merge(['owned_gadgets' => null]);
             }
 
             // add lead
             $this->leadService->createLead($request->toArray());
-
         } catch (Exception $ex) {
             dd($ex);
 
@@ -145,12 +149,11 @@ class LeadController extends Controller
         try {
             DB::beginTransaction();
 
-            if(!$request->has('owned_gadgets')) {
+            if (!$request->has('owned_gadgets')) {
                 $request->merge(['owned_gadgets' => null]);
             }
 
             $this->leadService->updateLead($request->validated(), $lead);
-            
         } catch (Exception $ex) {
 
             DB::rollBack();
@@ -170,26 +173,6 @@ class LeadController extends Controller
         //
     }
 
-    public function remarks(Request $request)
-    {
-        $this->authorize('update', Lead::class);
-
-        $request = $request->validate([
-            'lead_id' => 'required|exists:leads,id',
-            'remarks' => 'required|min:2',
-            'lead_status' => 'required|min:1',
-            'venue_id' => 'required|exists:venues,id'
-        ]);
-
-        $result = $this->leadService->modifyRemarks($request);
-
-        if (!$result) {
-            return redirect()->route('assigned-employees.index')->with('error', 'Something went wrong on saving!');
-        }
-
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully saved!');
-    }
-
     /**
      * Display a listing of the done leads
      *
@@ -199,42 +182,16 @@ class LeadController extends Controller
     {
         $leads = LeadResource::collection($this->leadService->indexDoneLead());
 
-        return Inertia::render('Done/IndexDone', [
+        return Inertia::render('Confirms/IndexConfirm', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexConfirmer(),
             'occupation_list' => Helper::occupationList(),
             'per_page' => 5,
             'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
             'status_list' => Helper::leadStatus(),
+            'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => Helper::leadSource()
-        ]);
-    }
-
-    /**
-     * Display a paginate listing of the resource.
-     */
-    public function indexPaginate(Request $request)
-    {
-        $per_page = $request->per_page;
-        $page = $request->page;
-
-        if (!$per_page) {
-            $per_page = 5;
-        }
-
-        // if(!$page) {
-        //     $page = 1;
-        // }
-
-        $leads = LeadResource::collection($this->leadService->indexPaginateLead($per_page));
-
-        // dd($leads);
-        return Inertia::render('Leads/PaginateLead', [
-            'leads' => $leads,
-            'employees' => $this->employeeService->indexEmployee(),
-            'occupation_list' => Helper::occupationList(),
-            'per_page' => 5
         ]);
     }
 
@@ -245,13 +202,14 @@ class LeadController extends Controller
     {
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
-            'status' => 'required|boolean'
+            'status' => 'required|boolean',
+            'employee_type' => 'required'
         ]);
 
         try {
             $lead = Lead::find($request->lead_id);
 
-            $lead = $this->leadService->done($lead, $request->status);
+            $lead = $this->leadService->done($lead, $request->status, $request->employee_type);
         } catch (Exception $e) {
             return redirect()->route('assigned-employees.index')->with('error', $e->getMessage());
         }
@@ -265,68 +223,21 @@ class LeadController extends Controller
     public function cancelDone(Request $request)
     {
         $request->validate([
-            'lead_ids' => 'required|array'
+            'lead_ids' => 'required|array',
+            'employee_type' => 'required'
         ]);
 
         try {
             foreach ($request->lead_ids as $lead_id) {
                 $lead = Lead::find($lead_id);
 
-                $lead = $this->leadService->done($lead, false);
+                $lead = $this->leadService->done($lead, false, $request->employee_type);
             }
         } catch (Exception $e) {
             return redirect()->route('done')->with('error', $e->getMessage());
         }
 
         return redirect()->route('done')->with('success', 'Successfully removed from done!');
-    }
-
-    /**
-     * Confirm lead
-     */
-    public function confirm(Request $request)
-    {
-        $request->validate([
-            'lead_id' => 'required|exists:leads,id',
-            'lead_status_confirmer' => 'required',
-            'confirmer_remarks' => 'required'
-        ]);
-
-        try {
-
-            $lead = Lead::find($request->lead_id);
-
-            $lead = $this->leadService->confirmLead($lead, $request->toArray());
-        } catch (Exception $e) {
-            return redirect()->route('assigned-confirmers.index')->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully confirmed!');
-    }
-
-    /**
-     * remove confirm status in leads
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function removeConfirmed(Request $request)
-    {
-        $request->validate([
-            'lead_ids' => 'required|array'
-        ]);
-
-        try {
-            foreach ($request->lead_ids as $lead_id) {
-                $lead = Lead::find($lead_id);
-
-                $lead = $this->leadService->removeConfirmLead($lead, $request->toArray());
-            }
-        } catch (Exception $e) {
-            return redirect()->route('assigned-confirmers.index')->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully confirmed!');
     }
 
     /**
@@ -370,5 +281,32 @@ class LeadController extends Controller
         }
 
         return redirect()->route('confirmed')->with('success', 'Successfully mark as showed!');
+    }
+
+    /**
+     * Display a paginate listing of the resource.
+     */
+    public function indexPaginate(Request $request)
+    {
+        $per_page = $request->per_page;
+        $page = $request->page;
+
+        if (!$per_page) {
+            $per_page = 5;
+        }
+
+        // if(!$page) {
+        //     $page = 1;
+        // }
+
+        $leads = LeadResource::collection($this->leadService->indexPaginateLead($per_page));
+
+        // dd($leads);
+        return Inertia::render('Leads/PaginateLead', [
+            'leads' => $leads,
+            'employees' => $this->employeeService->indexEmployee(),
+            'occupation_list' => Helper::occupationList(),
+            'per_page' => 5
+        ]);
     }
 }

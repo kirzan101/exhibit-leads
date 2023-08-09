@@ -54,7 +54,7 @@ class UserGroupSeeder extends Seeder
         $exhibit_permissions = Permission::where('module', 'leads')
             ->orWhere('module', 'employees')
             ->orWhere('module', 'assigns')
-            ->orWhere('module', 'invites')
+            ->orWhere('module', 'confirms')
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->get();
@@ -111,15 +111,15 @@ class UserGroupSeeder extends Seeder
                         'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'update')->first()->id
                     ]);
 
-                    //invites permission
+                    //confirms permission
                     UserGroupPermission::create([
                         'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'read')->first()->id
+                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'read')->first()->id
                     ]);
 
                     UserGroupPermission::create([
                         'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'update')->first()->id
+                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'update')->first()->id
                     ]);
                 } else if ($usergroup->name == 'confirmers') {
                     foreach ($confirmer_permissions as $permission) {
@@ -129,15 +129,15 @@ class UserGroupSeeder extends Seeder
                         ]);
                     }
 
-                    //invites/For Confirmation permission
+                    //confirms/For Confirmation permission
                     UserGroupPermission::create([
                         'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'read')->first()->id
+                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'read')->first()->id
                     ]);
 
                     UserGroupPermission::create([
                         'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'invites')->where('type', 'update')->first()->id
+                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'update')->first()->id
                     ]);
                 }
             }

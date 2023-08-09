@@ -30,14 +30,33 @@ class AssignedEmployeeService
     }
 
     /**
+     * index of current assigned employee service
+     *
+     * @return Collection
+     */
+    public function indexCurrentAssignedEmployee(): Collection
+    {
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', true)
+            ->where('leads.is_done', false)
+            ->where('assigned_employee.employee_id', Auth::user()->employee->id)
+            ->get();
+
+        return $assigned_leads;
+    }
+
+    /**
      * create assigned employee service
      *
      * @param array $request
      * @return AssignedEmployee
      */
-    public function createAssignedEmployee(array $request): bool
+    public function createAssignedEmployee(array $request): array
     {
         try {
+            DB::beginTransaction();
+
             foreach ($request['lead_ids'] as $lead) {
                 AssignedEmployee::create([
                     'lead_id' => $lead,
@@ -51,11 +70,14 @@ class AssignedEmployeeService
                     'updated_by' => Auth::user()->employee->id
                 ]);
             }
-        } catch (Exception $ex) {
-            return false;
-        }
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        return true;
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfuly assigned!'];
     }
 
     /**
@@ -64,9 +86,11 @@ class AssignedEmployeeService
      * @param array $request
      * @return AssignedEmployee
      */
-    public function updateAssignedEmployee(array $request): bool
+    public function updateAssignedEmployee(array $request): array
     {
         try {
+            DB::beginTransaction();
+
             foreach ($request['lead_ids'] as $lead) {
                 $assignedEmployee = AssignedEmployee::where('lead_id', $lead)->first();
 
@@ -84,13 +108,14 @@ class AssignedEmployeeService
                     ]);
                 }
             }
-        } catch (Exception $ex) {
-            return false;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
         }
+        DB::commit();
 
-        // $assigned_employee = tap($assignedEmployee)->update($request);
-
-        return true;
+        return ['result' => 'success', 'message' => 'Successfully updated!'];
     }
 
     /**
@@ -112,8 +137,7 @@ class AssignedEmployeeService
             ]);
 
             // delete record here
-            $assignedEmployee->delete;
-
+            $assignedEmployee->delete();
         } catch (Exception $e) {
             return false;
         }
@@ -127,41 +151,60 @@ class AssignedEmployeeService
      * @param array $request
      * @return boolean
      */
-    public function removedAssigned(array $request) : bool
+    public function removedAssigned(array $request): array
     {
         try {
+            DB::beginTransaction();
+
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
                 $lead->update([
                     'is_booker_assigned' => false,
-                    'remarks' => null,
                     'updated_by' => Auth::user()->employee->id
                 ]);
 
-                $assigned_employee = AssignedEmployee::where('lead_id', $lead->id);
-                $assigned_employee->delete();
+                $lead->assignedEmployee->delete();
             }
-        } catch (Exception $ex) {
-            return false;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e];
         }
 
-        return true;
+        DB::commit();
+        return ['result' => 'success', 'message' => 'Successfully removed assignment'];
     }
 
     /**
-     * index of current assigned employee service
+     * modify employee assigned remarks service
      *
-     * @return Collection
+     * @param array $request
+     * @return array
      */
-    public function indexCurrentAssignedEmployee(): Collection
+    public function modifyRemarks(array $request): array
     {
-        $assigned_leads = Lead::select('leads.*')
-            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
-            ->where('leads.is_booker_assigned', true)
-            ->where('leads.is_done', false)
-            ->where('assigned_employee.employee_id', Auth::user()->employee->id)
-            ->get();
+        try {
+            DB::beginTransaction();
 
-        return $assigned_leads;
+            $assigned_employee = AssignedEmployee::where('lead_id', $request['lead_id'])->first();
+            $assigned_employee = tap($assigned_employee)->update([
+                'remarks' => $request['remarks'],
+                'lead_status' => $request['lead_status'],
+                'updated_by' => Auth::user()->employee->id
+            ]);
+
+            $assigned_employee->lead->update([
+                'venue_id' => $request['venue_id'],
+                'updated_by' => Auth::user()->employee->id
+            ]);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfully saved!'];
     }
 }

@@ -218,7 +218,7 @@
                         @click="selectedLead(row.item)"
                         class="m-1"
                         v-if="
-                            !row.item.remarks &&
+                            !row.item.assigned_employee.remarks &&
                             check_access('assigns', 'update')
                         "
                         >Add remarks</b-button
@@ -233,10 +233,10 @@
                     >
                     <b-button
                         v-if="
-                            row.item.remarks &&
+                            row.item.assigned_employee.remarks &&
                             check_access('assigns', 'update')
                         "
-                        v-b-modal.invite-modal
+                        v-b-modal.done-modal
                         variant="success"
                         @click="selectedLead(row.item)"
                         class="m-1"
@@ -301,16 +301,16 @@
                 </template>
             </b-modal>
 
-            <b-modal id="invite-modal" title="Notice">
+            <b-modal id="done-modal" title="Notice">
                 <p>Mark as Done?</p>
                 <template #modal-footer>
                     <b-button
                         variant="danger"
                         type="button"
-                        @click="$bvModal.hide('invite-modal')"
+                        @click="$bvModal.hide('done-modal')"
                         >Close</b-button
                     >
-                    <b-button variant="success" type="button" @click="invite"
+                    <b-button variant="success" type="button" @click="done"
                         >Yes</b-button
                     >
                 </template>
@@ -365,9 +365,10 @@ export default {
             },
             hasRemarks: "All",
             updated_by: "",
-            invite_form: {
+            done_form: {
                 status: true,
                 lead_id: "",
+                employee_type: "employee"
             },
             lead_status_options: [
                 { value: null, text: "-- select --" },
@@ -429,9 +430,9 @@ export default {
         assignedLeads() {
             // remarks filter
             if (this.hasRemarks == "Yes") {
-                return this.items.filter((item) => item.remarks != null);
+                return this.items.filter((item) => item.assigned_employee.remarks != null);
             } else if (this.hasRemarks == "No") {
-                return this.items.filter((item) => item.remarks == null);
+                return this.items.filter((item) => item.assigned_employee.remarks == null);
             }
 
             // assigned date filter
@@ -520,10 +521,9 @@ export default {
             this.$bvModal.hide("remarks-modal");
         },
         selectedLead(data) {
-            console.log(data, "lead_status");
             this.selected_row_id = data.id;
-            this.remarks = data.remarks;
-            this.lead_status = data.lead_status;
+            this.remarks = data.assigned_employee.remarks;
+            this.lead_status = data.assigned_employee.lead_status;
             this.venue_id = data.venue_id;
             this.updated_by =
                 data.updated_by.length != 0
@@ -544,10 +544,10 @@ export default {
 
             return access.some((item) => item.type === type);
         },
-        invite() {
-            this.invite_form.lead_id = this.selected_row_id;
-            router.post("/invites", this.invite_form);
-            this.$bvModal.hide("invite-modal");
+        done() {
+            this.done_form.lead_id = this.selected_row_id;
+            router.post("/done", this.done_form);
+            this.$bvModal.hide("done-modal");
         },
         formatDate(value) {
             let date_value = new Date(value);

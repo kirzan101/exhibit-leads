@@ -183,6 +183,10 @@ class Helper
                 'code' => 'WN'
             ],
             [
+                'name' => 'Call Back',
+                'code' => 'CB'
+            ],
+            [
                 'name' => 'Cancelled',
                 'code' => 'C'
             ],

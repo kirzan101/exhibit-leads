@@ -163,45 +163,28 @@
                     >
 
                     <b-button
-                        v-b-modal.remarks-modal
+                        v-b-modal.employee-remarks-modal
                         variant="warning text-white"
                         class="m-1"
+                        @click="selected_lead(row.item)"
                         >Remarks</b-button
                     >
-
-                    <!-- Add Remarks modal -->
-                    <b-modal id="remarks-modal" title="Booker Remarks">
-                        <b-form-textarea
-                            id="textarea"
-                            placeholder="Enter something..."
-                            rows="3"
-                            max-rows="6"
-                            readonly
-                            v-model="row.item.assigned_employee.remarks"
-                        ></b-form-textarea>
-                        <p class="mt-2 mb-2">Booker Lead status:</p>
-                        <b-form-select
-                            :disabled="true"
-                            :value="row.item.assigned_employee.lead_status"
-                            :options="lead_status_options"
-                        ></b-form-select>
-
-                        <template #modal-footer>
-                            <b-button
-                                variant="danger"
-                                type="button"
-                                @click="$bvModal.hide('remarks-modal')"
-                                >Close</b-button
-                            >
-                        </template>
-                    </b-modal>
 
                     <b-button
                         v-b-modal.confirm-modal
                         variant="success text-white"
-                        @click="selectedLead(row.item)"
+                        @click="selected_lead(row.item)"
                         class="m-1"
+                        v-if="!has_confirmer"
                         >Confirm</b-button
+                    >
+                    <b-button
+                        v-b-modal.confirm-modal
+                        variant="danger text-white"
+                        @click="selected_lead(row.item)"
+                        class="m-1"
+                        v-if="has_confirmer"
+                        >Edit confirm</b-button
                     >
                 </template>
 
@@ -225,12 +208,73 @@
             >
                 <pre>{{ infoModal.content }}</pre>
             </b-modal>
+
+            <!-- Employee Remarks modal -->
+            <b-modal id="employee-remarks-modal" title="Booker Remarks">
+                <b-form-textarea
+                    id="textarea"
+                    placeholder="Enter something..."
+                    rows="3"
+                    max-rows="6"
+                    readonly
+                    v-model="employee_remarks"
+                ></b-form-textarea>
+                <p class="mt-2 mb-2">Booker Lead status:</p>
+                <b-form-select
+                    :disabled="true"
+                    :value="employee_lead_status"
+                    :options="lead_status_options"
+                ></b-form-select>
+                <p class="mt-4 mb-2">Remarks by: <b>{{ employee_name }}</b> </p>
+
+                <template #modal-footer>
+                    <b-button
+                        variant="danger"
+                        type="button"
+                        @click="$bvModal.hide('employee-remarks-modal')"
+                        >Close</b-button
+                    >
+                </template>
+            </b-modal>
+
+            <!-- Confirm modal -->
+            <b-modal id="confirm-modal" title="Confirm Lead:">
+                <p class="mt-2 mb-2">Remarks:</p>
+                <b-form-textarea
+                    id="textarea"
+                    placeholder="Enter something..."
+                    rows="3"
+                    max-rows="6"
+                    v-model="remarks"
+                ></b-form-textarea>
+                <p class="mt-2 mb-2">Lead status:</p>
+                <b-form-select
+                    v-model="lead_status"
+                    :options="lead_status_confirmer_options"
+                ></b-form-select>
+                <p v-if="confirmer_name" class="mt-4 mb-2">Last remarks by: <b>{{ confirmer_name }}</b> </p>
+
+                <template #modal-footer>
+                    <b-button
+                        variant="danger"
+                        type="button"
+                        @click="$bvModal.hide('confirm-modal')"
+                        >Close</b-button
+                    >
+                    <b-button
+                        variant="success"
+                        type="button"
+                        @click="submitConfirm"
+                        >Save</b-button
+                    >
+                </template>
+            </b-modal>
         </b-container>
     </div>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
 
 export default {
     components: {
@@ -243,6 +287,7 @@ export default {
         per_page: Number,
         occupation_list: Array,
         status_list: Array,
+        confirmer_status_list: Array,
         venues: Array,
         sources: Array,
     },
@@ -264,6 +309,18 @@ export default {
             },
             selected_ids: [],
             checkedAll: false,
+            employee_remarks: "",
+            employee_lead_status: "",
+            employee_name: "",
+            remarks: "",
+            lead_status: "",
+            confirmer_name: "",
+            has_confirmer: false,
+            form: {
+                lead_status: null,
+                remarks: null,
+                lead_id: null
+            },
             additional_filter: {
                 occupation: null,
                 venue_id: null,
@@ -278,6 +335,15 @@ export default {
             lead_status_options: [
                 { value: null, text: "-- select --" },
                 ...this.status_list.map((item) => {
+                    return {
+                        value: item.name,
+                        text: item.name,
+                    };
+                }),
+            ],
+            lead_status_confirmer_options: [
+                { value: null, text: "-- select --" },
+                ...this.confirmer_status_list.map((item) => {
                     return {
                         value: item.name,
                         text: item.name,
@@ -373,6 +439,34 @@ export default {
 
             return access.some((item) => item.type === type);
         },
+        selected_lead(data) {
+            // get the data of selected lead
+
+            // set employee remarks & lead status
+            this.employee_remarks = data.assigned_employee.remarks;
+            this.employee_lead_status = data.assigned_employee.lead_status;
+            this.employee_name = data.assigned_employee.updatedBy.full_name;
+
+            // set confirmer remarks & lead status
+            this.remarks = (data.assigned_confirmer) ? data.assigned_confirmer.remarks : null;
+            this.lead_status = (data.assigned_confirmer) ? data.assigned_confirmer.lead_status : null;
+            this.has_confirmer = (data.assigned_confirmer) ? true : false;
+            this.confirmer_name = "";
+
+            //set current lead
+            this.form.lead_id = data.id;
+        },
+        submitConfirm() {
+            this.form.lead_status = this.lead_status
+            this.form.remarks = this.remarks
+
+            router.post("/confirm", this.form);
+
+            //clear form contents
+            this.form.lead_status = "";
+            this.form.remarks = "";
+            this.form.lead_id = "";
+        }
     },
 };
 </script>

@@ -199,7 +199,7 @@
                 ></b-form-textarea>
                 <p class="mt-2 mb-2">Lead status:</p>
                 <b-form-select
-                    v-model="lead_status_confirmer"
+                    v-model="lead_status"
                     :options="lead_status_options"
                 ></b-form-select>
                 <br />
@@ -258,12 +258,12 @@ export default {
             selected_confirmer_ids: [],
             checkedAll: false,
             remarks: "",
-            lead_status_confirmer: null,
+            lead_status: null,
             selected_row_id: null,
             form: {
                 remarks: "",
                 lead_id: "",
-                lead_status_confirmer: "",
+                lead_status: "",
             },
             property_id: null,
             invite_form: {
@@ -386,16 +386,16 @@ export default {
         },
         confirmLead() {
             this.form.lead_id = this.selected_row_id;
-            this.form.confirmer_remarks = this.remarks;
-            this.form.lead_status_confirmer = this.lead_status_confirmer;
+            this.form.remarks = this.remarks;
+            this.form.lead_status = this.lead_status;
             router.post("/confirm", this.form);
             this.remarks = "";
-            this.lead_status_confirmer = "";
+            this.lead_status = "";
             this.$bvModal.hide("confirm-modal");
         },
         selectedLead(data) {
             this.selected_row_id = data.id;
-            this.remarks = data.confirmer_remarks;
+            this.remarks = data.remarks;
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

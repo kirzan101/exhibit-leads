@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('employee_id');
+            $table->longText('remarks')->nullable();
+            $table->string('lead_status')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

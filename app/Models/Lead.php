@@ -40,6 +40,7 @@ class Lead extends Model
         'contract_file',
         'is_booker_assigned',
         'is_done',
+        'is_done_confirmed',
         'is_showed',
         'is_confirm_assigned',
         'is_exhibitor_assigned',

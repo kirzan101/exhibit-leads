@@ -48,6 +48,7 @@ class LeadResource extends JsonResource
             'uploaded_contract_file' => ($this->contract_file) ? asset($this->contract_file) : null, //($this->contract_file) ? Storage::disk('public')->get($this->contract_file) : null,
             'is_booker_assigned' => (bool) $this->is_booker_assigned,
             'is_done' => (bool) $this->is_done,
+            'is_done_confirmed' => (bool) $this->is_done_confirmed,
             'is_confirm_assigned' => (bool) $this->is_confirm_assigned,
             'is_showed' => (bool) $this->is_showed,
             'is_exhibitor_assigned' => (bool) $this->is_exhibitor_assigned,

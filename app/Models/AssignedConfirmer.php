@@ -12,6 +12,8 @@ class AssignedConfirmer extends Model
     protected $fillable = [
         'employee_id',
         'lead_id',
+        'remarks',
+        'lead_status',
         'created_by',
         'updated_by'
     ];

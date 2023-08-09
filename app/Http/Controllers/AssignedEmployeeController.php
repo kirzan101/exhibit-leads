@@ -65,18 +65,9 @@ class AssignedEmployeeController extends Controller
     {
         $this->authorize('create', AssignedEmployee::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->createAssignedEmployee($request->toArray());
 
-            $this->assignedEmployeeService->createAssignedEmployee($request->validated());
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('leads.index')->with('success', 'Successfully assigned!');
+        return redirect()->route('leads.index')->with($result, $message);
     }
 
     /**
@@ -109,18 +100,9 @@ class AssignedEmployeeController extends Controller
     {
         $this->authorize('create', AssignedEmployee::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->updateAssignedEmployee($request->toArray());
 
-            $this->assignedEmployeeService->updateAssignedEmployee($request->validated());
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned!');
+        return redirect()->route('leads.index')->with($result, $message);
     }
 
     /**
@@ -133,16 +115,34 @@ class AssignedEmployeeController extends Controller
     {
         $this->authorize('create', AssignedEmployee::class);
 
-        $request = $request->validate([
+        $request->validate([
             'lead_ids' => 'required|array'
         ]);
 
-        $result = $this->assignedEmployeeService->removedAssigned($request);
+        ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->removedAssigned($request->toArray());
 
-        if (!$result) {
-            return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');
-        }
+        return redirect()->route('assigned-employees.index')->with($result, $message);
+    }
 
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully removed assignment!');
+    /**
+     * add or update remarks of lead
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function remarks(Request $request)
+    {
+        $this->authorize('update', AssignedEmployee::class);
+
+        $request = $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'remarks' => 'required|min:2',
+            'lead_status' => 'required|min:1',
+            'venue_id' => 'required|exists:venues,id'
+        ]);
+
+        ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->modifyRemarks($request);
+
+        return redirect()->route('assigned-employees.index')->with($result, $message);
     }
 }

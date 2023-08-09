@@ -193,12 +193,19 @@ class LeadService
      * @param bool $status
      * @return Lead
      */
-    public function done(Lead $lead, bool $status): Lead
+    public function done(Lead $lead, bool $status, string $employee_type): Lead
     {
-        $lead = tap($lead)->update([
-            'is_done' => $status,
-            'updated_by' => Auth::user()->id
-        ]);
+        if($employee_type === 'employee') {
+            $lead = tap($lead)->update([
+                'is_done' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        } else if($employee_type === 'confirmer') {
+            $lead = tap($lead)->update([
+                'is_done_confirmed' => $status,
+                'updated_by' => Auth::user()->id
+            ]);
+        }
 
         return $lead;
     }

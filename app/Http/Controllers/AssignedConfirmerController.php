@@ -27,8 +27,13 @@ class AssignedConfirmerController extends Controller
     private PropertyService $propertyService;
     private VenueService $venueService;
 
-    public function __construct(AssignedConfirmerService $assignedConfirmerService, EmployeeService $employeeService, LeadService $leadService, PropertyService $propertyService, VenueService $venueService)
-    {
+    public function __construct(
+        AssignedConfirmerService $assignedConfirmerService,
+        EmployeeService $employeeService,
+        LeadService $leadService,
+        PropertyService $propertyService,
+        VenueService $venueService
+    ) {
         $this->assignedConfirmerService = $assignedConfirmerService;
         $this->employeeService = $employeeService;
         $this->leadService = $leadService;
@@ -44,10 +49,10 @@ class AssignedConfirmerController extends Controller
         $this->authorize('read', AssignedConfirmer::class);
 
         $isConfirmer = (Auth::user()->employee->userGroup->name == 'confirmers') ?? false;
-        
+
         $leads = LeadResource::collection($this->assignedConfirmerService->indexLeadsOfAssignedConfirmer());
 
-        if($isConfirmer) {
+        if ($isConfirmer) {
             $leads = LeadResource::collection($this->assignedConfirmerService->indexLeadsOfCurrentAssignedConfirmer());
         }
 
@@ -56,7 +61,8 @@ class AssignedConfirmerController extends Controller
             'employees' => $this->employeeService->indexConfirmer(),
             'properties' => $this->propertyService->indexProperty(),
             'venue_list' => $this->venueService->indexVenueService(),
-            'status_list' => Helper::leadConfirmerStatus(),
+            'status_list' => Helper::leadStatus(),
+            'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'per_page' => 5
         ]);
     }
@@ -126,6 +132,12 @@ class AssignedConfirmerController extends Controller
         return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully reassigned!');
     }
 
+    /**
+     * remove assignement of leads in confirmer
+     *
+     * @param Request $request
+     * @return void
+     */
     public function removeAssignment(Request $request)
     {
         $this->authorize('create', AssignedEmployee::class);
@@ -141,5 +153,24 @@ class AssignedConfirmerController extends Controller
         }
 
         return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully removed assignment!');
+    }
+
+    /**
+     * confirm lead
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'lead_status' => 'required',
+            'remarks' => 'required'
+        ]);
+
+        ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->confirmLead($request->toArray());
+
+        return redirect()->route('confirms')->with($result, $message);
     }
 }

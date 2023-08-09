@@ -7,6 +7,7 @@ use App\Models\Lead;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AssignedConfirmerService
 {
@@ -23,7 +24,25 @@ class AssignedConfirmerService
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
             ->where('leads.is_confirm_assigned', true)
             ->where('leads.is_invited', true)
-            ->whereNull('confirmer_remarks')
+            ->whereNull('assigned_confirmers.remarks')
+            ->get();
+
+        return $assigned_leads;
+    }
+
+    /**
+     * index of leads of current assigned employee service
+     *
+     * @return Collection
+     */
+    public function indexLeadsOfCurrentAssignedConfirmer(): Collection
+    {
+
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
+            ->where('leads.is_confirm_assigned', true)
+            ->where('leads.is_done', true)
+            ->where('assigned_confirmers.employee_id', Auth::user()->employee->id)
             ->get();
 
         return $assigned_leads;
@@ -35,9 +54,11 @@ class AssignedConfirmerService
      * @param array $request
      * @return AssignedConfirmer
      */
-    public function createAssignedConfirmer(array $request): bool
+    public function createAssignedConfirmer(array $request): array
     {
         try {
+            DB::beginTransaction();
+
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
 
@@ -52,12 +73,14 @@ class AssignedConfirmerService
                     'created_by' => Auth::user()->employee->id,
                 ]);
             }
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        } catch (Exception $ex) {
-            return false;
+            return ['result' => 'error', 'message' => $e->getMessage()];
         }
+        DB::commit();
 
-        return true;
+        return ['result' => 'success', 'message' => 'Successfully saved!'];
     }
 
     /**
@@ -67,26 +90,24 @@ class AssignedConfirmerService
      * @param AssignedConfirmer $assignedConfirmer
      * @return AssignedConfirmer
      */
-    public function updateAssignedConfirmer(array $request): bool
+    public function updateAssignedConfirmer(array $request): array
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
                 $assignedConfirmer = AssignedConfirmer::where('lead_id', $lead)->first();
 
-                if($assignedConfirmer) {
+                if ($assignedConfirmer) {
                     $assignedConfirmer->update([
                         'employee_id' => $request['employee_id'],
                         'updated_by' => Auth::user()->employee->id
                     ]);
                 }
             }
-        } catch (Exception $ex) {
-            return false;
+        } catch (Exception $e) {
+            return ['result' => 'success', 'message' => $e->getMessage()];
         }
 
-        // $assigned_employee = tap($assignedConfirmer)->update($request);
-
-        return true;
+        return ['result' => 'success', 'message' => 'Successfully saved!'];
     }
 
     /**
@@ -112,19 +133,16 @@ class AssignedConfirmerService
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
 
-                $assignedConfirmer = AssignedConfirmer::where('lead_id', $lead->id)->first();
-
-                // delete assigned confirmer
-                $assignedConfirmer->delete();
-
                 // update lead information
                 $lead->update([
                     'is_confirm_assigned' => false,
-                    'confirmer_remarks' => null,
                     'updated_by' => Auth::user()->employee->id
                 ]);
+
+                // delete assigned confirmer
+                $lead->assignedConfirmer->delete();
             }
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
             return false;
         }
 
@@ -132,20 +150,95 @@ class AssignedConfirmerService
     }
 
     /**
-     * index of leads of current assigned employee service
+     * confirm lead service
      *
-     * @return Collection
+     * @param Lead $lead
+     * @param array $request
+     * @return array
      */
-    public function indexLeadsOfCurrentAssignedConfirmer(): Collection
+    public function confirmLead(array $request): array
     {
+        try {
+            DB::beginTransaction();
 
-        $assigned_leads = Lead::select('leads.*')
-            ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
-            ->where('leads.is_confirm_assigned', true)
-            ->where('leads.is_invited', true)
-            ->where('assigned_confirmers.employee_id', Auth::user()->employee->id)
-            ->get();
+            $assigned_confirmer = AssignedConfirmer::create([
+                'lead_id' => $request['lead_id'],
+                'employee_id' => Auth::user()->employee->id,
+                'remarks' => $request['remarks'],
+                'lead_status' => $request['lead_status'],
+                'created_by' => Auth::user()->employee->id,
+            ]);
 
-        return $assigned_leads;
+            $assigned_confirmer->lead->update([
+                'is_confirm_assigned' => true,
+                'is_done_confirmed' => true,
+                'updated_by' => Auth::user()->employee->id
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfully confirmed!'];
+    }
+
+    /**
+     * edit confirmed lead service
+     *
+     * @param array $request
+     * @return array
+     */
+    public function editConfirmedLead(array $request): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $assigned_confirmer = AssignedConfirmer::where('lead_id', $request['lead_id'])->first();
+            $assigned_confirmer->update([
+                'remarks' => $request['remarks'],
+                'lead_status' => $request['lead_status'],
+                'updated_by' => Auth::user()->employee->id,
+            ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'error', 'message' => 'Successfully saved!'];
+    }
+
+    /**
+     * remove multiple confirmed lead
+     *
+     * @param array $request
+     * @return array
+     */
+    public function removeConfirmedLead(array $request): array
+    {
+        try {
+            DB::beginTransaction();
+
+            foreach ($request['lead_ids'] as $lead_id) {
+                $lead = Lead::find($lead_id);
+                $lead = $lead->update([
+                    'is_done_confirmed' => false,
+                    'is_confirm_assigned' => false,
+                    'updated_by' => Auth::user()->employee->id
+                ]);
+
+                $lead->assignedConfirmer->delete();
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfully removed!'];
     }
 }

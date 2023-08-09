@@ -18,10 +18,14 @@ class AssignedEmployeeResource extends JsonResource
             'id' => $this->id,
             'lead_id' => $this->lead_id,
             'employee_id' => $this->employee_id,
+            'remarks' => $this->remarks,
+            'lead_status' => $this->lead_status,
             'created_at' => $this->created_at->toIso8601String(),
             'created_by' => $this->created_by,
+            'createdBy' => new EmployeeResource($this->createdBy),
             'updated_at' => $this->updated_at->toIso8601String(),
-            'updated_by' => $this->updated_by
+            'updated_by' => $this->updated_by,
+            'updatedBy' => new EmployeeResource($this->updatedBy)
         ];
     }
 }

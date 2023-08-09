@@ -82,12 +82,13 @@
 
             <br />
 
-            <ForConfirmationTable
+            <ConfirmTable
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
                 :occupation_list="occupation_list"
                 :status_list="status_list"
+                :confirmer_status_list="confirmer_status_list"
                 :venues="venues"
                 :sources="sources"
                 @selected_lead="getSelectedLead($event)"
@@ -101,11 +102,13 @@
 <script>
 import { Link, router } from "@inertiajs/vue2";
 import ForConfirmationTable from "../../Components/ForConfirmationTable.vue"
+import ConfirmTable from "../../Components/ConfirmTable.vue";
 
 export default {
     components: {
         Link,
-        ForConfirmationTable
+        ForConfirmationTable,
+        ConfirmTable
     },
     props: {
         leads: Array,
@@ -114,6 +117,7 @@ export default {
         occupation_list: Array,
         is_confirmer: Boolean,
         status_list: Array,
+        confirmer_status_list: Array,
         venues: Array,
         sources: Array
     },

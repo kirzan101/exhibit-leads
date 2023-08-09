@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('contracts', ContractController::class);
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
-    Route::post('remarks', [LeadController::class, 'remarks']);
+    Route::post('remarks', [AssignedEmployeeController::class, 'remarks']);
 
     // assign employee
     Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);
@@ -75,14 +75,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/edit', [EmployeeController::class, 'profileEdit']);
 
     // confirm
-    Route::post('confirm', [LeadController::class, 'confirm']);
+    Route::post('confirm', [AssignedConfirmerController::class, 'confirm']);
     Route::get('confirms', [LeadController::class, 'indexDoneLead'])->name('confirms');
-    Route::post('done', [LeadController::class, 'done']);
-    Route::post('done/cancel', [LeadController::class, 'cancelDone']);
 
     //confirmed
     Route::get('/confirmed', [LeadController::class, 'indexConfirmed'])->name('confirmed');
-    Route::get('/confirmed/remove', [LeadController::class, 'removeConfirmed']);
+    // Route::get('/confirmed/remove', [LeadController::class, 'removeConfirmed']);
+
+    // assign done status
+    Route::post('done', [LeadController::class, 'done']);
+    Route::post('done/cancel', [LeadController::class, 'cancelDone']);
 
     //mark as no show
     Route::post('/showed', [LeadController::class, 'showedLead']);
