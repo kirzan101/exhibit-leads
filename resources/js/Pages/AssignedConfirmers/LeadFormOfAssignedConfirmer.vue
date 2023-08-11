@@ -1,8 +1,8 @@
 <template>
     <b-container fluid>
         <Head>
-            <title v-if="is_disabled">Assigned Employee Lead | Show</title>
-            <title v-else>Assigned Employee Lead | Edit</title>
+            <title v-if="is_disabled">Assigned Confirmer Lead | Show</title>
+            <title v-else>Assigned Confirmer Lead | Edit</title>
         </Head>
 
         <!--Alert message here start-->
@@ -31,7 +31,7 @@
         <h5>
             <div v-if="is_disabled">
                 Show Lead |
-                <Link class="btn btn-secondary" :href="'/' + form_type"
+                <Link class="btn btn-secondary" href="/confirms"
                     >Back</Link
                 >
                 <Link

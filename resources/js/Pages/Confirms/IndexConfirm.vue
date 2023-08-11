@@ -128,7 +128,7 @@ export default {
                 { key: "selected", label: "selected", sortable: false },
                 { key: "lead_full_name", label: "Lead name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
-                { key: "lead_status", label: "Status", sortable: true },
+                { key: "lead_status", label: "Booker Status", sortable: false },
                 { key: "venue.name", label: "Venue", sortable: true },
                 { key: "source_complete", label: "Source", sortable: true },
                 { key: "mobile_number", label: "Mobile Number", sortable: false },

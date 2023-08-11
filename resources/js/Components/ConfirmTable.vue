@@ -153,22 +153,32 @@
                     </b-form-group>
                 </template>
 
+                <template v-slot:cell(lead_status)="row">
+                    <b-button
+                        v-b-modal.employee-remarks-modal
+                        variant="primary text-white"
+                        class="m-1"
+                        @click="selected_lead(row.item)"
+                        >{{ row.item.assigned_employee.lead_status }}</b-button
+                    >
+                </template>
+
                 <template #cell(actions)="row">
                     <Link
-                        :href="'assigned-exhibitors/' + row.item.id"
+                        :href="'assigned-confirmers/' + row.item.id"
                         class="btn m-1 btn-info"
                         type="button"
                         v-if="check_access('confirms', 'read')"
                         >Show</Link
                     >
-
+                    <!-- 
                     <b-button
                         v-b-modal.employee-remarks-modal
                         variant="warning text-white"
                         class="m-1"
                         @click="selected_lead(row.item)"
                         >Remarks</b-button
-                    >
+                    > -->
 
                     <b-button
                         v-b-modal.confirm-modal

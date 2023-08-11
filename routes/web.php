@@ -56,9 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
 
     //assign confirmer
-    Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'update', 'create']]);
-    Route::get('assigned-confirmers/{id}', [AssignedConfirmerController::class, 'show']);
-    Route::post('assign-confirmer', [AssignedConfirmerController::class, 'store']);
+    // Route::resource('assigned-confirmers', AssignedConfirmerController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'update', 'create']]);
+    Route::get('assigned-confirmers', [AssignedConfirmerController::class, 'index'])->name('assigned-confirmers');
+    Route::get('assigned-confirmers/{lead}', [AssignedConfirmerController::class, 'showLead'])->name('assigned-confirmers-show');
+    Route::post('assigned-confirmers', [AssignedConfirmerController::class, 'store']);
+    Route::get('assigned-confirmers/edit/{lead}', [AssignedConfirmerController::class, 'editLead']);
+    Route::put('assigned-confirmers/{lead}', [AssignedConfirmerController::class, 'updateLead']);
     Route::post('reassign-confirmer', [AssignedConfirmerController::class, 'reassignConfirmer']);
     Route::post('remove-assign-confirmer', [AssignedConfirmerController::class, 'removeAssignment']);
 

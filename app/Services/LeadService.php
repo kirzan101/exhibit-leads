@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Helpers\Helper;
 use App\Models\Lead;
+use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class LeadService
@@ -54,9 +56,9 @@ class LeadService
      * create lead service
      *
      * @param Request $request
-     * @return void
+     * @return array
      */
-    public function createLead(array $request): Lead
+    public function createLead(array $request): array
     {
         if ($request['owned_gadgets']) {
             // convert array to single string
@@ -66,17 +68,22 @@ class LeadService
 
         $request['created_by'] = Auth::user()->employee->id;
 
-        $lead = Lead::create($request);
+        try {
+            $lead = Lead::create($request);
 
-        if ($request['contract_file']) {
-            $result = Helper::uploadFile($request['contract_file'], $lead);
+            // save file
+            if ($request['contract_file']) {
+                $result = Helper::uploadFile($request['contract_file'], $lead);
 
-            if (!$result) {
-                throw ValidationException::withMessages(['error on file upload']);
+                if (!$result) {
+                    throw ValidationException::withMessages(['error on file upload']);
+                }
             }
+        } catch (Exception $e) {
+            return ['result' => 'error', 'message' => $e->getMessage()];
         }
 
-        return $lead;
+        return ['result' => 'success', 'message' => 'Successfully saved!'];
     }
 
     /**
@@ -84,9 +91,9 @@ class LeadService
      *
      * @param array $request
      * @param Lead $lead
-     * @return Lead
+     * @return array
      */
-    public function updateLead(array $request, Lead $lead): Lead
+    public function updateLead(array $request, Lead $lead): array
     {
         if ($request['owned_gadgets']) {
             $owned_gadgets = implode(',', $request['owned_gadgets']);
@@ -95,9 +102,18 @@ class LeadService
 
         $request['updated_by'] = Auth::user()->employee->id;
 
-        $lead = tap($lead)->update($request);
+        try {
+            DB::beginTransaction();
 
-        return $lead;
+            $lead = tap($lead)->update($request);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage()];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Succefully updated!'];
     }
 
     /**
@@ -189,60 +205,32 @@ class LeadService
      *
      * @param Lead $lead
      * @param bool $status
-     * @return Lead
+     * @return array
      */
-    public function done(Lead $lead, bool $status, string $employee_type): Lead
+    public function done(Lead $lead, bool $status, string $employee_type): array
     {
-        if($employee_type === 'employee') {
-            $lead = tap($lead)->update([
-                'is_done' => $status,
-                'updated_by' => Auth::user()->id
-            ]);
-        } else if($employee_type === 'confirmer') {
-            $lead = tap($lead)->update([
-                'is_done_confirmed' => $status,
-                'updated_by' => Auth::user()->id
-            ]);
+        try {
+            DB::beginTransaction();
+
+            if ($employee_type === 'employee') {
+                $lead = tap($lead)->update([
+                    'is_done' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+            } else if ($employee_type === 'confirmer') {
+                $lead = tap($lead)->update([
+                    'is_done_confirmed' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            
+            return ['result' => 'error', 'message' => $e->getMessage()];
         }
+        DB::commit();
 
-        return $lead;
-    }
-
-    /**
-     * Confirm the lead
-     *
-     * @param Lead $lead
-     * @param array $request
-     * @return Lead
-     */
-    public function confirmLead(Lead $lead, array $request): Lead
-    {
-        $lead = tap($lead)->update([
-            'confirmer_remarks' => $request['confirmer_remarks'],
-            'lead_status_confirmer' => $request['lead_status_confirmer'],
-            'is_confirm_assigned' => true,
-            'updated_by' => Auth::user()->id
-        ]);
-
-        return $lead;
-    }
-
-    /**
-     * remove confirm status
-     *
-     * @param Lead $lead
-     * @return Lead
-     */
-    public function removeConfirmLead(Lead $lead): Lead
-    {
-        $lead = tap($lead)->update([
-            'confirmer_remarks' => null,
-            'lead_status_confirmer' => null,
-            'is_confirm_assigned' => false,
-            'updated_by' => Auth::user()->id
-        ]);
-
-        return $lead;
+        return ['result' => 'success', 'message' => 'Successfully Done!'];
     }
 
     /**

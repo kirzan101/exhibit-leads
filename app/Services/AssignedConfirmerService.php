@@ -23,7 +23,7 @@ class AssignedConfirmerService
         $assigned_leads = Lead::select('leads.*')
             ->join('assigned_confirmers', 'assigned_confirmers.lead_id', '=', 'leads.id')
             ->where('leads.is_confirm_assigned', true)
-            ->where('leads.is_invited', true)
+            ->where('leads.is_done', true)
             ->whereNull('assigned_confirmers.remarks')
             ->get();
 

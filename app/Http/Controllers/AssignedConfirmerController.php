@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Http\Requests\AssignedConfirmerFormRequest;
+use App\Http\Requests\LeadFormRequest;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedConfirmer;
 use App\Models\Employee;
@@ -12,6 +13,7 @@ use App\Services\AssignedConfirmerService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
+use App\Services\SourceService;
 use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,19 +28,22 @@ class AssignedConfirmerController extends Controller
     private LeadService $leadService;
     private PropertyService $propertyService;
     private VenueService $venueService;
+    private SourceService $sourceService;
 
     public function __construct(
         AssignedConfirmerService $assignedConfirmerService,
         EmployeeService $employeeService,
         LeadService $leadService,
         PropertyService $propertyService,
-        VenueService $venueService
+        VenueService $venueService,
+        SourceService $sourceService
     ) {
         $this->assignedConfirmerService = $assignedConfirmerService;
         $this->employeeService = $employeeService;
         $this->leadService = $leadService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
+        $this->sourceService = $sourceService;
     }
 
     /**
@@ -91,21 +96,55 @@ class AssignedConfirmerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function showLead(Lead $lead)
     {
         $this->authorize('read', AssignedConfirmer::class);
 
-        $lead = Lead::where('id', $id)->where('is_assigned', true)->first();
-
         if ($lead) {
             $employee = Employee::find($lead->employee_id);
-            return Inertia::render('AssignedConfirmers/ShowAssignedConfirmer', [
+            return Inertia::render('AssignedConfirmers/LeadFormOfAssignedConfirmer', [
+                'is_disabled' => true,
+                'form_type' => 'assigned-confirmers',
                 'lead' => $this->leadService->showLead($lead),
-                'assigned_confirmer' => ($employee) ? $employee->getFullName() : '-'
+                'properties' => $this->propertyService->indexProperty(),
+                'venues' => $this->venueService->indexVenueService(),
+                'sources' => $this->sourceService->indexSource(),
             ]);
         }
 
         return redirect()->route('assigned-confirmers.index')->with('error', 'Lead not found.');
+    }
+
+    /**
+     * Edit specific lead of assigned confirmers
+     *
+     * @param Lead $lead
+     * @return void
+     */
+    public function editLead(Lead $lead)
+    {
+        $this->authorize('update', AssignedConfirmer::class);
+
+        return Inertia::render('AssignedConfirmers/LeadFormOfAssignedConfirmer', [
+            'is_disabled' => false,
+            'form_type' => 'assigned-confirmers',
+            'lead' => $this->leadService->showLead($lead),
+            'properties' => $this->propertyService->indexProperty(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
+        ]);
+    }
+
+    /**
+     * Update specific lead of assigned confirmers.
+     */
+    public function updateLead(LeadFormRequest $request, Lead $lead)
+    {
+        $this->authorize('update', AssignedConfirmer::class);
+
+        ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
+
+        return redirect()->route('assigned-confirmers-show', $lead)->with($result, $message);
     }
 
     /**

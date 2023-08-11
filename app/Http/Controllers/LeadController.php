@@ -84,25 +84,14 @@ class LeadController extends Controller
     {
         $this->authorize('create', Lead::class);
 
-        try {
-            DB::beginTransaction();
-
-            if (!$request->has('owned_gadgets')) {
-                $request->merge(['owned_gadgets' => null]);
-            }
-
-            // add lead
-            $this->leadService->createLead($request->toArray());
-        } catch (Exception $ex) {
-            dd($ex);
-
-            DB::rollBack();
-
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
+        if (!$request->has('owned_gadgets')) {
+            $request->merge(['owned_gadgets' => null]);
         }
 
-        DB::commit();
-        return redirect()->route('leads.index')->with('success', 'Successfully saved!');
+        // add lead
+        ['result' => $result, 'message' => $message] = $this->leadService->createLead($request->toArray());
+
+        return redirect()->route('leads.index')->with($result, $message);
     }
 
     /**
@@ -146,23 +135,13 @@ class LeadController extends Controller
     {
         $this->authorize('update', Lead::class);
 
-        try {
-            DB::beginTransaction();
-
-            if (!$request->has('owned_gadgets')) {
-                $request->merge(['owned_gadgets' => null]);
-            }
-
-            $this->leadService->updateLead($request->validated(), $lead);
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
+        if (!$request->has('owned_gadgets')) {
+            $request->merge(['owned_gadgets' => null]);
         }
 
-        DB::commit();
-        return redirect()->route('leads.index')->with('success', 'Successfully updated!');
+        ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
+
+        return redirect()->route('leads.index')->with($result, $message);
     }
 
     /**
@@ -206,15 +185,11 @@ class LeadController extends Controller
             'employee_type' => 'required'
         ]);
 
-        try {
-            $lead = Lead::find($request->lead_id);
+        $lead = Lead::find($request->lead_id);
 
-            $lead = $this->leadService->done($lead, $request->status, $request->employee_type);
-        } catch (Exception $e) {
-            return redirect()->route('assigned-employees.index')->with('error', $e->getMessage());
-        }
+        ['result' => $result, 'message' => $message] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully Done!');
+        return redirect()->route('assigned-employees')->with($result, $message);
     }
 
     /**
