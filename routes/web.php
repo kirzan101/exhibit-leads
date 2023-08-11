@@ -46,9 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::post('remarks', [AssignedEmployeeController::class, 'remarks']);
 
     // assign employee
-    Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);
-    Route::get('assigned-employees/{id}', [AssignedEmployeeController::class, 'show']);
-    Route::post('assign-employee', [AssignedEmployeeController::class, 'store']);
+    // Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);
+    Route::get('assigned-employees', [AssignedEmployeeController::class, 'index'])->name('assigned-employees');
+    Route::get('assigned-employees/{lead}', [AssignedEmployeeController::class, 'showLead'])->name('assigned-employees-show');
+    Route::post('assigned-employees', [AssignedEmployeeController::class, 'store']);
+    Route::get('assigned-employees/edit/{lead}', [AssignedEmployeeController::class, 'editLead']);
+    Route::put('assigned-employees/{lead}', [AssignedEmployeeController::class, 'updateLead']);
     Route::post('reassign-employee', [AssignedEmployeeController::class, 'reassignEmployee']);
     Route::post('remove-assign', [AssignedEmployeeController::class, 'removeAssignment']);
 

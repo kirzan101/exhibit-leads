@@ -161,40 +161,6 @@
                         v-if="check_access('confirms', 'read')"
                         >Show</Link
                     >
-
-                    <b-button
-                        v-b-modal.employee-remarks-modal
-                        variant="warning text-white"
-                        class="m-1"
-                        @click="selected_lead(row.item)"
-                        >Remarks</b-button
-                    >
-
-                    <b-button
-                        v-b-modal.confirm-modal
-                        variant="success text-white"
-                        @click="selected_lead(row.item)"
-                        class="m-1"
-                        v-if="!row.item.is_confirm_assigned"
-                        >Confirm</b-button
-                    >
-                    <b-button
-                        v-b-modal.confirm-modal
-                        variant="danger text-white"
-                        @click="selected_lead(row.item)"
-                        class="m-1"
-                        v-else
-                        >Edit confirm</b-button
-                    >
-
-                    <b-button
-                        v-b-modal.done-modal
-                        variant="success text-white"
-                        class="m-1"
-                        v-if="row.item.is_confirm_assigned"
-                        @click="selected_lead(row.item)"
-                        >Done</b-button
-                    >
                 </template>
 
                 <template #row-details="row">

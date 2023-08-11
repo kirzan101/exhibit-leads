@@ -32,13 +32,16 @@
                         class="nav-item"
                         v-if="check_access('confirms', 'read')"
                     >
-                        <Link class="nav-link" href="/confirms"
-                            >Confirms</Link
-                        >
+                        <Link class="nav-link" href="/confirms">Confirms</Link>
                     </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
 
-                    <b-nav-item-dropdown ref="managedd" text="Manage" right>
+                    <b-nav-item-dropdown
+                        ref="managemenu"
+                        text="Manage"
+                        v-if="check_manage_access()"
+                        right
+                    >
                         <li role="presentation">
                             <Link
                                 v-if="check_access('employees', 'read')"
@@ -66,6 +69,15 @@
                                 @click="closeDropDown"
                                 href="/sources"
                                 >Sources</Link
+                            >
+                            <Link
+                                v-if="check_access('confirms', 'read')"
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                @click="closeDropDown"
+                                href="/confirmed"
+                                >Confirmed</Link
                             >
                         </li>
                     </b-nav-item-dropdown>
@@ -136,8 +148,31 @@ export default {
         },
         closeDropDown() {
             this.$refs.dropdown.hide(true); // dropdown for user profile
-            this.$refs.managedd.hide(true); // drop down for manage
+            this.$refs.managemenu.hide(true); // drop down for manage
             // console.log("clicked dropdown");
+        },
+        check_manage_access() {
+            //checker for manage drop down
+            let result = [];
+            let modules = ["employees", "venues", "sources", "confirms"];
+            let permissions = this.$page.props.auth.permissions;
+
+            modules.forEach((module) => {
+                if (
+                    permissions.filter((item) => item.module === module)
+                        .length > 0
+                ) {
+                    result.push(true);
+                } else {
+                    result.push(false);
+                }
+            });
+
+            if (result.filter((item) => item === true).length > 0) {
+                return true;
+            } else {
+                return false;
+            }
         },
     },
 };

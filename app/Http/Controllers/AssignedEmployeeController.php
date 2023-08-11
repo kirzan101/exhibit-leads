@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Http\Requests\AssignedEmployeeFormRequest;
+use App\Http\Requests\LeadFormRequest;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedEmployee;
 use App\Models\Employee;
@@ -11,6 +12,8 @@ use App\Models\Lead;
 use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
+use App\Services\PropertyService;
+use App\Services\SourceService;
 use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
@@ -24,13 +27,23 @@ class AssignedEmployeeController extends Controller
     private LeadService $leadService;
     private EmployeeService $employeeService;
     private VenueService $venueService;
+    private SourceService $sourceService;
+    private PropertyService $propertyService;
 
-    public function __construct(AssignedEmployeeService $assignedEmployeeService, LeadService $leadService, EmployeeService $employeeService, VenueService $venueService)
-    {
+    public function __construct(
+        AssignedEmployeeService $assignedEmployeeService,
+        LeadService $leadService,
+        EmployeeService $employeeService,
+        VenueService $venueService,
+        SourceService $sourceService,
+        PropertyService $propertyService
+    ) {
         $this->assignedEmployeeService = $assignedEmployeeService;
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->venueService = $venueService;
+        $this->sourceService = $sourceService;
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -71,23 +84,52 @@ class AssignedEmployeeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show specific lead of assigned employee
      */
-    public function show($id)
+    public function showLead(Lead $lead)
     {
         $this->authorize('read', AssignedEmployee::class);
 
-        $lead = Lead::where('id', $id)->where('is_assigned', true)->first();
+        return Inertia::render('AssignedEmployees/LeadFormOfAssignedEmployee', [
+            'is_disabled' => true,
+            'form_type' => 'assigned-employees',
+            'lead' => $this->leadService->showLead($lead),
+            'properties' => $this->propertyService->indexProperty(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
+        ]);
+    }
 
-        if ($lead) {
-            $employee = $lead->assignedEmployee->employee;
-            return Inertia::render('AssignedEmployees/ShowAssignedEmployee', [
-                'lead' => $this->leadService->showLead($lead),
-                'assigned_employee' => ($employee) ? $employee->getFullName() : '-'
-            ]);
-        }
+    /**
+     * Edit specigic lead of assigned employee
+     *
+     * @param Lead $lead
+     * @return void
+     */
+    public function editLead(Lead $lead)
+    {
+        $this->authorize('update', AssignedEmployee::class);
 
-        return redirect()->route('assigned-employees.index')->with('error', 'Lead not found.');
+        return Inertia::render('AssignedEmployees/LeadFormOfAssignedEmployee', [
+            'is_disabled' => false,
+            'form_type' => 'assigned-employees',
+            'lead' => $this->leadService->showLead($lead),
+            'properties' => $this->propertyService->indexProperty(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
+        ]);
+    }
+    
+    /**
+     * Update specific lead of assigned employee.
+     */
+    public function updateLead(LeadFormRequest $request, Lead $lead)
+    {
+        $this->authorize('update', AssignedEmployee::class);
+        
+        ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
+
+        return redirect()->route('assigned-employees-show', $lead)->with($result, $message);
     }
 
     /**

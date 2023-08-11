@@ -29,11 +29,9 @@
         <b-container fluid>
             <h5>
                 <div class="row">
+                    <div class="col-sm-6">Confirmed</div>
                     <div class="col-sm-6">
-                        Confirmed | <Link class="btn btn-secondary" type="button" href="/assigned-confirmers">Back</Link>
-                    </div>
-                    <div class="col-sm-6">
-                        <div v-if="check_access('invites', 'create')">
+                        <div v-if="check_access('confirms', 'create')">
                             <b-button
                                 class="btn btn-danger m-1"
                                 v-b-modal.remove-modal
@@ -52,9 +50,9 @@
                                 >Remove</b-button
                             >
                         </div>
-                        <!-- remove invitee -->
+                        <!-- remove done -->
                         <b-modal title="Notice:" id="remove-modal">
-                            <p>Remove to confirmed?</p>
+                            <p>Remove Done remarks?</p>
                             <template #modal-footer>
                                 <b-button
                                     variant="danger"
@@ -65,7 +63,7 @@
                                 <b-button
                                     variant="success"
                                     type="button"
-                                    @click="submitRemove()"
+                                    @click="submitDone()"
                                     v-if="selected_employee != ''"
                                     >Yes</b-button
                                 >
@@ -75,40 +73,6 @@
                                     disabled
                                     v-else
                                     >Yes</b-button
-                                >
-                            </template>
-                        </b-modal>
-
-                        <!-- assign to confirmer -->
-                        <b-modal title="Assign to Confirmer" id="assign-modal">
-                            <b-form @submit.prevent="submitAssigned">
-                                <b-form-select
-                                    v-model="selected_employee"
-                                    :options="employeeList"
-                                    size="sm"
-                                    class="mt-3"
-                                ></b-form-select>
-                            </b-form>
-                            <template #modal-footer>
-                                <b-button
-                                    variant="danger"
-                                    type="button"
-                                    @click="$bvModal.hide('assign-modal')"
-                                    >Close</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
-                                    @click="submitAssigned()"
-                                    v-if="selected_employee != ''"
-                                    >Submit</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
-                                    disabled
-                                    v-else
-                                    >Submit</b-button
                                 >
                             </template>
                         </b-modal>
@@ -118,11 +82,15 @@
 
             <br />
 
-            <LeadTable
+            <ConfirmedTable
                 :fields="fields"
                 :items="leads"
                 :per_page="per_page"
                 :occupation_list="occupation_list"
+                :status_list="status_list"
+                :confirmer_status_list="confirmer_status_list"
+                :venues="venues"
+                :sources="sources"
                 @selected_lead="getSelectedLead($event)"
             />
         </b-container>
@@ -133,48 +101,39 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import LeadTable from "../../Components/LeadTable.vue";
+import ForConfirmationTable from "../../Components/ForConfirmationTable.vue"
+import ConfirmedTable from "../../Components/ConfirmedTable.vue";
 
 export default {
     components: {
         Link,
-        LeadTable,
+        ForConfirmationTable,
+        ConfirmedTable
     },
     props: {
         leads: Array,
         employees: Array,
         per_page: Number,
         occupation_list: Array,
+        is_confirmer: Boolean,
+        status_list: Array,
+        confirmer_status_list: Array,
+        venues: Array,
+        sources: Array
     },
     data() {
         return {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
-                // {
-                //     key: "id",
-                //     label: "Id",
-                //     sortable: true,
-                //     sortDirection: "desc",
-                // },
-                { key: "first_name", label: "First name", sortable: true },
-                { key: "last_name", label: "Last name", sortable: true },
+                { key: "lead_full_name", label: "Lead name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
-                { key: "address", label: "Address", sortable: true },
-                // {
-                //     key: "is_assigned",
-                //     label: "Is Assigned",
-                //     sortable: false,
-                //     formatter: (value, key, item) => {
-                //         return value ? "Yes" : "No";
-                //     },
-                // },
-                // { key: "actions", label: "Actions" },
-                {
-                    key: "assigned_confirmer_name",
-                    label: "Assigned Confirmer",
-                    sortable: true,
-                },
+                { key: "assigned_employee.lead_status", label: "Booker Status", sortable: true },
+                { key: "assigned_confirmer.lead_status", label: "Confirmer Status", sortable: true },
+                { key: "venue.name", label: "Venue", sortable: true },
+                { key: "source_complete", label: "Source", sortable: true },
+                { key: "mobile_number", label: "Mobile Number", sortable: false },
+                { key: "actions", label: "Actions" },
             ],
             selected_lead: [],
             form: {
@@ -182,10 +141,10 @@ export default {
             },
             assign_form: {
                 lead_ids: [],
-                employee_id: ''
+                employee_id: "",
             },
             alert: false,
-            selected_employee: '',
+            selected_employee: "",
         };
     },
     computed: {
@@ -205,23 +164,13 @@ export default {
         getSelectedLead(data) {
             this.selected_lead = data;
         },
-        submitRemove() {
+        submitDone() {
             this.form.lead_ids = this.selected_lead;
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/confirmed/remove", this.form);
+            router.post("/done/cancel", this.form);
             this.selected_lead = [];
-        },
-        submitAssigned() {
-            this.assign_form.lead_ids = this.selected_lead;
-            this.assign_form.employee_id = this.selected_employee;
-
-            this.$bvModal.hide("assign-modal");
-
-            router.post("/assign-confirmer", this.assign_form);
-            this.selected_lead = [];
-            this.selected_employee = ''
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

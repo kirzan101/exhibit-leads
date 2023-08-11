@@ -255,8 +255,11 @@ class LeadController extends Controller
             'employees' => $this->employeeService->indexConfirmer(),
             'occupation_list' => Helper::occupationList(),
             'per_page' => 5,
+            'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
+            'status_list' => Helper::leadStatus(),
+            'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => $this->sourceService->indexSource(),
+            'sources' => Helper::leadSource()
         ]);
     }
 

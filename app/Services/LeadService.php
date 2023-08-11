@@ -40,13 +40,10 @@ class LeadService
                 ->orderBy('leads.id', 'desc')
                 ->get();
         } else if (Auth::user()->employee->userGroup->name == 'employees' || Auth::user()->employee->userGroup->name == 'confirmers') {
-            // get the list of leads that assigned to the exhibitor of the employee
-            $leads = Lead::select('leads.*')
-                ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
-                ->where('leads.is_booker_assigned', false)
-                ->where('leads.is_exhibitor_assigned', true)
-                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->exhibitor_id)
-                ->orderBy('leads.id', 'desc')
+            // get the list of leads that was created by the employee
+            $leads = Lead::where('is_booker_assigned', false)
+                ->where('is_exhibitor_assigned', false)
+                ->where('created_by', Auth::user()->employee->id)
                 ->get();
         }
 
@@ -167,6 +164,7 @@ class LeadService
     {
         $leads = Lead::where('is_done', true)
             ->where('is_confirm_assigned', false)
+            ->where('is_done_confirmed', false)
             ->get();
 
         // if current user is confirmer, get the same venue of leads
@@ -178,8 +176,8 @@ class LeadService
             });
 
             $leads = Lead::where('is_done', true)
-                ->where('is_confirm_assigned', false)
-                ->whereIn('venue_id', $venue_ids)
+                ->where('is_done_confirmed', false)
+                ->whereIn('venue_id', $venue_ids->toArray())
                 ->get();
         }
 
@@ -254,19 +252,9 @@ class LeadService
      */
     public function indexConfirmedLead(): Collection
     {
-        $leads = Lead::where('is_invited', true)
-            ->where('is_confirm_assigned', true)
-            ->whereNotNull('confirmer_remarks')
+        $leads = Lead::where('is_confirm_assigned', true)
+            ->where('is_done_confirmed', true)
             ->get();
-
-        if (Auth::user()->employee->userGroup->name == 'confirmers') {
-            Lead::select('leads.*')
-                ->where('leads.is_confirm_assigned', true)
-                ->where('leads.is_invited', true)
-                ->where('leads.venue_id', '=', Auth::user()->employee->venue_id)
-                ->whereNotNull('confirmer_remarks')
-                ->get();
-        }
 
         return $leads;
     }

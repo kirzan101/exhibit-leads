@@ -171,7 +171,7 @@ class AssignedConfirmerService
 
             $assigned_confirmer->lead->update([
                 'is_confirm_assigned' => true,
-                'is_done_confirmed' => true,
+                'is_done_confirmed' => false,
                 'updated_by' => Auth::user()->employee->id
             ]);
         } catch (Exception $e) {

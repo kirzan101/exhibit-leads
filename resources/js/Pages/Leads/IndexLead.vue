@@ -210,6 +210,7 @@ export default {
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
+                { key: "mobile_number", label: "Mobile number", sortable: false },
                 { key: "source", label: "Source", sortable: true },
                 { key: "venue.name", label: "Venue", sortable: true },
                 { key: "actions", label: "Actions" },

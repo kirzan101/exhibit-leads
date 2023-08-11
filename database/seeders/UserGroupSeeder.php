@@ -110,17 +110,6 @@ class UserGroupSeeder extends Seeder
                         'user_group_id' => $usergroup->id,
                         'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'update')->first()->id
                     ]);
-
-                    //confirms permission
-                    UserGroupPermission::create([
-                        'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'read')->first()->id
-                    ]);
-
-                    UserGroupPermission::create([
-                        'user_group_id' => $usergroup->id,
-                        'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'update')->first()->id
-                    ]);
                 } else if ($usergroup->name == 'confirmers') {
                     foreach ($confirmer_permissions as $permission) {
                         UserGroupPermission::create([

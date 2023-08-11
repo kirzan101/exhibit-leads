@@ -40,7 +40,7 @@ class AssignedEmployeeService
             ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
             ->where('leads.is_booker_assigned', true)
             ->where('leads.is_done', false)
-            ->where('assigned_employee.employee_id', Auth::user()->employee->id)
+            ->where('assigned_employees.employee_id', Auth::user()->employee->id)
             ->get();
 
         return $assigned_leads;
