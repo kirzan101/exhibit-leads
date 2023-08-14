@@ -86,6 +86,43 @@
                     </b-form-group>
                 </b-col>
 
+                <!-- third filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Booker status"
+                        label-for="lead-status-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="lead-status-select"
+                            v-model="additional_filter.booker_status"
+                            :options="lead_status_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Confirmer Status"
+                        label-for="confirmer-lead-status-select"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-select
+                            id="confirmer-lead-select"
+                            v-model="additional_filter.confirmer_status"
+                            :options="lead_status_confirmer_options"
+                            size="sm"
+                        ></b-form-select>
+                    </b-form-group>
+                </b-col>
+
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group
                         label="Per page"
@@ -326,6 +363,8 @@ export default {
                 occupation: null,
                 venue_id: null,
                 source_name: null,
+                booker_status: null,
+                confirmer_status: null,
             },
             occupation_options: [
                 { value: null, text: "-- select --" },
@@ -399,6 +438,22 @@ export default {
                     (item) =>
                         item.source_complete ==
                         this.additional_filter.source_name
+                );
+            }
+
+            if (this.additional_filter.booker_status) {
+                return this.items.filter(
+                    (item) =>
+                        item.assigned_employee.lead_status ==
+                        this.additional_filter.booker_status
+                );
+            }
+
+            if (this.additional_filter.confirmer_status) {
+                return this.items.filter(
+                    (item) =>
+                        item.assigned_confirmer.lead_status ==
+                        this.additional_filter.confirmer_status
                 );
             }
 
