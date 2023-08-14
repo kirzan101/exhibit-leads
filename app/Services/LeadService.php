@@ -225,7 +225,7 @@ class LeadService
             }
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             return ['result' => 'error', 'message' => $e->getMessage()];
         }
         DB::commit();
@@ -270,9 +270,18 @@ class LeadService
      *
      * @return Paginator
      */
-    public function indexPaginateLead(int $perPage): Paginator
+    public function indexPaginateLead(int $perPage, array $request): Paginator
     {
         $lead = Lead::where('is_booker_assigned', false)->paginate($perPage);
+
+        if (array_key_exists('sortBy', $request)) {
+            $sort = 'asc';
+
+            if (array_key_exists('sortDesc', $request)) {
+                $sort = 'desc';
+                $lead = Lead::where('is_booker_assigned', false)->orderBy($request['sortBy'], $sort)->paginate($perPage);
+            }
+        }
 
         return $lead;
     }

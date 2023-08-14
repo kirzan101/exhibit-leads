@@ -260,31 +260,4 @@ class LeadController extends Controller
 
         return redirect()->route('confirmed')->with('success', 'Successfully mark as showed!');
     }
-
-    /**
-     * Display a paginate listing of the resource.
-     */
-    public function indexPaginate(Request $request)
-    {
-        $per_page = $request->per_page;
-        $page = $request->page;
-
-        if (!$per_page) {
-            $per_page = 5;
-        }
-
-        // if(!$page) {
-        //     $page = 1;
-        // }
-
-        $leads = LeadResource::collection($this->leadService->indexPaginateLead($per_page));
-
-        // dd($leads);
-        return Inertia::render('Leads/PaginateLead', [
-            'leads' => $leads,
-            'employees' => $this->employeeService->indexEmployee(),
-            'occupation_list' => Helper::occupationList(),
-            'per_page' => 5
-        ]);
-    }
 }

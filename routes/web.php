@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\PaginateController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\VenueController;
@@ -95,13 +96,16 @@ Route::middleware('auth')->group(function () {
     //mark as no show
     Route::post('/showed', [LeadController::class, 'showedLead']);
 
-    Route::get('paginate', [LeadController::class, 'indexPaginate']);
-
     //venues
     Route::resource('/venues', VenueController::class);
-
+    
     //sources
     Route::resource('/sources', SourceController::class);
-
+    
+    //user groups
     Route::get('/usergroups', [UserGroupController::class, 'index']);
+
+    //lead paginate
+    Route::get('/paginate/leads', [PaginateController::class, 'leadPaginate']);
+    Route::get('/paginate/leads/request', [PaginateController::class, 'leadPaginateIndex']);
 });

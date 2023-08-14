@@ -259,7 +259,7 @@ export default {
 
             this.$bvModal.hide("assign-modal");
 
-            router.post("/assign-employee", this.form);
+            router.post("/assigned-employees", this.form);
             this.selected_employee = "";
             this.selected_lead = [];
         },
