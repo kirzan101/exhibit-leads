@@ -133,6 +133,7 @@ export default {
                 { key: "venue.name", label: "Venue", sortable: true },
                 { key: "source_complete", label: "Source", sortable: true },
                 { key: "mobile_number", label: "Mobile Number", sortable: false },
+                { key: "assigned_confirmer.updated_at", label: "Done at", sortable: true },
                 { key: "actions", label: "Actions" },
             ],
             selected_lead: [],

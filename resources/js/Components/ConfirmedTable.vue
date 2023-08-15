@@ -49,7 +49,45 @@
                     </b-form-group>
                 </b-col>
 
-                <!-- second filter -->
+                <!-- Second filter -->
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="Start to"
+                        label-for="start-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="start-to"
+                            v-model="start_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+
+                <b-col lg="6" class="my-1">
+                    <b-form-group
+                        label="End to"
+                        label-for="end-to"
+                        label-cols-sm="3"
+                        label-align-sm="right"
+                        label-size="sm"
+                        class="mb-0"
+                    >
+                        <b-form-datepicker
+                            id="end-to"
+                            v-model="end_to"
+                            size="sm"
+                            class="mb-2"
+                        ></b-form-datepicker>
+                    </b-form-group>
+                </b-col>
+                <!-- End Second filter -->
+
+                <!-- third filter -->
                 <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Venue"
@@ -86,7 +124,7 @@
                     </b-form-group>
                 </b-col>
 
-                <!-- third filter -->
+                <!-- fourth filter -->
                 <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Booker status"
@@ -208,6 +246,10 @@
                             </li>
                         </ul>
                     </b-card>
+                </template>
+
+                <template #cell(assigned_confirmer.updated_at)="row">
+                    {{ formatDate(row.item.assigned_confirmer.updated_at) }}
                 </template>
             </b-table>
 
@@ -349,6 +391,8 @@ export default {
             lead_status: "",
             confirmer_name: "",
             has_confirmer: false,
+            start_to: this.currentDate,
+            end_to: this.currentDate,
             form: {
                 lead_status: null,
                 remarks: null,
@@ -408,6 +452,9 @@ export default {
         selected_ids() {
             return this.$emit("selected_lead", this.selected_ids);
         },
+        start_to() {
+            console.log(this.start_to);
+        },
     },
     computed: {
         sortOptions() {
@@ -459,10 +506,17 @@ export default {
 
             return this.items;
         },
+        currentDate() {
+            const dateObject = new Date();
+
+            return dateObject.toLocaleDateString("en-CA");
+        },
     },
     mounted() {
         // Set the initial number of items
         this.totalRows = this.leadList.length;
+        this.start_to = this.currentDate;
+        this.end_to = this.currentDate;
     },
     methods: {
         info(item, index, button) {
@@ -539,6 +593,15 @@ export default {
             router.post("/done", this.done_form);
             this.done_form.lead_id = "";
             this.$bvModal.hide("done-modal");
+        },
+        formatDate(value) {
+            let date_value = new Date(value);
+
+            return (
+                date_value.toLocaleDateString("en-US") +
+                " " +
+                date_value.toLocaleTimeString("en-US")
+            );
         },
     },
 };
