@@ -160,7 +160,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="12">
+                    <b-col sm="6">
                         <b-form-group>
                             <template #label>
                                 <b class="required">Choose your venues:</b
@@ -186,6 +186,32 @@
                                     name="flavour-1a"
                                 ></b-form-checkbox-group>
                             </div>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="6" v-if="form.user_group_id === 3">
+                        <b-form-group
+                            label="Exhibitor"
+                            label-for="exhibitor"
+                            label-class="required"
+                        >
+                            <b-form-select
+                                id="exhibitor"
+                                v-model="form.exhibitor_id"
+                                :state="errors.exhibitor_id ? false : null"
+                                :options="exhibitor_options"
+                                required
+                            >
+                                <template #first>
+                                    <b-form-select-option value="null" disabled
+                                        >-- select --</b-form-select-option
+                                    >
+                                </template>
+                            </b-form-select>
+                            <b-form-invalid-feedback
+                                :state="errors.exhibitor_id ? false : null"
+                            >
+                                {{ errors.exhibitor_id }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -237,7 +263,8 @@ export default {
         user: Object,
         user_groups: Array,
         properties: Array,
-        venues: Array
+        venues: Array,
+        exhibitors: Array
     },
     data() {
         return {
@@ -250,6 +277,7 @@ export default {
                 email: this.user.email,
                 user_id: this.user.id,
                 user_group_id: this.employee.user_group_id,
+                exhibitor_id: this.employee.exhibitor_id,
             },
             property_locations: [
                 { text: "-- select --", value: null },
@@ -258,12 +286,20 @@ export default {
                 }),
             ],
             selected: this.employee.employee_venues.map((i) => {
-                return i.venue_id
+                return i.venue_id;
             }),
             allSelected: false,
             venue_options: [
                 ...this.venues.map((i) => {
                     return { text: i.name, value: i.id, disabled: false };
+                }),
+            ],
+            exhibitor_options: [
+                ...this.exhibitors.map((i) => {
+                    return {
+                        text: i.last_name + ", " + i.first_name,
+                        value: i.id,
+                    };
                 }),
             ],
         };
@@ -301,6 +337,12 @@ export default {
                 this.allSelected = true;
             } else {
                 this.allSelected = false;
+            }
+        },
+        "form.user_group_id": function (value) {
+            // 3 - employee user group
+            if (value != 3) {
+                this.form.exhibitor_id = null;
             }
         },
     },

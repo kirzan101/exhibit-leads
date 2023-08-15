@@ -57,7 +57,8 @@ class EmployeeController extends Controller
         return Inertia::render('Employees/CreateEmployee', [
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
-            'properties' =>$this->propertyService->indexProperty()
+            'properties' => $this->propertyService->indexProperty(),
+            'exhibitors' => $this->employeeService->indexExhibitor()
         ]);
     }
 
@@ -97,7 +98,8 @@ class EmployeeController extends Controller
             'user' => $employee->user,
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
-            'properties' =>$this->propertyService->indexProperty()
+            'properties' =>$this->propertyService->indexProperty(),
+            'exhibitors' => $this->employeeService->indexExhibitor()
         ]);
     }
 
@@ -114,6 +116,7 @@ class EmployeeController extends Controller
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' => $this->propertyService->indexProperty(),
+            'exhibitors' => $this->employeeService->indexExhibitor()
         ]);
     }
 

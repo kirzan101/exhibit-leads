@@ -504,6 +504,23 @@ export default {
                 );
             }
 
+            // Done date filter
+            if (this.start_to != "" && this.end_to != "") {
+                return this.items.filter((item) => {
+                    const itemDate = new Date(
+                        item.assigned_confirmer.updated_at
+                    );
+                    const start = new Date(this.start_to);
+                    const end = new Date(this.end_to);
+                    return (
+                        itemDate.toLocaleDateString("en-US") >=
+                            start.toLocaleDateString("en-US") &&
+                        itemDate.toLocaleDateString("en-US") <=
+                            end.toLocaleDateString("en-US")
+                    );
+                });
+            }
+
             return this.items;
         },
         currentDate() {

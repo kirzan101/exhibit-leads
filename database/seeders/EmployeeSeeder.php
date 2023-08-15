@@ -71,7 +71,7 @@ class EmployeeSeeder extends Seeder
             'position' => 'Employee',
             'property_id' => 1,
             'user_id' => $user_emp->id,
-            'user_group_id' => UserGroup::where('name', 'employees')->first()->id
+            'user_group_id' => UserGroup::where('name', 'employees')->first()->id,
         ]);
 
         // create exhibitor account
@@ -124,11 +124,20 @@ class EmployeeSeeder extends Seeder
 
         //create default venue per employee
         $employees = Employee::all();
+        $user_group = UserGroup::where('name', 'employees')->first();
         foreach($employees as $employee) {
             EmployeeVenue::create([
                 'employee_id' => $employee->id,
                 'venue_id' => 1
             ]);
+
+            // set default exhibitor
+            // id 4: Exhibitor account
+            if($employee->user_group_id == $user_group->id) {
+                $employee->update([
+                    'exhibitor_id' => 4
+                ]);
+            }
         }
     }
 }

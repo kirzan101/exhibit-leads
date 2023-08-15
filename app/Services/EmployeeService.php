@@ -51,7 +51,8 @@ class EmployeeService
             'property_id' => $request['property_id'],
             'position' => $request['position'],
             'user_group_id' => $request['user_group_id'],
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'exhibitor_id' => $request['exhibitor_id']
         ]);
 
         foreach($request['venue_ids'] as $venue_id) {
@@ -85,6 +86,7 @@ class EmployeeService
             'property_id' => $request['property_id'],
             'position' => $request['position'],
             'user_group_id' => $request['user_group_id'],
+            'exhibitor_id' => $request['exhibitor_id']
         ]);
 
         foreach($request['venue_ids'] as $venue_id) {

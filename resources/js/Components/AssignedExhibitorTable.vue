@@ -339,7 +339,7 @@ export default {
             if (this.start_to != "" && this.end_to != "") {
                 return this.items.filter((item) => {
                     const itemDate = new Date(
-                        item.assigned_employee.created_at
+                        item.assigned_exhibitor.created_at
                     );
                     const start = new Date(this.start_to);
                     const end = new Date(this.end_to);
