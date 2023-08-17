@@ -525,7 +525,7 @@ export default {
             this.$bvModal.hide("confirm-modal");
         },
         done() {
-            router.post("/done", this.done_form);
+            router.post("/confirmer/done", this.done_form);
             this.done_form.lead_id = "";
             this.$bvModal.hide("done-modal");
         },

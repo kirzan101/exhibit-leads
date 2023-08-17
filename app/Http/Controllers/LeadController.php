@@ -216,6 +216,47 @@ class LeadController extends Controller
     }
 
     /**
+     * Add done status to a leads
+     */
+    public function doneConfirmer(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'status' => 'required|boolean',
+            'employee_type' => 'required'
+        ]);
+
+        $lead = Lead::find($request->lead_id);
+
+        ['result' => $result, 'message' => $message] = $this->leadService->done($lead, $request->status, $request->employee_type);
+
+        return redirect()->route('confirms')->with($result, $message);
+    }
+
+    /**
+     * remove done status to a lead
+     */
+    public function cancelDoneConfirmer(Request $request)
+    {
+        $request->validate([
+            'lead_ids' => 'required|array',
+            'employee_type' => 'required'
+        ]);
+
+        try {
+            foreach ($request->lead_ids as $lead_id) {
+                $lead = Lead::find($lead_id);
+
+                $lead = $this->leadService->done($lead, false, $request->employee_type);
+            }
+        } catch (Exception $e) {
+            return redirect()->route('done')->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('confirms')->with('success', 'Successfully removed from confirms!');
+    }
+
+    /**
      * Display the list of leads that has a confirmed status
      *
      * @param Request $request

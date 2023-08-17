@@ -23,18 +23,23 @@ class PaginateController extends Controller
                 'per_page' => 5
             ]);
         }
-        // dd($request->page);
+
+        if(!$request->sortDesc) {
+            $request->merge([
+                'sortDesc' => false
+            ]);
+        }
 
         $leads = $this->leadService->indexPaginateLead($request->per_page, $request->toArray());
 
-        // dd($leads);
+        // dd($request->sortDesc);
 
         return Inertia::render('Paginates/LeadPaginate', [
             'items' => LeadResource::collection($leads->items()),
             'per_page' => $leads->perPage(),
             'last_page' => $leads->lastPage(),
             'current_page' => $leads->currentPage(),
-            'total' => $leads->total()
+            'total' => $leads->total(),
         ]);
     }
 

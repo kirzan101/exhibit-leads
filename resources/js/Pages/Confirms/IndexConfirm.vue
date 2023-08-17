@@ -168,7 +168,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/done/cancel", this.form);
+            router.post("/confirmer/done/cancel", this.form);
             this.selected_lead = [];
         },
         check_access(module, type) {

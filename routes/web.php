@@ -93,6 +93,10 @@ Route::middleware('auth')->group(function () {
     Route::post('done', [LeadController::class, 'done']);
     Route::post('done/cancel', [LeadController::class, 'cancelDone']);
 
+    // assign done status by confirmer
+    Route::post('confirmer/done', [LeadController::class, 'doneConfirmer']);
+    Route::post('confirmer/done/cancel', [LeadController::class, 'cancelDoneConfirmer']);
+
     //mark as no show
     Route::post('/showed', [LeadController::class, 'showedLead']);
 

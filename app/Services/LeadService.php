@@ -274,11 +274,15 @@ class LeadService
     {
         $lead = Lead::where('is_booker_assigned', false)->paginate($perPage);
 
-        if (array_key_exists('sortBy', $request)) {
+        if (array_key_exists('sortBy', $request) && $request['sortBy'] != null) {
             $sort = 'asc';
 
             if (array_key_exists('sortDesc', $request)) {
-                $sort = 'desc';
+                $sort = 'asc';
+
+                if ($request['sortDesc'] === 'true') {
+                    $sort = 'desc';
+                }
                 $lead = Lead::where('is_booker_assigned', false)->orderBy($request['sortBy'], $sort)->paginate($perPage);
             }
         }

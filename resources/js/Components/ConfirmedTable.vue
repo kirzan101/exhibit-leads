@@ -606,11 +606,6 @@ export default {
             this.form.lead_id = "";
             this.$bvModal.hide("confirm-modal");
         },
-        done() {
-            router.post("/done", this.done_form);
-            this.done_form.lead_id = "";
-            this.$bvModal.hide("done-modal");
-        },
         formatDate(value) {
             let date_value = new Date(value);
 

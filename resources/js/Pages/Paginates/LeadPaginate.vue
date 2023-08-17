@@ -38,14 +38,20 @@
                             >Add</Link
                         >
                     </div>
-                    <div class="col-sm-6">
-                        &nbsp;
-                    </div>
+                    <div class="col-sm-6">&nbsp;</div>
                 </div>
             </h5>
 
             <br />
-            <GenericPaginateTable :items="items" :per_page="per_page" :fields="fields" :current_page="current_page" :last_page="last_page" :total="total" />
+            <GenericPaginateTable
+                :items="items"
+                :per_page="per_page"
+                :fields="fields"
+                :current_page="current_page"
+                :last_page="last_page"
+                :total="total"
+                @toggle-paginate-link="paginateLink"
+            />
         </b-container>
 
         <br />
@@ -59,24 +65,24 @@ import GenericPaginateTable from "../../Components/PaginateTable/GenericPaginate
 export default {
     components: {
         Link,
-        GenericPaginateTable
+        GenericPaginateTable,
     },
     props: {
         items: Array,
         per_page: Number,
         current_page: Number,
         last_page: Number,
-        total: Number
+        total: Number,
     },
     data() {
         return {
             fields: [
-                { key: "lead_full_name", label: "Name", sortable: true },
-                { key: "occupation", label: "Occupation", sortable: true },
+                { key: "lead_full_name", label: "Name", isSortable: true },
+                { key: "occupation", label: "Occupation", isSortable: true },
                 { key: "mobile_number", label: "Mobile No." },
             ],
             alert: false,
-            module: 'venues',
+            module: "venues",
         };
     },
     methods: {
@@ -104,6 +110,21 @@ export default {
             this.$page.props.flash.success = null;
             this.$page.props.flash.error = null;
             this.$page.props.flash.message = null;
+        },
+        paginateLink(filter) {
+            let url = "/paginate/leads/request";
+            console.log(filter);
+
+            router.reload({
+                data: filter,
+                only: [
+                    "items",
+                    "per_page",
+                    "current_page",
+                    "last_page",
+                    "total",
+                ]
+            });
         },
     },
 };
