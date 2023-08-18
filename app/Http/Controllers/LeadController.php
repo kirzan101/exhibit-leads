@@ -52,6 +52,11 @@ class LeadController extends Controller
         $this->authorize('read', Lead::class);
 
         $leads = LeadResource::collection($this->leadService->indexLead());
+
+        // set the default exhibitor.
+        // replace value on live
+        $exhibitor = $this->employeeService->indexExhibitor()->first(); 
+
         return Inertia::render('Leads/IndexLead', [
             'leads' => $leads,
             'employees' => $this->employeeService->indexEncoder(),
@@ -59,7 +64,8 @@ class LeadController extends Controller
             'per_page' => 5,
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),
-            'exhibitors' => $this->employeeService->indexExhibitor()
+            'exhibitors' => $this->employeeService->indexExhibitor(),
+            'exhibitor' => $exhibitor->id // add value if only one exhibitor must be assign
         ]);
     }
 

@@ -180,7 +180,9 @@ class AssignedEmployeeController extends Controller
             'lead_id' => 'required|exists:leads,id',
             'remarks' => 'required|min:2',
             'lead_status' => 'required|min:1',
-            'venue_id' => 'required|exists:venues,id'
+            'venue_id' => 'required|exists:venues,id',
+            'presentation_date' => 'nullable|date_format:Y-m-d',
+            'presentation_time' => 'nullable'
         ]);
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->modifyRemarks($request);

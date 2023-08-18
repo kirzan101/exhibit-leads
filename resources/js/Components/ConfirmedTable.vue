@@ -125,7 +125,7 @@
                 </b-col>
 
                 <!-- fourth filter -->
-                <b-col lg="6" class="my-1">
+                <!-- <b-col lg="6" class="my-1">
                     <b-form-group
                         label="Booker status"
                         label-for="lead-status-select"
@@ -159,7 +159,7 @@
                             size="sm"
                         ></b-form-select>
                     </b-form-group>
-                </b-col>
+                </b-col> -->
 
                 <b-col sm="5" md="6" class="my-1">
                     <b-form-group

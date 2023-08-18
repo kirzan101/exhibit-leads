@@ -87,23 +87,41 @@
                 </b-row>
                 <b-row>
                     <b-col sm="3">
-                        <b-form-group label="Alias" label-for="alias">
+                        <b-form-group
+                            label="Spouse/Partner First Name"
+                            label-for="spouse-first-name"
+                        >
                             <b-form-input
                                 type="text"
-                                id="alias"
-                                v-model="form.alias"
+                                id="spouse-first-name"
+                                v-model="form.spouse_first_name"
+                                :state="errors.spouse_first_name ? false : null"
                                 readonly
                             ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.spouse_first_name ? false : null"
+                            >
+                                {{ errors.spouse_first_name }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group label="Suffix" label-for="suffix">
+                        <b-form-group
+                            label="Spouse/Partner Last Name"
+                            label-for="spouse-last-name"
+                        >
                             <b-form-input
                                 type="text"
-                                id="suffix"
-                                v-model="form.suffix"
+                                id="spouse-last-name"
+                                v-model="form.spouse_last_name"
+                                :state="errors.spouse_last_name ? false : null"
                                 readonly
                             ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.spouse_last_name ? false : null"
+                            >
+                                {{ errors.spouse_last_name }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
@@ -313,12 +331,8 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
-                        <b-form-group
-                            label="Email"
-                            label-for="email"
-                            label-class="required"
-                        >
+                    <b-col sm="12">
+                        <b-form-group label="Email" label-for="email">
                             <b-form-input
                                 type="email"
                                 id="email"
@@ -331,16 +345,6 @@
                             >
                                 {{ errors.email }}
                             </b-form-invalid-feedback>
-                        </b-form-group>
-                    </b-col>
-                    <b-col sm="6">
-                        <b-form-group label="Fax" label-for="fax">
-                            <b-form-input
-                                type="text"
-                                id="fax"
-                                v-model="form.fax"
-                                readonly
-                            ></b-form-input>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -523,7 +527,7 @@
                                 :state="errors.contract_file ? false : null"
                                 placeholder="Choose an image"
                                 accept="image/png, image/jpg, image/jpeg"
-                                readonly
+                                :disabled="true"
                             ></b-form-file>
                             <div class="mt-3">
                                 Selected file:
@@ -561,17 +565,35 @@
                             label="Presentation date"
                             label-for="presentation-date"
                         >
-                            <b-form-input
-                                type="date"
-                                id="presentation-date"
-                                v-model="form.presentation_date"
-                                :state="errors.presentation_date ? false : null"
-                                readonly
-                            ></b-form-input>
+                            <b-input-group>
+                                <b-form-input
+                                    type="date"
+                                    id="presentation-date"
+                                    v-model="form.presentation_date"
+                                    :disabled="true"
+                                    :state="
+                                        errors.presentation_date ? false : null
+                                    "
+                                ></b-form-input>
+                                <b-form-input
+                                    type="time"
+                                    id="presentation-time"
+                                    v-model="form.presentation_time"
+                                    :disabled="true"
+                                    :state="
+                                        errors.presentation_time ? false : null
+                                    "
+                                ></b-form-input>
+                            </b-input-group>
                             <b-form-invalid-feedback
                                 :state="errors.presentation_date ? false : null"
                             >
                                 {{ errors.presentation_date }}
+                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback
+                                :state="errors.presentation_time ? false : null"
+                            >
+                                {{ errors.presentation_time }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -582,13 +604,18 @@
                             label-class="required"
                         >
                             <b-input-group>
-                                <b-form-input v-model="form.source" readonly></b-form-input>
+                                <b-form-input
+                                    v-model="form.source"
+                                    readonly
+                                ></b-form-input>
 
                                 <template #prepend>
                                     <b-form-select
                                         id="source"
                                         v-model="form.source_prefix"
-                                        :state="errors.source_prefix ? false : null"
+                                        :state="
+                                            errors.source_prefix ? false : null
+                                        "
                                         :options="source_options"
                                         :disabled="true"
                                     ></b-form-select>
@@ -690,8 +717,6 @@ export default {
                 first_name: this.lead.first_name,
                 middle_name: this.lead.middle_name,
                 last_name: this.lead.last_name,
-                title: this.lead.title,
-                alias: this.lead.alias,
                 suffix: this.lead.suffix,
                 birth_date: this.lead.birth_date,
                 address: this.lead.address,
@@ -706,7 +731,6 @@ export default {
                 mobile_number_one: this.lead.mobile_number_one,
                 mobile_number_two: this.lead.mobile_number_two,
                 telephone: this.lead.telephone,
-                fax: this.lead.fax,
                 combined_monthly_income: this.lead.combined_monthly_income,
                 internet_connection: this.lead.internet_connection,
                 owned_gadgets: this.lead.owned_gadgets,
@@ -716,6 +740,7 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
+                presentation_time: this.lead.presentation_time,
                 source: this.lead.source,
                 source_prefix: this.lead.source_prefix,
                 membership_type: this.lead.membership_type,
@@ -723,6 +748,8 @@ export default {
                 holiday_consultant: this.lead.holiday_consultant,
                 is_confidential: this.lead.is_confidential,
                 venue_id: this.lead.venue_id,
+                spouse_first_name: this.lead.spouse_first_name,
+                spouse_last_name: this.lead.spouse_last_name,
             }),
             titles: [
                 { text: "-- select --", value: null },

@@ -37,6 +37,8 @@ return new class extends Migration
             $table->string('internet_connection')->nullable();
             $table->string('owned_gadgets')->nullable();
             $table->string('other_gadgets')->nullable();
+            $table->string('spouse_first_name')->nullable();
+            $table->string('spouse_last_name')->nullable();
             $table->string('spouse_occupation')->nullable();
             $table->string('nature_of_business')->nullable();
             $table->unsignedBigInteger('property_id');
@@ -54,6 +56,7 @@ return new class extends Migration
             $table->string('source_prefix')->nullable();
             $table->string('source')->nullable();
             $table->date('presentation_date')->nullable();
+            $table->time('presentation_time')->nullable();
             $table->string('refer_by')->nullable();
             $table->string('holiday_consultant')->nullable();
             $table->string('membership_type')->nullable();

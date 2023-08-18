@@ -55,7 +55,17 @@ class LeadFormRequest extends FormRequest
             'refer_by' => 'nullable|min:2',
             'holiday_consultant' => 'nullable|min:2',
             'membership_type' => 'nullable|min:2',
-            'venue_id' => 'nullable|exists:venues,id'
+            'venue_id' => 'nullable|exists:venues,id',
+            'spouse_first_name' => 'nullable|min:2',
+            'spouse_last_name' => 'nullable|min:2',
+        ];
+    }
+
+    public function messages() : array
+    {
+        return [
+            'spouse_first_name.min' => 'Spouse/Partner first name must be at least 2 characters.',
+            'spouse_last_name.min' => 'Spouse/Partner last name must be at least 2 characters.'
         ];
     }
 }

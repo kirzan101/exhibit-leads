@@ -34,7 +34,13 @@ class SourceSeeder extends Seeder
             ],
             [
                 'name' => 'BNMB',
-            ]
+            ],
+            [
+                'name' => 'IP',
+            ],
+            [
+                'name' => 'LS',
+            ],
         ];
 
         foreach($sources as $source) {

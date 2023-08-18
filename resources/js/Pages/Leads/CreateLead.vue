@@ -86,21 +86,39 @@
                 </b-row>
                 <b-row>
                     <b-col sm="3">
-                        <b-form-group label="Alias" label-for="alias">
+                        <b-form-group
+                            label="Spouse/Partner First Name"
+                            label-for="spouse-first-name"
+                        >
                             <b-form-input
                                 type="text"
-                                id="alias"
-                                v-model="form.alias"
+                                id="spouse-first-name"
+                                v-model="form.spouse_first_name"
+                                :state="errors.spouse_first_name ? false : null"
                             ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.spouse_first_name ? false : null"
+                            >
+                                {{ errors.spouse_first_name }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group label="Suffix" label-for="suffix">
+                        <b-form-group
+                            label="Spouse/Partner Last Name"
+                            label-for="spouse-last-name"
+                        >
                             <b-form-input
                                 type="text"
-                                id="suffix"
-                                v-model="form.suffix"
+                                id="spouse-last-name"
+                                v-model="form.spouse_last_name"
+                                :state="errors.spouse_last_name ? false : null"
                             ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.spouse_last_name ? false : null"
+                            >
+                                {{ errors.spouse_last_name }}
+                            </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
@@ -110,7 +128,6 @@
                                 id="birth-date"
                                 v-model="form.birth_date"
                                 :state="errors.birth_date ? false : null"
-                                required
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.birth_date ? false : null"
@@ -231,7 +248,7 @@
                     </b-col>
                     <b-col sm="3">
                         <b-form-group
-                            label="Spouse Occupation"
+                            label="Spouse/Partner Occupation"
                             label-for="spouse-occupation"
                         >
                             <b-form-input
@@ -303,12 +320,8 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="6">
-                        <b-form-group
-                            label="Email"
-                            label-for="email"
-                            label-class="required"
-                        >
+                    <b-col sm="12">
+                        <b-form-group label="Email" label-for="email">
                             <b-form-input
                                 type="email"
                                 id="email"
@@ -320,15 +333,6 @@
                             >
                                 {{ errors.email }}
                             </b-form-invalid-feedback>
-                        </b-form-group>
-                    </b-col>
-                    <b-col sm="6">
-                        <b-form-group label="Fax" label-for="fax">
-                            <b-form-input
-                                type="text"
-                                id="fax"
-                                v-model="form.fax"
-                            ></b-form-input>
                         </b-form-group>
                     </b-col>
                 </b-row>
@@ -541,19 +545,41 @@
                         <b-form-group
                             label="Presentation date"
                             label-for="presentation-date"
-                            label-class="required"
                         >
-                            <b-form-input
-                                type="date"
-                                id="presentation-date"
-                                v-model="form.presentation_date"
-                                :state="errors.presentation_date ? false : null"
-                                required
-                            ></b-form-input>
+                            <b-input-group>
+                                <b-form-input
+                                    type="date"
+                                    id="presentation-date"
+                                    v-model="form.presentation_date"
+                                    :state="
+                                        errors.presentation_date ? false : null
+                                    "
+                                ></b-form-input>
+                                <b-form-input
+                                    type="time"
+                                    id="presentation-time"
+                                    v-if="form.presentation_date"
+                                    v-model="form.presentation_time"
+                                    :state="
+                                        errors.presentation_time ? false : null
+                                    "
+                                ></b-form-input>
+                                <b-form-input
+                                    type="time"
+                                    id="presentation-time"
+                                    disabled
+                                    v-else
+                                ></b-form-input>
+                            </b-input-group>
                             <b-form-invalid-feedback
                                 :state="errors.presentation_date ? false : null"
                             >
                                 {{ errors.presentation_date }}
+                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback
+                                :state="errors.presentation_time ? false : null"
+                            >
+                                {{ errors.presentation_time }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -564,14 +590,20 @@
                             label-class="required"
                         >
                             <b-input-group>
-                                <b-form-input v-if="form.source_prefix" v-model="form.source" :state="errors.source ? false : null"></b-form-input>
+                                <b-form-input
+                                    v-if="form.source_prefix"
+                                    v-model="form.source"
+                                    :state="errors.source ? false : null"
+                                ></b-form-input>
                                 <b-form-input v-else readonly></b-form-input>
 
                                 <template #prepend>
                                     <b-form-select
                                         id="source"
                                         v-model="form.source_prefix"
-                                        :state="errors.source_prefix ? false : null"
+                                        :state="
+                                            errors.source_prefix ? false : null
+                                        "
                                         :options="source_options"
                                         required
                                     ></b-form-select>
@@ -698,8 +730,6 @@ export default {
                 first_name: null,
                 middle_name: null,
                 last_name: null,
-                title: null,
-                alias: null,
                 suffix: null,
                 birth_date: null,
                 address: null,
@@ -714,7 +744,6 @@ export default {
                 mobile_number_one: null,
                 mobile_number_two: null,
                 telephone: null,
-                fax: null,
                 combined_monthly_income: null,
                 internet_connection: null,
                 owned_gadgets: [],
@@ -724,6 +753,7 @@ export default {
                 property_id: null,
                 contract_file: null,
                 presentation_date: null,
+                presentation_time: null,
                 source_prefix: null,
                 source: null,
                 membership_type: null,
@@ -731,6 +761,8 @@ export default {
                 holiday_consultant: null,
                 is_confidential: false,
                 venue_id: null,
+                spouse_first_name: null,
+                spouse_last_name: null,
             },
             titles: [
                 { text: "-- select --", value: null },

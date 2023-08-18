@@ -108,7 +108,11 @@
                             "
                         >
                             <!-- Exhibitor assign -->
-                            <div v-if="check_access('assign-exhibitors', 'create')">
+                            <div
+                                v-if="
+                                    check_access('assign-exhibitors', 'create')
+                                "
+                            >
                                 <b-button
                                     class="btn btn-info m-1"
                                     v-b-modal.assign-exhibitor-modal
@@ -128,13 +132,14 @@
                                 >
                             </div>
                             <b-modal
-                                title="Assign to Employee"
+                                title="Assign to Exhibitor"
                                 id="assign-exhibitor-modal"
                             >
                                 <b-form @submit.prevent="submitAssigned">
                                     <b-form-select
                                         v-model="selected_exhibitor"
                                         :options="exhibitorList"
+                                        :disabled="true"
                                         size="sm"
                                         class="mt-3"
                                     ></b-form-select>
@@ -143,7 +148,11 @@
                                     <b-button
                                         variant="danger"
                                         type="button"
-                                        @click="$bvModal.hide('assign-exhibitor-modal')"
+                                        @click="
+                                            $bvModal.hide(
+                                                'assign-exhibitor-modal'
+                                            )
+                                        "
                                         >Close</b-button
                                     >
                                     <b-button
@@ -201,6 +210,7 @@ export default {
         venues: Array,
         sources: Array,
         exhibitors: Array,
+        exhibitor: Number
     },
     data() {
         return {
@@ -210,7 +220,11 @@ export default {
                 { key: "first_name", label: "First name", sortable: true },
                 { key: "last_name", label: "Last name", sortable: true },
                 { key: "occupation", label: "Occupation", sortable: true },
-                { key: "mobile_number", label: "Mobile number", sortable: false },
+                {
+                    key: "mobile_number",
+                    label: "Mobile number",
+                    sortable: false,
+                },
                 { key: "source", label: "Source", sortable: true },
                 { key: "venue.name", label: "Venue", sortable: true },
                 { key: "actions", label: "Actions" },
@@ -224,6 +238,9 @@ export default {
             },
             alert: false,
         };
+    },
+    mounted() {
+        this.selected_exhibitor = (this.exhibitor) ? this.exhibitor : '';
     },
     computed: {
         employeeList() {

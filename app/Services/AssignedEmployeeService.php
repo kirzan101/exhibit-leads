@@ -195,6 +195,8 @@ class AssignedEmployeeService
 
             $assigned_employee->lead->update([
                 'venue_id' => $request['venue_id'],
+                'presentation_date' => $request['presentation_date'],
+                'presentation_time' => $request['presentation_time'],
                 'updated_by' => Auth::user()->employee->id
             ]);
 

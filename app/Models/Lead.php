@@ -34,6 +34,8 @@ class Lead extends Model
         'internet_connection',
         'owned_gadgets',
         'other_gadgets',
+        'spouse_first_name',
+        'spouse_last_name',
         'spouse_occupation',
         'nature_of_business',
         'property_id',
@@ -52,6 +54,7 @@ class Lead extends Model
         'source_prefix',
         'source',
         'presentation_date',
+        'presentation_time',
         'refer_by',
         'holiday_consultant',
         'membership_type',
@@ -85,9 +88,24 @@ class Lead extends Model
         return sprintf('%s/%s', $this->mobile_number_one, $this->mobile_number_two);
     }
 
+    /**
+     * get concat source
+     *
+     * @return void
+     */
     public function getSource()
     {
         return sprintf('%s-%s', $this->source_prefix, $this->source);
+    }
+
+    /**
+     * get full name of spouse
+     *
+     * @return void
+     */
+    public function getSpouseFullName()
+    {
+        return sprintf('%s, %s', $this->spouse_last_name, $this->spouse_first_name);
     }
 
     /**

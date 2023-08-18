@@ -274,6 +274,26 @@
                     v-model="venue_id"
                     :options="venue_options"
                 ></b-form-select>
+                <p class="mt-2 mb-2">Presentation:</p>
+                <b-input-group>
+                    <b-form-input
+                        type="date"
+                        id="presentation-date"
+                        v-model="presentation_date"
+                    ></b-form-input>
+                    <b-form-input
+                        type="time"
+                        id="presentation-time"
+                        v-if="presentation_date"
+                        v-model="presentation_time"
+                    ></b-form-input>
+                    <b-form-input
+                        type="time"
+                        id="presentation-time"
+                        disabled
+                        v-else
+                    ></b-form-input>
+                </b-input-group>
                 <p class="mt-3" v-if="updated_by !== ''">
                     Last remark by: <b>{{ updated_by }}</b>
                 </p>
@@ -362,6 +382,8 @@ export default {
                 lead_id: "",
                 lead_status: "",
                 venue_id: "",
+                presentation_date: null,
+                presentation_time: null
             },
             hasRemarks: "All",
             updated_by: "",
@@ -402,6 +424,8 @@ export default {
                 }),
             ],
             venue_id: null, //used in remarks modal
+            presentation_date: null,
+            presentation_time: null
         };
     },
     watch: {
@@ -516,6 +540,9 @@ export default {
             this.form.remarks = this.remarks;
             this.form.lead_status = this.lead_status;
             this.form.venue_id = this.venue_id;
+            this.form.presentation_date = this.presentation_date;
+            this.form.presentation_time = this.presentation_time;
+
             router.post("/remarks", this.form);
             this.remarks = "";
             this.$bvModal.hide("remarks-modal");
@@ -531,6 +558,8 @@ export default {
                       ", " +
                       data.updated_by.first_name
                     : "";
+            this.presentation_date = data.presentation_date;
+            this.presentation_time = data.presentation_time;
         },
         check_access(module, type) {
             let permissions = this.$page.props.auth.permissions;

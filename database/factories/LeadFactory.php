@@ -37,6 +37,7 @@ class LeadFactory extends Factory
             'property_id' => 1,
             'created_by' => 1,
             'presentation_date' => fake()->dateTimeBetween(now(), "+5 days"),
+            'presentation_time' => fake()->time('H:i'),
             'exhibit_code' => fake()->randomElement(['Sales Deck', 'Palawan', 'Bora']),
             'venue_id' => fake()->numberBetween(1, 3),
             'source_prefix' => fake()->randomElement(['LSR', 'ALM', 'PRJ', 'ROI']),
