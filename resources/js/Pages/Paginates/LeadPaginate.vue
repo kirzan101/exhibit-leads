@@ -42,15 +42,18 @@
                 </div>
             </h5>
 
+            {{ items.current_page }}
             <br />
+
             <GenericPaginateTable
                 :items="items"
-                :per_page="per_page"
                 :fields="fields"
-                :current_page="current_page"
-                :last_page="last_page"
-                :total="total"
-                @toggle-paginate-link="paginateLink"
+                :sort_by="sortBy"
+                :sort_desc="sortDesc"
+                :search_filter="search"
+                :isBusy="is_busy"
+                @toggle-load-data="loadData"
+                @selected-ids="getSelectedIds"
             />
         </b-container>
 
@@ -68,21 +71,25 @@ export default {
         GenericPaginateTable,
     },
     props: {
-        items: Array,
-        per_page: Number,
-        current_page: Number,
-        last_page: Number,
-        total: Number,
+        items: Object,
+        sortBy: String,
+        sortDesc: Boolean,
+        search: String,
     },
     data() {
         return {
             fields: [
+                { key: "selected", label: "selected", sortable: false },
                 { key: "lead_full_name", label: "Name", isSortable: true },
                 { key: "occupation", label: "Occupation", isSortable: true },
                 { key: "mobile_number", label: "Mobile No." },
+                { key: "source_complete", label: "Source" },
+                { key: "venue.name", label: "Venue" },
             ],
             alert: false,
-            module: "venues",
+            module: "leads",
+            is_busy: false,
+            selected_ids: []
         };
     },
     methods: {
@@ -111,20 +118,14 @@ export default {
             this.$page.props.flash.error = null;
             this.$page.props.flash.message = null;
         },
-        paginateLink(filter) {
-            let url = "/paginate/leads/request";
-            console.log(filter);
-
+        loadData(filter) {
             router.reload({
                 data: filter,
-                only: [
-                    "items",
-                    "per_page",
-                    "current_page",
-                    "last_page",
-                    "total",
-                ]
+                only: ["items", "sortBy", "sortDesc", "search"],
             });
+        },
+        getSelectedIds(data) {
+            this.selected_ids = data;
         },
     },
 };

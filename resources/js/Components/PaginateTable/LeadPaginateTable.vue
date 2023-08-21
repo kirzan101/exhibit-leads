@@ -2,6 +2,7 @@
     <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
+            <!-- first filter start -->
             <b-col lg="6" class="my-1">
                 <b-form-group
                     label="Sort"
@@ -65,6 +66,7 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
+            <!-- first filter end -->
 
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
@@ -79,7 +81,7 @@
                 >
                     <b-form-select
                         id="per-page-select"
-                        v-model.lazy="perPage"
+                        v-model="perPage"
                         :options="pageOptions"
                         size="sm"
                         @change="filterTable"
@@ -100,48 +102,25 @@
         </b-row>
 
         <i
-            >Showing <b>{{ filteredRows }}</b> items of
-            <b>{{ rows }}</b> records</i
+            >Showing <b>{{ filteredRows }}</b> of <b>{{ rows }}</b></i
         >
         <!-- Main table element -->
         <b-table
             :items="items.data"
             :fields="fields"
             :current-page="currentPage"
-            :busy="is_Busy"
+            :busy="isBusy"
             stacked="md"
             show-empty
             small
             :no-local-sorting="true"
-            @row-clicked="select"
         >
-            <!-- loader start -->
             <template #table-busy>
                 <div class="text-center text-info my-2">
                     <b-spinner class="align-middle mr-2"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
             </template>
-            <!-- loader end -->
-
-            <!-- checkbox start -->
-            <template #head(selected)="column">
-                <b-form-checkbox
-                    v-model="checkedAll"
-                    @change="selectAll"
-                ></b-form-checkbox>
-            </template>
-
-            <template v-slot:cell(selected)="row">
-                <b-form-group>
-                    <b-form-checkbox
-                        v-model="selected_ids"
-                        :value="row.item.id"
-                        :id="row.item.id + '-id'"
-                    ></b-form-checkbox>
-                </b-form-group>
-            </template>
-            <!-- checkbox end -->
         </b-table>
     </b-container>
 </template>
@@ -155,7 +134,6 @@ export default {
         sort_desc: Boolean,
         search_filter: String,
         items: Object,
-        isBusy: Boolean,
     },
     data() {
         return {
@@ -164,8 +142,8 @@ export default {
             sortBy: this.sort_by,
             sortDesc: this.sort_desc,
             sortDirection: "asc",
-            pageOptions: [5, 10, 15, { value: 100, text: "Show a lot (100)" }],
-            is_Busy: this.isBusy,
+            pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+            isBusy: false,
             search: this.search_filter,
             filter: {
                 page: 1,
@@ -174,8 +152,6 @@ export default {
                 per_page: 5,
                 search: null,
             },
-            selected_ids: [],
-            checkedAll: false,
         };
     },
     computed: {
@@ -203,12 +179,6 @@ export default {
         currentPage() {
             this.filterTable();
         },
-        search() {
-            this.filterTable();
-        },
-        selected_ids() {
-            return this.$emit("selected-ids", this.selected_ids);
-        },
     },
     methods: {
         filterTable() {
@@ -217,29 +187,9 @@ export default {
             this.filter.sortDesc = this.sortDesc;
             this.filter.per_page = this.perPage;
             this.filter.search = this.search;
-            this.is_Busy = true;
+            this.isBusy = true;
 
-            this.$emit("toggle-load-data", this.filter);
-        },
-        selectAll() {
-            this.selected_ids = [];
-            if (this.checkedAll) {
-                for (let i in this.items.data) {
-                    this.selected_ids.push(this.items.data[i].id);
-                }
-            }
-        },
-        select(item) {
-            if (this.selected_ids.includes(item.id)) {
-                const index = this.selected_ids.indexOf(item.id);
-                if (index > -1) {
-                    // only splice array when item is found
-                    this.selected_ids.splice(index, 1); // 2nd parameter means remove one item only
-                }
-            } 
-            else {
-                this.selected_ids.push(item.id);
-            }
+            this.$emit("toggle-paginate-link", this.filter);
         },
     },
 };

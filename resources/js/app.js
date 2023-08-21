@@ -1,6 +1,7 @@
 import Vue from "vue";
 import { createInertiaApp } from "@inertiajs/vue2";
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import vueDebounce from 'vue-debounce'
 import Layout from '@/Pages/Layout.vue';
 
 
@@ -12,6 +13,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin)
+Vue.use(vueDebounce)
 
 createInertiaApp({
     resolve: (name) => {

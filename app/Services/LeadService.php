@@ -272,8 +272,18 @@ class LeadService
      */
     public function indexPaginateLead(int $perPage, array $request): Paginator
     {
-        $lead = Lead::where('is_booker_assigned', false)->paginate($perPage);
+        $lead = Lead::where('is_booker_assigned', false);
 
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $lead->where('first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // sorting
         if (array_key_exists('sortBy', $request) && $request['sortBy'] != null) {
             $sort = 'asc';
 
@@ -283,10 +293,12 @@ class LeadService
                 if ($request['sortDesc'] === 'true') {
                     $sort = 'desc';
                 }
-                $lead = Lead::where('is_booker_assigned', false)->orderBy($request['sortBy'], $sort)->paginate($perPage);
+                $lead->orderBy($request['sortBy'], $sort);
             }
         }
 
-        return $lead;
+        // dd($lead->toSql());
+
+        return $lead->paginate($perPage);
     }
 }
