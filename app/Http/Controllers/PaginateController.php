@@ -18,44 +18,19 @@ class PaginateController extends Controller
 
     public function leadPaginateIndex(Request $request)
     {
-        if(!$request->per_page) {
-            $request->merge([
-                'per_page' => 5
-            ]);
-        }
-
-        if(!$request->sortDesc) {
-            $request->merge([
-                'sortDesc' => false
-            ]);
-        }
-
         //set default value for lead name
-        $leadSort = $request->sortBy;
-        if($request->sortBy == 'lead_full_name') {
-            $request->merge(['sortBy' => 'last_name']);
+        $sort_by = $request->sort_by;
+        if($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
         }
 
-        $leads = $this->leadService->indexPaginateLead($request->per_page, $request->toArray());
-
+        $leads = $this->leadService->indexPaginateLead($request->toArray());
 
         return Inertia::render('Paginates/LeadPaginate', [
-            // 'items' => LeadResource::collection($leads->items()),
-            // 'per_page' => $leads->perPage(),
-            // 'last_page' => $leads->lastPage(),
-            // 'current_page' => $leads->currentPage(),
-            // 'total' => $leads->total(),
-            'sortBy' => $leadSort,
-            'sortDesc' => filter_var($request->sortDesc, FILTER_VALIDATE_BOOLEAN),
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
             'search' => $request->search,
             'items' => LeadResource::collection($leads)
         ]);
     }
-
-    // public function leadPaginate(Request $request)
-    // {
-    //     $leads = $this->leadService->indexPaginateLead($request->per_page);
-
-    //     return response()->json($leads);
-    // }
 }

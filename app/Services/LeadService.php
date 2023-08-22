@@ -270,35 +270,63 @@ class LeadService
      *
      * @return Paginator
      */
-    public function indexPaginateLead(int $perPage, array $request): Paginator
+    public function indexPaginateLead(array $request): Paginator
     {
-        $lead = Lead::where('is_booker_assigned', false);
+        $leads = Lead::where('is_booker_assigned', false)
+            ->where('is_exhibitor_assigned', false);
+
+        if (Auth::user()->employee->userGroup->name == 'exhibit-admin') {
+            // get all the unassigned leads
+            $leads = Lead::where('is_booker_assigned', false)
+                ->where('is_exhibitor_assigned', false);
+        } else if (Auth::user()->employee->userGroup->name == 'exhibit') {
+            // get the list of leads that assigned to the exhibitor
+            $leads = Lead::select('leads.*')
+                ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
+                ->where('leads.is_booker_assigned', false)
+                ->where('leads.is_exhibitor_assigned', true)
+                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id);
+        } else if (Auth::user()->employee->userGroup->name == 'employees' || Auth::user()->employee->userGroup->name == 'confirmers') {
+            // get the list of leads that was created by the employee
+            $leads = Lead::where('is_booker_assigned', false)
+                ->where('is_exhibitor_assigned', false)
+                ->where('created_by', Auth::user()->employee->id);
+        }
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $lead->where('first_name', 'LIKE', '%' . $request['search'] . '%')
+            $leads->where('first_name', 'LIKE', '%' . $request['search'] . '%')
                 ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
                 ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
                 ->orWhere('mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
                 ->orWhere('mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
         }
 
-        // sorting
-        if (array_key_exists('sortBy', $request) && $request['sortBy'] != null) {
-            $sort = 'asc';
-
-            if (array_key_exists('sortDesc', $request)) {
-                $sort = 'asc';
-
-                if ($request['sortDesc'] === 'true') {
-                    $sort = 'desc';
-                }
-                $lead->orderBy($request['sortBy'], $sort);
-            }
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $leads->where('venue_id', $request['venue_id']);
         }
 
-        // dd($lead->toSql());
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $leads->where('source_prefix', $prefix)
+                ->where('source', $suffix);
+        }
 
-        return $lead->paginate($perPage);
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $leads->where('occupation', $request['occupation']);
+        }
+
+        return $leads->orderBy($sort_by, $sort)->paginate($per_page);
     }
 }

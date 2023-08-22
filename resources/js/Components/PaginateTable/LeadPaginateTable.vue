@@ -2,42 +2,8 @@
     <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
-            <!-- first filter start -->
-            <b-col lg="6" class="my-1">
-                <b-form-group
-                    label="Sort"
-                    label-for="sort-by-select"
-                    label-cols-sm="3"
-                    label-align-sm="right"
-                    label-size="sm"
-                    class="mb-0"
-                    v-slot="{ ariaDescribedby }"
-                >
-                    <b-input-group size="sm">
-                        <b-form-select
-                            id="sort-by-select"
-                            v-model="sortBy"
-                            :options="sortOptions"
-                            :aria-describedby="ariaDescribedby"
-                            class="w-75"
-                            @change="filterTable"
-                        >
-                        </b-form-select>
-
-                        <b-form-select
-                            v-model="sortDesc"
-                            :disabled="!sortBy"
-                            :aria-describedby="ariaDescribedby"
-                            size="sm"
-                            class="w-25"
-                            @change="filterTable"
-                        >
-                            <option :value="false">Asc</option>
-                            <option :value="true">Desc</option>
-                        </b-form-select>
-                    </b-input-group>
-                </b-form-group>
-            </b-col>
+            <!-- first filter -->
+            <b-col lg="6" class="my-1"> &nbsp; </b-col>
 
             <b-col lg="6" class="my-1">
                 <b-form-group
@@ -51,37 +17,131 @@
                     <b-input-group size="sm">
                         <b-form-input
                             id="filter-input"
-                            v-model.lazy="search"
-                            type="search"
+                            v-model="filter.search"
+                            type="text"
                             placeholder="Type to Search"
-                            v-debounce:1000ms="filterTable"
+                            v-debounce:500ms="filterTable"
                             maxlength="15"
                         ></b-form-input>
 
                         <b-input-group-append>
-                            <b-button :disabled="!search" @click="search = ''"
+                            <b-button
+                                :disabled="!filter.search"
+                                @click="filter.search = ''"
                                 >Clear</b-button
                             >
                         </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
             </b-col>
-            <!-- first filter end -->
+
+            <!-- second filter -->
+            <b-col sm="5" md="6" class="my-1">
+                <b-form-group
+                    label="Venue"
+                    label-for="venue-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="venue-select"
+                        v-model="filter.venue_id"
+                        :options="venue_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="7" md="6" class="my-1">
+                <b-form-group
+                    label="Source"
+                    label-for="source-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="source-select"
+                        v-model="filter.source_name"
+                        :options="source_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+
+            <!-- third filter -->
+            <b-col sm="5" md="6" class="my-1">
+                <b-form-group
+                    label="Sort"
+                    label-for="sort-by-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                    v-slot="{ ariaDescribedby }"
+                >
+                    <b-input-group size="sm">
+                        <b-form-select
+                            id="sort-by-select"
+                            v-model="filter.sort_by"
+                            :options="sortOptions"
+                            :aria-describedby="ariaDescribedby"
+                            class="w-75"
+                            @change="filterTable"
+                        >
+                        </b-form-select>
+
+                        <b-form-select
+                            v-model="filter.is_sort_desc"
+                            :disabled="!filter.sort_by"
+                            :aria-describedby="ariaDescribedby"
+                            size="sm"
+                            class="w-25"
+                            @change="filterTable"
+                        >
+                            <option :value="false">Asc</option>
+                            <option :value="true">Desc</option>
+                        </b-form-select>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="7" md="6" class="my-1">
+                <b-form-group
+                    label="Occupation"
+                    label-for="occupation-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="occupation-select"
+                        v-model="filter.occupation"
+                        :options="occupation_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
 
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
                     label="Per page"
                     label-for="per-page-select"
-                    label-cols-sm="6"
-                    label-cols-md="4"
-                    label-cols-lg="3"
+                    label-cols-sm="3"
                     label-align-sm="right"
                     label-size="sm"
                     class="mb-0"
                 >
                     <b-form-select
                         id="per-page-select"
-                        v-model="perPage"
+                        v-model="filter.per_page"
                         :options="pageOptions"
                         size="sm"
                         @change="filterTable"
@@ -91,7 +151,7 @@
 
             <b-col sm="7" md="6" class="my-1">
                 <b-pagination
-                    v-model="currentPage"
+                    v-model="filter.page"
                     :total-rows="rows"
                     :per-page="perPage"
                     align="fill"
@@ -102,30 +162,74 @@
         </b-row>
 
         <i
-            >Showing <b>{{ filteredRows }}</b> of <b>{{ rows }}</b></i
+            >Showing <b>{{ filteredRows }}</b> items of
+            <b>{{ rows }}</b> records</i
         >
         <!-- Main table element -->
         <b-table
             :items="items.data"
             :fields="fields"
             :current-page="currentPage"
-            :busy="isBusy"
+            :busy="is_Busy"
             stacked="md"
             show-empty
             small
             :no-local-sorting="true"
+            @row-clicked="select"
         >
+            <!-- loader start -->
             <template #table-busy>
                 <div class="text-center text-info my-2">
                     <b-spinner class="align-middle mr-2"></b-spinner>
                     <strong>Loading...</strong>
                 </div>
             </template>
+            <!-- loader end -->
+
+            <!-- checkbox start -->
+            <template #head(selected)="column">
+                <b-form-checkbox
+                    v-model="checkedAll"
+                    @change="selectAll"
+                ></b-form-checkbox>
+            </template>
+
+            <template v-slot:cell(selected)="row">
+                <b-form-group>
+                    <b-form-checkbox
+                        v-model="selectedIds"
+                        :value="row.item.id"
+                        :id="row.item.id + '-id'"
+                    ></b-form-checkbox>
+                </b-form-group>
+            </template>
+            <!-- checkbox end -->
+
+            <!-- actions start -->
+            <template #cell(actions)="row">
+                <Link
+                    :href="'/' + module + '/' + row.item.id"
+                    class="btn mx-1 btn-info"
+                    type="button"
+                    v-if="check_access(module, 'read')"
+                    >Show</Link
+                >
+                <Link
+                    :href="'/' + module + '/' + row.item.id + '/edit'"
+                    class="btn mx-1 btn-warning text-white"
+                    type="button"
+                    v-if="check_access(module, 'update')"
+                    >Edit</Link
+                >
+            </template>
+            <!-- actions end -->
         </b-table>
     </b-container>
 </template>
 
 <script>
+import { Link } from "@inertiajs/vue2";
+
 export default {
     props: {
         fields: Array,
@@ -134,24 +238,54 @@ export default {
         sort_desc: Boolean,
         search_filter: String,
         items: Object,
+        isBusy: Boolean,
+        module: String,
+        occupation_list: Array,
+        venues: Array,
+        sources: Array,
+        exhibitors: Array,
+        exhibitor: Number,
+        occupationName: String,
+        venueId: String,
+        sourceName: String,
+    },
+    components: {
+        Link,
     },
     data() {
         return {
-            currentPage: this.items.meta.current_page,
-            perPage: this.items.meta.per_page,
-            sortBy: this.sort_by,
-            sortDesc: this.sort_desc,
-            sortDirection: "asc",
-            pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
-            isBusy: false,
-            search: this.search_filter,
+            pageOptions: [5, 10, 15, { value: 100, text: "Show a lot (100)" }],
+            is_Busy: this.isBusy,
             filter: {
-                page: 1,
-                sortBy: null,
-                sortDesc: null,
-                per_page: 5,
-                search: null,
+                page: this.items.meta.current_page,
+                sort_by: this.sort_by,
+                is_sort_desc: this.sort_desc,
+                per_page: this.items.meta.per_page,
+                search: this.search_filter,
+                occupation: this.occupationName,
+                venue_id: this.venueId,
+                source_name: this.sourceName,
             },
+            selectedIds: [],
+            checkedAll: false,
+            occupation_options: [
+                { value: null, text: "-- select --" },
+                ...this.occupation_list.map((item) => {
+                    return { value: item.occupation, text: item.occupation };
+                }),
+            ],
+            venue_options: [
+                { value: null, text: "-- select --" },
+                ...this.venues.map((item) => {
+                    return { value: item.id, text: item.name };
+                }),
+            ],
+            source_options: [
+                { value: null, text: "-- select --" },
+                ...this.sources.map((item) => {
+                    return { value: item.source, text: item.source };
+                }),
+            ],
         };
     },
     computed: {
@@ -161,8 +295,11 @@ export default {
         filteredRows() {
             return this.items.data.length;
         },
-        currentPagedata() {
+        currentPage() {
             return this.items.meta.current_page;
+        },
+        perPage() {
+            return this.items.meta.per_page;
         },
         sortOptions() {
             return [
@@ -176,20 +313,48 @@ export default {
         },
     },
     watch: {
-        currentPage() {
+        "filter.page": function () {
             this.filterTable();
+        },
+        selectedIds() {
+            return this.$emit("selected-ids", this.selectedIds);
         },
     },
     methods: {
-        filterTable() {
-            this.filter.page = this.currentPage;
-            this.filter.sortBy = this.sortBy;
-            this.filter.sortDesc = this.sortDesc;
-            this.filter.per_page = this.perPage;
-            this.filter.search = this.search;
-            this.isBusy = true;
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
 
-            this.$emit("toggle-paginate-link", this.filter);
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
+        },
+        filterTable() {
+            this.is_Busy = true;
+
+            this.$emit("toggle-load-data", this.filter);
+        },
+        selectAll() {
+            this.selectedIds = [];
+            if (this.checkedAll) {
+                for (let i in this.items.data) {
+                    this.selectedIds.push(this.items.data[i].id);
+                }
+            }
+        },
+        select(item) {
+            if (this.selectedIds.includes(item.id)) {
+                const index = this.selectedIds.indexOf(item.id);
+                if (index > -1) {
+                    this.selectedIds.splice(index, 1);
+                }
+            } else {
+                this.selectedIds.push(item.id);
+            }
         },
     },
 };

@@ -35,17 +35,20 @@ class AssignedExhibitorService
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
-                AssignedExhibitor::create([
-                    'lead_id' => $lead,
-                    'employee_id' => $request['employee_id'],
-                    'created_by' => Auth::user()->employee->id,
-                ]);
-
                 $lead = Lead::find($lead);
-                $lead->update([
-                    'is_exhibitor_assigned' => true,
-                    'updated_by' => Auth::user()->employee->id
-                ]);
+
+                if(!$lead->is_exhibitor_assigned) {
+                    AssignedExhibitor::create([
+                        'lead_id' => $lead,
+                        'employee_id' => $request['employee_id'],
+                        'created_by' => Auth::user()->employee->id,
+                    ]);
+    
+                    $lead->update([
+                        'is_exhibitor_assigned' => true,
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+                }
             }
         } catch (Exception $e) {
             return false;

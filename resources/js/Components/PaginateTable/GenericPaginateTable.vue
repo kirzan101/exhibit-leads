@@ -50,10 +50,10 @@
                     <b-input-group size="sm">
                         <b-form-input
                             id="filter-input"
-                            v-model.lazy="search"
+                            v-model="search"
                             type="search"
                             placeholder="Type to Search"
-                            v-debounce:1000ms="filterTable"
+                            v-debounce:500ms="filterTable"
                             maxlength="15"
                         ></b-form-input>
 
@@ -142,11 +142,32 @@
                 </b-form-group>
             </template>
             <!-- checkbox end -->
+
+            <!-- actions start -->
+            <template #cell(actions)="row">
+                <Link
+                    :href="'/' + module + '/' + row.item.id"
+                    class="btn mx-1 btn-info"
+                    type="button"
+                    v-if="check_access(module, 'read')"
+                    >Show</Link
+                >
+                <Link
+                    :href="'/' + module + '/' + row.item.id + '/edit'"
+                    class="btn mx-1 btn-warning text-white"
+                    type="button"
+                    v-if="check_access(module, 'update')"
+                    >Edit</Link
+                >
+            </template>
+            <!-- actions end -->
         </b-table>
     </b-container>
 </template>
 
 <script>
+import { Link } from "@inertiajs/vue2";
+
 export default {
     props: {
         fields: Array,
@@ -156,6 +177,10 @@ export default {
         search_filter: String,
         items: Object,
         isBusy: Boolean,
+        module: String,
+    },
+    components: {
+        Link,
     },
     data() {
         return {
@@ -169,8 +194,8 @@ export default {
             search: this.search_filter,
             filter: {
                 page: 1,
-                sortBy: null,
-                sortDesc: null,
+                sort_by: null,
+                is_sort_desc: null,
                 per_page: 5,
                 search: null,
             },
@@ -204,17 +229,29 @@ export default {
             this.filterTable();
         },
         search() {
-            this.filterTable();
+            // this.filterTable();
         },
         selected_ids() {
             return this.$emit("selected-ids", this.selected_ids);
         },
     },
     methods: {
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
+        },
         filterTable() {
             this.filter.page = this.currentPage;
-            this.filter.sortBy = this.sortBy;
-            this.filter.sortDesc = this.sortDesc;
+            this.filter.sort_by = this.sortBy;
+            this.filter.is_sort_desc = this.sortDesc;
             this.filter.per_page = this.perPage;
             this.filter.search = this.search;
             this.is_Busy = true;
@@ -233,11 +270,9 @@ export default {
             if (this.selected_ids.includes(item.id)) {
                 const index = this.selected_ids.indexOf(item.id);
                 if (index > -1) {
-                    // only splice array when item is found
-                    this.selected_ids.splice(index, 1); // 2nd parameter means remove one item only
+                    this.selected_ids.splice(index, 1);
                 }
-            } 
-            else {
+            } else {
                 this.selected_ids.push(item.id);
             }
         },

@@ -45,25 +45,40 @@ class LeadController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * paginate index of Leads
+     *
+     * @param Request $request
+     * @return void
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', Lead::class);
 
-        $leads = LeadResource::collection($this->leadService->indexLead());
+        //set default value for lead name
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
+        }
+
+        $leads = LeadResource::collection($this->leadService->indexPaginateLead($request->toArray()));
 
         // set the default exhibitor.
         // replace value on live
-        $exhibitor = $this->employeeService->indexExhibitor()->first(); 
+        $exhibitor = $this->employeeService->indexExhibitor()->first();
 
-        return Inertia::render('Leads/IndexLead', [
-            'leads' => $leads,
+        return Inertia::render('Leads/IndexPaginateLead', [
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'occupation' => $request->occupation,
+            'venue_id' => $request->venue_id,
+            'source_name' => $request->source_name,
+            'module' => 'leads',
+            'items' => $leads,
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
-            'per_page' => 5,
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => $this->sourceService->indexSource(),
+            'sources' => Helper::leadSource(),
             'exhibitors' => $this->employeeService->indexExhibitor(),
             'exhibitor' => $exhibitor->id // add value if only one exhibitor must be assign
         ]);

@@ -45,13 +45,14 @@
             {{ items.current_page }}
             <br />
 
-            <GenericPaginateTable
+            <LeadPaginateTable
                 :items="items"
                 :fields="fields"
                 :sort_by="sortBy"
                 :sort_desc="sortDesc"
                 :search_filter="search"
                 :isBusy="is_busy"
+                :module="module"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
             />
@@ -64,11 +65,13 @@
 <script>
 import { Link, router } from "@inertiajs/vue2";
 import GenericPaginateTable from "../../Components/PaginateTable/GenericPaginateTable.vue";
+import LeadPaginateTable from "../../Components/PaginateTable/LeadPaginateTable.vue"
 
 export default {
     components: {
         Link,
         GenericPaginateTable,
+        LeadPaginateTable
     },
     props: {
         items: Object,
@@ -85,6 +88,7 @@ export default {
                 { key: "mobile_number", label: "Mobile No." },
                 { key: "source_complete", label: "Source" },
                 { key: "venue.name", label: "Venue" },
+                { key: "actions", label: "Actions" },
             ],
             alert: false,
             module: "leads",

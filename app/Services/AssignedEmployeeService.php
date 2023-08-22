@@ -58,17 +58,20 @@ class AssignedEmployeeService
             DB::beginTransaction();
 
             foreach ($request['lead_ids'] as $lead) {
-                AssignedEmployee::create([
-                    'lead_id' => $lead,
-                    'employee_id' => $request['employee_id'],
-                    'created_by' => Auth::user()->employee->id,
-                ]);
-
                 $lead = Lead::find($lead);
-                $lead->update([
-                    'is_booker_assigned' => true,
-                    'updated_by' => Auth::user()->employee->id
-                ]);
+                
+                if(!$lead->is_booker_assigned) {
+                    AssignedEmployee::create([
+                        'lead_id' => $lead,
+                        'employee_id' => $request['employee_id'],
+                        'created_by' => Auth::user()->employee->id,
+                    ]);
+    
+                    $lead->update([
+                        'is_booker_assigned' => true,
+                        'updated_by' => Auth::user()->employee->id
+                    ]);
+                }
             }
         } catch (Exception $e) {
             DB::rollBack();
