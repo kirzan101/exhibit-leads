@@ -20,6 +20,7 @@ class AssignedExhibitorService
         $leads = Lead::select('leads.*')
             ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
             ->where('leads.is_exhibitor_assigned', true)
+            ->where('leads.is_booker_assigned', false)
             ->get();
 
         return $leads;
@@ -39,7 +40,7 @@ class AssignedExhibitorService
 
                 if(!$lead->is_exhibitor_assigned) {
                     AssignedExhibitor::create([
-                        'lead_id' => $lead,
+                        'lead_id' => $lead->getKey(),
                         'employee_id' => $request['employee_id'],
                         'created_by' => Auth::user()->employee->id,
                     ]);

@@ -40,13 +40,6 @@
                                     align-v="end"
                                     >Remove</b-button
                                 >
-                                <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    v-b-modal.assign-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    >Re-assign</b-button
-                                >
                             </div>
                         </div>
                         <div v-else>
@@ -57,13 +50,6 @@
                                     align-v="end"
                                     disabled
                                     >Remove</b-button
-                                >
-                                <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    >Re-assign</b-button
                                 >
                             </div>
                         </div>

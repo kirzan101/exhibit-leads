@@ -222,6 +222,8 @@ class LeadService
                     'is_done_confirmed' => $status,
                     'updated_by' => Auth::user()->id
                 ]);
+            } else {
+                return ['result' => 'error', 'message' => 'Incorrect employee type!'];
             }
         } catch (Exception $e) {
             DB::rollBack();

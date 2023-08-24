@@ -37,8 +37,9 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
+            <!-- first filter end-->
 
-            <!-- second filter -->
+            <!-- second filter start -->
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
                     label="Venue"
@@ -76,8 +77,9 @@
                     ></b-form-select>
                 </b-form-group>
             </b-col>
+            <!-- second filter end -->
 
-            <!-- third filter -->
+            <!-- third filter start -->
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
                     label="Sort"
@@ -132,6 +134,43 @@
                     ></b-form-select>
                 </b-form-group>
             </b-col>
+            <!-- third filter end -->
+
+            <!-- fourth filter start -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Start to"
+                    label-for="start-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-datepicker
+                        id="start-to"
+                        v-model="filter.start_to"
+                        class="mb-2"
+                    ></b-form-datepicker>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="End to"
+                    label-for="end-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-datepicker
+                        id="end-to"
+                        v-model="filter.end_to"
+                        class="mb-2"
+                    ></b-form-datepicker>
+                </b-form-group>
+            </b-col>
+            <!-- fourth filter end -->
 
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
@@ -211,27 +250,74 @@
             <!-- actions start -->
             <template #cell(actions)="row">
                 <Link
-                    :href="'/' + module + '/' + row.item.id"
+                    :href="'assigned-employees/' + row.item.id"
                     class="btn m-1 btn-info"
                     type="button"
-                    v-if="check_access(module, 'read')"
+                    v-if="check_access('assigns', 'read')"
                     >Show</Link
                 >
-                <Link
-                    :href="'/' + module + '/' + row.item.id + '/edit'"
-                    class="btn m-1 btn-warning text-white"
-                    type="button"
-                    v-if="check_access(module, 'update')"
-                    >Edit</Link
+                <b-button
+                    v-b-modal.remarks-modal
+                    variant="warning text-white"
+                    @click="selectedLead(row.item)"
+                    class="m-1"
+                    v-if="
+                        !row.item.assigned_employee.remarks &&
+                        check_access('assigns', 'update')
+                    "
+                    >Add remarks</b-button
                 >
+                <b-button
+                    v-b-modal.remarks-modal
+                    variant="danger"
+                    @click="selectedLead(row.item)"
+                    class="m-1"
+                    v-else
+                    >Edit remarks</b-button
+                >
+                <b-button
+                    v-if="
+                        row.item.assigned_employee.remarks &&
+                        check_access('assigns', 'update')
+                    "
+                    v-b-modal.done-modal
+                    variant="success"
+                    @click="selectedLead(row.item)"
+                    class="m-1"
+                    >Done</b-button
+                >
+
+                <RemarksModal
+                    :form="form"
+                    :updated_by="updated_by"
+                    title="Remarks"
+                    :venues="venues"
+                    :status_list="status_list"
+                    @submit-remarks="modifyRemarks"
+                />
+
+                <DoneModal
+                    v-if="row.item.assigned_employee.remarks"
+                    :status="status"
+                    :lead_id="row.item.id"
+                    :employee_type="employee_type"
+                />
             </template>
             <!-- actions end -->
+
+            <!-- format assigned date start -->
+            <template #cell(assigned_employee.created_at)="row">
+                {{ formatDate(row.item.assigned_employee.created_at) }}
+            </template>
+            <!-- format assigned date end -->
         </b-table>
     </b-container>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
+import RemarksModal from "../Modals/RemarksModal.vue";
+import DoneModal from "../Modals/DoneModal.vue";
 
 export default {
     props: {
@@ -246,14 +332,17 @@ export default {
         occupation_list: Array,
         venues: Array,
         sources: Array,
-        exhibitors: Array,
-        exhibitor: Number,
+        status_list: Array,
         occupationName: String,
         venueId: String,
         sourceName: String,
+        startTo: String,
+        endTo: String,
     },
     components: {
         Link,
+        RemarksModal,
+        DoneModal,
     },
     data() {
         return {
@@ -268,6 +357,8 @@ export default {
                 occupation: this.occupationName,
                 venue_id: this.venueId,
                 source_name: this.sourceName,
+                start_to: this.startTo,
+                end_to: this.endTo,
             },
             selectedIds: [],
             checkedAll: false,
@@ -289,6 +380,17 @@ export default {
                     return { value: item.source, text: item.source };
                 }),
             ],
+            form: {
+                remarks: "",
+                lead_id: "",
+                lead_status: "",
+                venue_id: "",
+                presentation_date: null,
+                presentation_time: null,
+            },
+            updated_by: "",
+            status: true,
+            employee_type: "employee"
         };
     },
     computed: {
@@ -358,6 +460,33 @@ export default {
             } else {
                 this.selectedIds.push(item.id);
             }
+        },
+        modifyRemarks(form) {
+            router.post("/remarks", form);
+            this.$bvModal.hide("remarks-modal");
+        },
+        selectedLead(data) {
+            this.form.lead_id = data.id;
+            this.form.remarks = data.assigned_employee.remarks;
+            this.form.lead_status = data.assigned_employee.lead_status;
+            this.form.venue_id = data.venue_id;
+            this.updated_by =
+                data.updated_by.length != 0
+                    ? data.updated_by.last_name +
+                      ", " +
+                      data.updated_by.first_name
+                    : "";
+            this.form.presentation_date = data.presentation_date;
+            this.form.presentation_time = data.presentation_time;
+        },
+        formatDate(value) {
+            let date_value = new Date(value);
+
+            return (
+                date_value.toLocaleDateString("en-US") +
+                " " +
+                date_value.toLocaleTimeString("en-US")
+            );
         },
     },
 };

@@ -49,25 +49,38 @@ class AssignedEmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', AssignedEmployee::class);
 
-        $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
-
-        $leads = LeadResource::collection($this->assignedEmployeeService->indexAssignedEmployee());
-
-        if ($isEmployee) {
-            $leads = LeadResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployee());
+        //set default value for lead name
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
         }
 
-        return Inertia::render('AssignedEmployees/IndexAssignedEmployee', [
-            'leads' => $leads,
-            'employees' => $this->employeeService->indexEmployee(),
-            'status_list' => Helper::leadStatus(),
+        $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
+
+        $leads = LeadResource::collection($this->assignedEmployeeService->indexAssignedEmployeePaginate($request->toArray()));
+
+        if ($isEmployee) {
+            $leads = LeadResource::collection($this->assignedEmployeeService->indexCurrentAssignedEmployeePaginate($request->toArray()));
+        }
+
+        return Inertia::render('AssignedEmployees/IndexPaginateAssignedEmployee', [
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'occupation' => $request->occupation,
+            'venue_id' => $request->venue_id,
+            'source_name' => $request->source_name,
+            'module' => 'assigned-employees',
+            'items' => $leads,
+            'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
-            'venue_list' => $this->venueService->indexVenueService(),
-            'per_page' => 5
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => Helper::leadSource(),
+            'status_list' => Helper::leadStatus()
         ]);
     }
 
@@ -119,14 +132,14 @@ class AssignedEmployeeController extends Controller
             'sources' => $this->sourceService->indexSource(),
         ]);
     }
-    
+
     /**
      * Update specific lead of assigned employee.
      */
     public function updateLead(LeadFormRequest $request, Lead $lead)
     {
         $this->authorize('update', AssignedEmployee::class);
-        
+
         ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
 
         return redirect()->route('assigned-employees-show', $lead)->with($result, $message);

@@ -176,7 +176,7 @@
                     <b-form-checkbox
                         v-model="checkedAll"
                         @change="select"
-                        v-if="check_access('assigns', 'create')"
+                        v-if="check_access('assign-exhibitors', 'create')"
                     ></b-form-checkbox>
                     <span v-else>&nbsp;</span>
                 </template>
@@ -191,7 +191,7 @@
                             @change="
                                 selectEmployee($event, row.item.assigned_exhibitor.employee_id)
                             "
-                            v-if="check_access('assigns', 'create')"
+                            v-if="check_access('assign-exhibitors', 'create')"
                         ></b-form-checkbox>
                     </b-form-group>
                 </template>

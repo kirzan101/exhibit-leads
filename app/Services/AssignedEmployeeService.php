@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\AssignedEmployee;
 use App\Models\Contract;
 use App\Models\Lead;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +49,116 @@ class AssignedEmployeeService
     }
 
     /**
+     * index of assigned employee service
+     *
+     * @return Paginator
+     */
+    public function indexAssignedEmployeePaginate(array $request): Paginator
+    {
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', true)
+            ->where('leads.is_done', false);
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $assigned_leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $assigned_leads->where('leads.venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $assigned_leads->where('leads.source_prefix', $prefix)
+                ->where('leads.source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $assigned_leads->where('leads.occupation', $request['occupation']);
+        }
+
+        //date filter
+        if((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $assigned_leads->whereBetween(Carbon::parse('assigned_employees.created_at'), [Carbon::parse($request['start_to']), Carbon::parse($request['end_to'])]);
+        }
+
+        return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
+    }
+
+    /**
+     * index of current assigned employee service
+     *
+     * @return Paginator
+     */
+    public function indexCurrentAssignedEmployeePaginate(array $request): Paginator
+    {
+        $assigned_leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', true)
+            ->where('leads.is_done', false)
+            ->where('assigned_employees.employee_id', Auth::user()->employee->id)
+            ->get();
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $assigned_leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $assigned_leads->where('leads.venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $assigned_leads->where('leads.source_prefix', $prefix)
+                ->where('leads.source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $assigned_leads->where('leads.occupation', $request['occupation']);
+        }
+
+        //date filter
+        if((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $assigned_leads->whereBetween(Carbon::parse('assigned_employees.created_at'), [Carbon::parse($request['start_to']), Carbon::parse($request['end_to'])]);
+        }
+
+        return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
+    }
+
+    /**
      * create assigned employee service
      *
      * @param array $request
@@ -59,14 +171,14 @@ class AssignedEmployeeService
 
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
-                
-                if(!$lead->is_booker_assigned) {
+
+                if (!$lead->is_booker_assigned) {
                     AssignedEmployee::create([
-                        'lead_id' => $lead,
+                        'lead_id' => $lead->getKey(),
                         'employee_id' => $request['employee_id'],
                         'created_by' => Auth::user()->employee->id,
                     ]);
-    
+
                     $lead->update([
                         'is_booker_assigned' => true,
                         'updated_by' => Auth::user()->employee->id
@@ -202,7 +314,6 @@ class AssignedEmployeeService
                 'presentation_time' => $request['presentation_time'],
                 'updated_by' => Auth::user()->employee->id
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
 

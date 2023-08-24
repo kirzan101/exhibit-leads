@@ -15,7 +15,7 @@
                     <b-input-group size="sm">
                         <b-form-select
                             id="sort-by-select"
-                            v-model="sortBy"
+                            v-model="filter.sort_by"
                             :options="sortOptions"
                             :aria-describedby="ariaDescribedby"
                             class="w-75"
@@ -24,8 +24,8 @@
                         </b-form-select>
 
                         <b-form-select
-                            v-model="sortDesc"
-                            :disabled="!sortBy"
+                            v-model="filter.is_sort_desc"
+                            :disabled="!filter.sort_by"
                             :aria-describedby="ariaDescribedby"
                             size="sm"
                             class="w-25"
@@ -50,7 +50,7 @@
                     <b-input-group size="sm">
                         <b-form-input
                             id="filter-input"
-                            v-model="search"
+                            v-model="filter.search"
                             type="search"
                             placeholder="Type to Search"
                             v-debounce:500ms="filterTable"
@@ -58,7 +58,12 @@
                         ></b-form-input>
 
                         <b-input-group-append>
-                            <b-button :disabled="!search" @click="search = ''"
+                            <b-button
+                                :disabled="!filter.search"
+                                @click="
+                                    filter.search = '';
+                                    filterTable();
+                                "
                                 >Clear</b-button
                             >
                         </b-input-group-append>
@@ -79,7 +84,7 @@
                 >
                     <b-form-select
                         id="per-page-select"
-                        v-model.lazy="perPage"
+                        v-model.lazy="filter.per_page"
                         :options="pageOptions"
                         size="sm"
                         @change="filterTable"
@@ -89,7 +94,7 @@
 
             <b-col sm="7" md="6" class="my-1">
                 <b-pagination
-                    v-model="currentPage"
+                    v-model="filter.page"
                     :total-rows="rows"
                     :per-page="perPage"
                     align="fill"
@@ -147,14 +152,14 @@
             <template #cell(actions)="row">
                 <Link
                     :href="'/' + module + '/' + row.item.id"
-                    class="btn mx-1 btn-info"
+                    class="btn m-1 btn-info"
                     type="button"
                     v-if="check_access(module, 'read')"
                     >Show</Link
                 >
                 <Link
                     :href="'/' + module + '/' + row.item.id + '/edit'"
-                    class="btn mx-1 btn-warning text-white"
+                    class="btn m-1 btn-warning text-white"
                     type="button"
                     v-if="check_access(module, 'update')"
                     >Edit</Link
@@ -184,20 +189,14 @@ export default {
     },
     data() {
         return {
-            currentPage: this.items.meta.current_page,
-            perPage: this.items.meta.per_page,
-            sortBy: this.sort_by,
-            sortDesc: this.sort_desc,
-            sortDirection: "asc",
             pageOptions: [5, 10, 15, { value: 100, text: "Show a lot (100)" }],
             is_Busy: this.isBusy,
-            search: this.search_filter,
             filter: {
-                page: 1,
-                sort_by: null,
-                is_sort_desc: null,
-                per_page: 5,
-                search: null,
+                page: this.items.meta.current_page,
+                sort_by: this.sort_by,
+                is_sort_desc: this.sort_desc,
+                per_page: this.items.meta.per_page,
+                search: this.search_filter,
             },
             selected_ids: [],
             checkedAll: false,
@@ -210,8 +209,11 @@ export default {
         filteredRows() {
             return this.items.data.length;
         },
-        currentPagedata() {
+        currentPage() {
             return this.items.meta.current_page;
+        },
+        perPage() {
+            return this.items.meta.per_page;
         },
         sortOptions() {
             return [

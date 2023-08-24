@@ -60,7 +60,10 @@ export default {
     },
     methods: {
         submit() {
-            return this.$emit("submit-assigned-exhibitor",this.selectedExhibitorId);
+            return this.$emit(
+                "submit-assigned-exhibitor",
+                this.selectedExhibitorId
+            );
         },
     },
 };

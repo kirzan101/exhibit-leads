@@ -1,5 +1,5 @@
 <template>
-    <b-modal title="Assign to Employee" id="assign-modal">
+    <b-modal :title="title" id="assign-modal">
         <b-form>
             <b-form-select
                 v-model="selectedEmployeeId"
@@ -33,6 +33,7 @@
 export default {
     props: {
         employees: Array,
+        title: String
     },
     data() {
         return {
