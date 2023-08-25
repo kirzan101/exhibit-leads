@@ -71,6 +71,8 @@
                 </div>
             </h5>
 
+            <RemoveModal @submit-remove="submitRemove" />
+
             <AssignedEmployeePaginateTable
                 :items="items"
                 :fields="fields"
@@ -102,12 +104,14 @@
 import { Link, router } from "@inertiajs/vue2";
 import AssignEmployeeModal from "../../Components/Modals/AssignEmployeeModal.vue";
 import AssignedEmployeePaginateTable from "../../Components/PaginateTable/AssignedEmployeePaginateTable.vue";
+import RemoveModal from "../../Components/Modals/RemoveModal.vue";
 
 export default {
     components: {
         Link,
         AssignedEmployeePaginateTable,
         AssignEmployeeModal,
+        RemoveModal,
     },
     props: {
         sortBy: String,
@@ -129,20 +133,20 @@ export default {
     data() {
         return {
             fields: [
-                { key: "selected", label: "selected", sortable: false },
+                { key: "selected", label: "selected" },
                 {
                     key: "lead_full_name",
                     label: "Lead name",
-                    sortable: true,
+                    isSortable: true,
                 },
-                { key: "occupation", label: "Occupation", sortable: true },
+                { key: "occupation", label: "Occupation", isSortable: true },
                 {
                     key: "mobile_number",
                     label: "Mobile Number",
-                    sortable: false,
+                    isSortable: false,
                 },
-                { key: "venue.name", label: "Venue", sortable: true },
-                { key: "source_complete", label: "source", sortable: true },
+                { key: "venue.name", label: "Venue", isSortable: true },
+                { key: "source_complete", label: "Source", isSortable: true },
                 {
                     key: "assigned_employee_name",
                     label: "Assigned To",
@@ -202,7 +206,7 @@ export default {
                     "venue_id",
                     "source_name",
                     "start_to",
-                    "end_to"
+                    "end_to",
                 ],
             });
         },

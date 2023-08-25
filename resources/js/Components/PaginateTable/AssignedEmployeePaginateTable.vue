@@ -203,7 +203,8 @@
             </b-col>
         </b-row>
 
-        <i
+        <br />
+        <i v-if="rows.length > 0"
             >Showing <b>{{ filteredRows }}</b> items of
             <b>{{ rows }}</b> records</i
         >
@@ -409,11 +410,11 @@ export default {
         sortOptions() {
             return [
                 { text: "-- select --", value: null },
-                ...this.fields
-                    .filter((f) => f.isSortable)
-                    .map((f) => {
-                        return { text: f.label, value: f.key };
-                    }),
+                // ...this.fields
+                //     .filter((f) => f.isSortable)
+                //     .map((f) => {
+                //         return { text: f.label, value: f.key };
+                //     }),
             ];
         },
     },

@@ -113,8 +113,7 @@ class AssignedEmployeeService
             ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
             ->where('leads.is_booker_assigned', true)
             ->where('leads.is_done', false)
-            ->where('assigned_employees.employee_id', Auth::user()->employee->id)
-            ->get();
+            ->where('assigned_employees.employee_id', Auth::user()->employee->id);
 
         //set default values
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;

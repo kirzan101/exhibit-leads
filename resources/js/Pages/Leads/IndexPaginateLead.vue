@@ -66,6 +66,7 @@
                                 <AssignEmployeeModal
                                     v-if="selectedIds.length > 0"
                                     :employees="employees"
+                                    title="Assign Employee"
                                     @submit-assigned-employee="submitAssigned"
                                 />
                             </div>
