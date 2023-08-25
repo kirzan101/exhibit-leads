@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Assigned Leads</title>
+            <title>Confirms</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -29,51 +29,41 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">Assigned Leads</div>
+                    <div class="col-sm-6">Confirms</div>
                     <div class="col-sm-6">
-                        <div v-if="selectedIds.length > 0">
-                            <div v-if="check_access('assigns', 'create')">
-                                <b-button
-                                    class="btn btn-danger mx-1 my-1"
-                                    v-b-modal.remove-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    >Remove</b-button
-                                >
-                                <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    v-b-modal.assign-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    >Re-assign</b-button
-                                >
-                            </div>
-                        </div>
-                        <div v-else>
-                            <div v-if="check_access('assigns', 'create')">
-                                <b-button
-                                    class="btn btn-danger mx-1 my-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    >Remove</b-button
-                                >
-                                <b-button
-                                    class="btn btn-info mx-1 my-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    >Re-assign</b-button
-                                >
-                            </div>
+                        <div v-if="check_access('confirms', 'create')">
+                            <b-button
+                                class="btn btn-danger m-1"
+                                v-b-modal.remove-modal
+                                style="float: right"
+                                align-v="end"
+                                v-if="selectedIds.length > 0"
+                                >Remove</b-button
+                            >
+                            <b-button
+                                class="btn btn-danger m-1"
+                                v-b-modal.remove-modal
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                v-else
+                                >Remove</b-button
+                            >
                         </div>
                     </div>
                 </div>
             </h5>
 
-            <RemoveModal message="Remove Assigned?" @submit-remove="submitRemove" />
+            <!-- remove done -->
+            <RemoveModal
+                v-if="selectedIds.length > 0"
+                message="Remove Done remarks?"
+                @submit-remove="submitRemove"
+            />
 
-            <AssignedEmployeePaginateTable
+            <!-- add confirm table here -->
+            
+            <!-- <AssignedEmployeePaginateTable
                 :items="items"
                 :fields="fields"
                 :sort_by="sortBy"
@@ -93,7 +83,7 @@
                 :endTo="end_to"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
-            />
+            /> -->
         </b-container>
 
         <br />
@@ -228,8 +218,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/remove-assign", this.form);
-            this.selected_employee = "";
+            router.post("/confirmer/done/cancel", this.form);
             this.selected_lead = [];
         },
     },

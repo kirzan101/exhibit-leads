@@ -1,6 +1,6 @@
 <template>
     <b-modal title="Notice:" id="remove-modal">
-        <h5>Remove Assigned?</h5>
+        <h5>{{ message }}</h5>
         <template #modal-footer>
             <b-button
                 variant="danger"
@@ -17,6 +17,9 @@
 
 <script>
 export default {
+    props: {
+        message: String
+    },
     methods: {
         submit() {
             return this.$emit("submit-remove");
