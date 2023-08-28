@@ -3,7 +3,24 @@
         <!-- User Interface controls -->
         <b-row>
             <!-- first filter -->
-            <b-col lg="6" class="my-1"> &nbsp; </b-col>
+            <b-col lg="6" class="my-1">
+                <b-form-group
+                    label="Status"
+                    label-for="status-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="status-select"
+                        v-model="filter.lead_status"
+                        :options="lead_status_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
 
             <b-col lg="6" class="my-1">
                 <b-form-group
@@ -339,6 +356,7 @@ export default {
         sourceName: String,
         startTo: String,
         endTo: String,
+        leadStatus: String
     },
     components: {
         Link,
@@ -360,6 +378,7 @@ export default {
                 source_name: this.sourceName,
                 start_to: this.startTo,
                 end_to: this.endTo,
+                lead_status: this.leadStatus
             },
             selectedIds: [],
             checkedAll: false,
@@ -379,6 +398,15 @@ export default {
                 { value: null, text: "-- select --" },
                 ...this.sources.map((item) => {
                     return { value: item.source, text: item.source };
+                }),
+            ],
+            lead_status_options: [
+                { value: null, text: "-- select --" },
+                ...this.status_list.map((item) => {
+                    return {
+                        value: item.name,
+                        text: item.name + " " + "(" + item.code + ")",
+                    };
                 }),
             ],
             form: {

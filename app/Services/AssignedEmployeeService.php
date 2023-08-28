@@ -94,9 +94,14 @@ class AssignedEmployeeService
             $assigned_leads->where('leads.occupation', $request['occupation']);
         }
 
+        // lead_status
+        if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
+            $assigned_leads->where('leads.lead_status', $request['lead_status']);
+        }
+
         //date filter
-        if((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $assigned_leads->whereBetween(Carbon::parse('assigned_employees.created_at'), [Carbon::parse($request['start_to']), Carbon::parse($request['end_to'])]);
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
         }
 
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
@@ -149,9 +154,14 @@ class AssignedEmployeeService
             $assigned_leads->where('leads.occupation', $request['occupation']);
         }
 
+        // lead_status
+        if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
+            $assigned_leads->where('leads.lead_status', $request['lead_status']);
+        }
+
         //date filter
-        if((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $assigned_leads->whereBetween(Carbon::parse('assigned_employees.created_at'), [Carbon::parse($request['start_to']), Carbon::parse($request['end_to'])]);
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
         }
 
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);

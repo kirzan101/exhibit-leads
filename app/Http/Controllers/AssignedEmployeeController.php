@@ -15,6 +15,7 @@ use App\Services\LeadService;
 use App\Services\PropertyService;
 use App\Services\SourceService;
 use App\Services\VenueService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +60,16 @@ class AssignedEmployeeController extends Controller
             $request->merge(['sort_by' => 'last_name']);
         }
 
+        // set default value for start to
+        if(!$request->has('start_to')) {
+            $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        // set default value for end to
+        if(!$request->has('end_to')) {
+            $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
         $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
 
         $leads = LeadResource::collection($this->assignedEmployeeService->indexAssignedEmployeePaginate($request->toArray()));
@@ -80,7 +91,10 @@ class AssignedEmployeeController extends Controller
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => Helper::leadSource(),
-            'status_list' => Helper::leadStatus()
+            'status_list' => Helper::leadStatus(),
+            'start_to' => $request->start_to,
+            'end_to' => $request->end_to,
+            'lead_status' => $request->lead_status,
         ]);
     }
 
