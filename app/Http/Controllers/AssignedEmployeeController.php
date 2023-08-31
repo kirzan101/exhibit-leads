@@ -171,7 +171,7 @@ class AssignedEmployeeController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->updateAssignedEmployee($request->toArray());
 
-        return redirect()->route('leads.index')->with($result, $message);
+        return redirect()->route('assigned-employees')->with($result, $message);
     }
 
     /**

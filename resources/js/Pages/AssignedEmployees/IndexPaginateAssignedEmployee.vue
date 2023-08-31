@@ -71,7 +71,15 @@
                 </div>
             </h5>
 
-            <RemoveModal message="Remove Assigned?" @submit-remove="submitRemove" />
+            <RemoveModal
+                message="Remove Assigned?"
+                @submit-remove="submitRemove"
+            />
+            <AssignEmployeeModal
+                title="Re-assign leads"
+                :employees="employees"
+                @submit-assigned-employee="submitAssigned"
+            />
 
             <AssignedEmployeePaginateTable
                 :items="items"
@@ -130,7 +138,7 @@ export default {
         source_name: String,
         start_to: String,
         end_to: String,
-        lead_status: String
+        lead_status: String,
     },
     data() {
         return {
@@ -149,7 +157,11 @@ export default {
                 },
                 { key: "venue.name", label: "Venue", isSortable: true },
                 { key: "source_complete", label: "Source", isSortable: true },
-                { key: "assigned_employee.lead_status", label: "Status", isSortable: true },
+                {
+                    key: "assigned_employee.lead_status",
+                    label: "Status",
+                    isSortable: true,
+                },
                 {
                     key: "assigned_employee_name",
                     label: "Assigned To",
@@ -210,16 +222,16 @@ export default {
                     "source_name",
                     "start_to",
                     "end_to",
-                    "lead_status"
+                    "lead_status",
                 ],
             });
         },
         getSelectedIds(data) {
             this.selectedIds = data;
         },
-        submitAssigned(selectedEmployeeId) {
+        submitAssigned(data) {
             // assign leads to an employee
-            this.form.employee_id = selectedEmployeeId; // get id from modal component
+            this.form.employee_id = data; // get id from modal component
             this.form.lead_ids = this.selectedIds;
 
             this.$bvModal.hide("assign-modal");

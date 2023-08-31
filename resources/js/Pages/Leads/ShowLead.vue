@@ -467,7 +467,7 @@
                             label="Other's specified"
                             label-for="others-specified"
                             v-slot="{ ariaDescribedby }"
-                            v-if="form.owned_gadgets.includes('Others')"
+                            v-if="(form.owned_gadgets) && form.owned_gadgets.includes('Others')"
                         >
                             <b-form-input
                                 type="text"
