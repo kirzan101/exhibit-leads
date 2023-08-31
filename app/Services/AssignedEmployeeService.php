@@ -96,7 +96,7 @@ class AssignedEmployeeService
 
         // lead_status
         if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
-            $assigned_leads->where('leads.lead_status', $request['lead_status']);
+            $assigned_leads->where('assigned_employees.lead_status', $request['lead_status']);
         }
 
         //date filter
@@ -156,7 +156,7 @@ class AssignedEmployeeService
 
         // lead_status
         if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
-            $assigned_leads->where('leads.lead_status', $request['lead_status']);
+            $assigned_leads->where('assigned_employees.lead_status', $request['lead_status']);
         }
 
         //date filter

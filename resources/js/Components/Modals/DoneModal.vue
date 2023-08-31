@@ -35,8 +35,7 @@ export default {
     },
     methods: {
         submit() {
-            router.post("/done", this.form);
-            this.$bvModal.hide("done-modal");
+            return this.$emit("submit-done", this.form);
         },
     },
 };

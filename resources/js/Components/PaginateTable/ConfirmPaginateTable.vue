@@ -5,17 +5,17 @@
             <!-- first filter -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
-                    label="Status"
-                    label-for="status-select"
+                    label="Employee"
+                    label-for="employee-select"
                     label-cols-sm="3"
                     label-align-sm="right"
                     label-size="sm"
                     class="mb-0"
                 >
                     <b-form-select
-                        id="status-select"
-                        v-model="filter.lead_status"
-                        :options="lead_status_options"
+                        id="employee-select"
+                        v-model="filter.employee_id"
+                        :options="employee_options"
                         @change="filterTable"
                         size="sm"
                     ></b-form-select>
@@ -163,11 +163,26 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <!-- <b-form-datepicker
                         id="start-to"
                         v-model="filter.start_to"
+                        @input="filterDate"
                         class="mb-2"
-                    ></b-form-datepicker>
+                    ></b-form-datepicker> -->
+                    <b-input-group>
+                        <b-form-input
+                            type="date"
+                            id="start-to"
+                            v-model="filter.start_to"
+                            v-debounce:500ms="filterDate"
+                        ></b-form-input>
+                        <b-form-input
+                            type="time"
+                            id="start-time-to"
+                            v-model="filter.start_time_to"
+                            v-debounce:500ms="filterDate"
+                        ></b-form-input>
+                    </b-input-group>
                 </b-form-group>
             </b-col>
 
@@ -180,11 +195,26 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <!-- <b-form-datepicker
                         id="end-to"
                         v-model="filter.end_to"
+                        @input="filterDate"
                         class="mb-2"
-                    ></b-form-datepicker>
+                    ></b-form-datepicker> -->
+                    <b-input-group>
+                        <b-form-input
+                            type="date"
+                            id="end-to"
+                            v-model="filter.end_to"
+                            v-debounce:500ms="filterDate"
+                        ></b-form-input>
+                        <b-form-input
+                            type="time"
+                            id="end-time-to"
+                            v-model="filter.end_time_to"
+                            v-debounce:500ms="filterDate"
+                        ></b-form-input>
+                    </b-input-group>
                 </b-form-group>
             </b-col>
             <!-- fourth filter end -->
@@ -268,22 +298,22 @@
             <!-- actions start -->
             <template #cell(actions)="row">
                 <Link
-                    :href="'assigned-employees/' + row.item.id"
+                    :href="'assigned-confirmers/' + row.item.id"
                     class="btn m-1 btn-info"
                     type="button"
-                    v-if="check_access('assigns', 'read')"
+                    v-if="check_access('confirms', 'read')"
                     >Show</Link
                 >
                 <b-button
-                    v-b-modal.remarks-modal
+                    v-b-modal.confirm-modal
                     variant="warning text-white"
                     @click="selectedLead(row.item)"
                     class="m-1"
                     v-if="
-                        !row.item.assigned_employee.remarks &&
-                        check_access('assigns', 'update')
+                        !row.item.is_confirm_assigned &&
+                        check_access('confirms', 'update')
                     "
-                    >Add remarks</b-button
+                    >Confirm</b-button
                 >
                 <b-button
                     v-b-modal.remarks-modal
@@ -291,12 +321,12 @@
                     @click="selectedLead(row.item)"
                     class="m-1"
                     v-else
-                    >Edit remarks</b-button
+                    >Edit confirm</b-button
                 >
                 <b-button
                     v-if="
-                        row.item.assigned_employee.remarks &&
-                        check_access('assigns', 'update')
+                        row.item.is_confirm_assigned &&
+                        check_access('confirms', 'update')
                     "
                     v-b-modal.done-modal
                     variant="success"
@@ -305,14 +335,21 @@
                     >Done</b-button
                 >
 
+                <ConfirmModal
+                    :form="formConfirmer"
+                    title="Confirm Lead"
+                    :status_list="confirmer_status_list"
+                    :isShow="true"
+                    @submit-confirm="submitConfirm"
+                />
+
                 <RemarksModal
                     :form="form"
                     :updated_by="updated_by"
                     title="Remarks"
                     :venues="venues"
                     :status_list="status_list"
-                    :isShow="false"
-                    @submit-remarks="modifyRemarks"
+                    :isShow="true"
                 />
 
                 <DoneModal
@@ -338,6 +375,7 @@
 import { Link, router } from "@inertiajs/vue2";
 import RemarksModal from "../Modals/RemarksModal.vue";
 import DoneModal from "../Modals/DoneModal.vue";
+import ConfirmModal from "../Modals/ConfirmModal.vue";
 
 export default {
     props: {
@@ -348,21 +386,26 @@ export default {
         search_filter: String,
         items: Object,
         isBusy: Boolean,
-        module: String,
         occupation_list: Array,
         venues: Array,
         sources: Array,
         status_list: Array,
+        confirmer_status_list: Array,
         occupationName: String,
         venueId: String,
         sourceName: String,
         startTo: String,
         endTo: String,
-        leadStatus: String
+        startTimeTo: String,
+        endTimeTo: String,
+        leadStatus: String,
+        employees: Array,
+        employeeId: String,
     },
     components: {
         Link,
         RemarksModal,
+        ConfirmModal,
         DoneModal,
     },
     data() {
@@ -380,7 +423,10 @@ export default {
                 source_name: this.sourceName,
                 start_to: this.startTo,
                 end_to: this.endTo,
-                lead_status: this.leadStatus
+                start_time_to: this.startTimeTo,
+                end_time_to: this.endTimeTo,
+                lead_status: this.leadStatus,
+                employee_id: this.employeeId,
             },
             selectedIds: [],
             checkedAll: false,
@@ -411,17 +457,32 @@ export default {
                     };
                 }),
             ],
+            employee_options: [
+                { value: null, text: "-- select --" },
+                ...this.employees.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.last_name + ", " + item.first_name,
+                    };
+                }),
+            ],
             form: {
                 remarks: "",
                 lead_id: "",
-                lead_status: "",
+                lead_status: null,
                 venue_id: "",
                 presentation_date: null,
                 presentation_time: null,
+                employee_id: "",
+            },
+            formConfirmer: {
+                remarks: "",
+                lead_id: "",
+                lead_status: null,
             },
             updated_by: "",
             status: true,
-            employee_type: "employee"
+            employee_type: "confirmer",
         };
     },
     computed: {
@@ -440,11 +501,11 @@ export default {
         sortOptions() {
             return [
                 { text: "-- select --", value: null },
-                // ...this.fields
-                //     .filter((f) => f.isSortable)
-                //     .map((f) => {
-                //         return { text: f.label, value: f.key };
-                //     }),
+                ...this.fields
+                    .filter((f) => f.isSortable)
+                    .map((f) => {
+                        return { text: f.label, value: f.key };
+                    }),
             ];
         },
     },
@@ -474,6 +535,17 @@ export default {
 
             this.$emit("toggle-load-data", this.filter);
         },
+        filterDate() {
+            this.is_Busy = true;
+
+            if (
+                this.filter.start_to != null ||
+                (this.filter.start_to != "" && this.filter.end_to != null) ||
+                this.filter.end_to != ""
+            ) {
+                this.$emit("toggle-load-data", this.filter);
+            }
+        },
         selectAll() {
             this.selectedIds = [];
             if (this.checkedAll) {
@@ -492,10 +564,6 @@ export default {
                 this.selectedIds.push(item.id);
             }
         },
-        modifyRemarks(form) {
-            router.post("/remarks", form);
-            this.$bvModal.hide("remarks-modal");
-        },
         selectedLead(data) {
             this.form.lead_id = data.id;
             this.form.remarks = data.assigned_employee.remarks;
@@ -509,6 +577,14 @@ export default {
                     : "";
             this.form.presentation_date = data.presentation_date;
             this.form.presentation_time = data.presentation_time;
+
+            //confirmer
+            this.formConfirmer.lead_id = data.id;
+            if (data.is_confirm_assigned) {
+                this.formConfirmer.remarks = data.assigned_confirmer.remarks;
+                this.formConfirmer.lead_status =
+                    data.assigned_confirmer.lead_status;
+            }
         },
         formatDate(value) {
             let date_value = new Date(value);
@@ -520,8 +596,14 @@ export default {
             );
         },
         submitDone(form) {
-            router.post("/done", form);
+            router.post("/confirmer/done", form);
+
             this.$bvModal.hide("done-modal");
+        },
+        submitConfirm(form) {
+            router.post("/confirm", form);
+
+            this.$bvModal.hide("confirm-modal");
         },
     },
 };

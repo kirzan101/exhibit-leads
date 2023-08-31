@@ -1,7 +1,7 @@
 <template>
     <div>
         <Head>
-            <title>Confirms</title>
+            <title>Confirmed</title>
         </Head>
         <!--Alert message here start-->
         <b-alert
@@ -29,15 +29,15 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">Confirms</div>
+                    <div class="col-sm-6">Confirmed</div>
                     <div class="col-sm-6">
-                        <div v-if="check_access(module, 'create')">
+                        <div v-if="check_access('confirms', 'create')">
                             <b-button
-                                class="btn btn-danger mx-1 my-1"
+                                class="btn btn-danger m-1"
                                 v-b-modal.remove-modal
                                 style="float: right"
                                 align-v="end"
-                                v-if="selectedIds > 0"
+                                v-if="selectedIds.length > 0"
                                 >Remove</b-button
                             >
                             <b-button
@@ -50,38 +50,67 @@
                                 >Remove</b-button
                             >
                         </div>
+                        <!-- remove done -->
+                        <b-modal title="Notice:" id="remove-modal">
+                            <p>Remove Done remarks?</p>
+                            <template #modal-footer>
+                                <b-button
+                                    variant="danger"
+                                    type="button"
+                                    @click="$bvModal.hide('remove-modal')"
+                                    >Close</b-button
+                                >
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    @click="submitDone()"
+                                    v-if="selected_employee != ''"
+                                    >Yes</b-button
+                                >
+                                <b-button
+                                    variant="success"
+                                    type="button"
+                                    disabled
+                                    v-else
+                                    >Yes</b-button
+                                >
+                            </template>
+                        </b-modal>
                     </div>
                 </div>
             </h5>
 
+            <br />
+
             <RemoveModal
-                message="Remove Assigned?"
+                message="Remove Confirmed?"
                 @submit-remove="submitRemove"
             />
 
-            <ConfirmPaginateTable
-                :items="items"
-                :fields="fields"
+            <ConfirmedPaginateTable
                 :sort_by="sortBy"
                 :sort_desc="sortDesc"
                 :search_filter="search"
-                :isBusy="is_busy"
-                :module="module"
-                :employees="employees"
-                :occupation_list="occupation_list"
-                :venues="venues"
-                :sources="sources"
-                :status_list="status_list"
-                :confirmer_status_list="confirmer_status_list"
                 :occupationName="occupation"
                 :venueId="venue_id"
                 :sourceName="source_name"
+                :occupation_list="occupation_list"
+                :items="items"
+                :fields="fields"
+                :module="module"
+                :isBusy="is_busy"
                 :startTo="start_to"
                 :endTo="end_to"
-                :startTimeTo="start_time_to"
-                :endTimeTo="end_time_to"
-                :leadStatus="lead_status"
                 :employeeId="employee_id"
+                :confirmerId="confirmer_id"
+                :exhibitorId="exhibitor_id"
+                :venues="venues"
+                :sources="sources"
+                :employees="employees"
+                :confirmers="confirmers"
+                :exhibitors="exhibitors"
+                :status_list="status_list"
+                :confirmer_status_list="confirmer_status_list"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
             />
@@ -93,78 +122,81 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import AssignedEmployeePaginateTable from "../../Components/PaginateTable/AssignedEmployeePaginateTable.vue";
-import ConfirmPaginateTable from "../../Components/PaginateTable/ConfirmPaginateTable.vue";
+import ConfirmedPaginateTable from "../../Components/PaginateTable/ConfirmedPaginateTable.vue";
 import RemoveModal from "../../Components/Modals/RemoveModal.vue";
 
 export default {
     components: {
         Link,
-        ConfirmPaginateTable,
+        ConfirmedPaginateTable,
         RemoveModal,
     },
     props: {
         sortBy: String,
         sortDesc: Boolean,
         search: String,
-        module: String,
-        items: Object,
-        employees: Array,
-        occupation_list: Array,
-        venues: Array,
-        sources: Array,
-        status_list: Array,
-        confirmer_status_list: Array,
         occupation: String,
         venue_id: String,
         source_name: String,
         start_to: String,
         end_to: String,
-        start_time_to: String,
-        end_time_to: String,
-        lead_status: String,
-        employee_id: String
+        employee_id: String,
+        confirmer_id: String,
+        exhibitor_id: String,
+        items: Object,
+        occupation_list: Array,
+        venues: Array,
+        sources: Array,
+        employees: Array,
+        exhibitors: Array,
+        confirmers: Array,
+        status_list: Array,
+        confirmer_status_list: Array,
+        module: String,
     },
     data() {
         return {
             fields: [
-                { key: "selected", label: "selected" },
-                {
-                    key: "lead_full_name",
-                    label: "Lead name",
-                    isSortable: true,
-                },
+                { key: "selected", label: "selected", isSortable: false },
+                { key: "lead_full_name", label: "Lead name", isSortable: true },
                 { key: "occupation", label: "Occupation", isSortable: true },
-                {
-                    key: "mobile_number",
-                    label: "Mobile Number",
-                    isSortable: false,
-                },
                 { key: "venue.name", label: "Venue", isSortable: true },
                 { key: "source_complete", label: "Source", isSortable: true },
                 {
                     key: "assigned_employee_name",
                     label: "Booker",
+                    isSortable: false,
                 },
                 {
-                    key: "presentation_datetime",
-                    label: "Presentation date",
+                    key: "assigned_exhibitor_name",
+                    label: "Exhibitor",
+                    isSortable: false,
+                },
+                {
+                    key: "assigned_confirmer_name",
+                    label: "Confirmer",
+                    isSortable: false,
+                },
+                {
+                    key: "assigned_confirmer.updated_at",
+                    label: "Done at",
+                    isSortable: true,
                 },
                 { key: "actions", label: "Actions" },
             ],
-            alert: false,
             is_busy: false,
-            selectedIds: [],
+            selected_lead: [],
             form: {
-                employee_id: "",
                 lead_ids: [],
             },
+            assign_form: {
+                lead_ids: [],
+                employee_id: "",
+            },
+            alert: false,
+            selected_employee: "",
+            selectedIds: [],
         };
-    },
-    computed: {
-        user_group() {
-            return this.$page.props.auth.user.employee.user_group.name;
-        },
     },
     methods: {
         check_access(module, type) {
@@ -190,7 +222,6 @@ export default {
             this.$page.props.flash.message = null;
         },
         loadData(filter) {
-            console.log("here");
             router.reload({
                 data: filter,
                 only: [
@@ -203,10 +234,10 @@ export default {
                     "source_name",
                     "start_to",
                     "end_to",
-                    "start_time_to",
-                    "end_time_to",
                     "lead_status",
-                    "employee_id"
+                    "employee_id",
+                    "confirmer_id",
+                    "exhibitor_id"
                 ],
             });
         },
@@ -218,7 +249,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/confirmer/done/cancel", this.form);
+            router.post("/done/cancel", this.form);
             this.selected_lead = [];
         },
     },

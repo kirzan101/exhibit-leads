@@ -48,10 +48,10 @@ return new class extends Migration
             $table->boolean('is_booker_assigned')->default(false);
             $table->boolean('is_confirm_assigned')->default(false);
             $table->boolean('is_exhibitor_assigned')->default(false);
-            $table->longText('remarks')->nullable();
-            $table->string('lead_status')->nullable();
-            $table->longText('confirmer_remarks')->nullable();
-            $table->string('lead_status_confirmer')->nullable();
+            // $table->longText('remarks')->nullable();
+            // $table->string('lead_status')->nullable();
+            // $table->longText('confirmer_remarks')->nullable();
+            // $table->string('lead_status_confirmer')->nullable();
             $table->string('exhibit_code')->nullable();
             $table->string('source_prefix')->nullable();
             $table->string('source')->nullable();

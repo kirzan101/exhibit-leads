@@ -5,17 +5,17 @@
             <!-- first filter -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
-                    label="Status"
-                    label-for="status-select"
+                    label="Booker"
+                    label-for="booker-select"
                     label-cols-sm="3"
                     label-align-sm="right"
                     label-size="sm"
                     class="mb-0"
                 >
                     <b-form-select
-                        id="status-select"
-                        v-model="filter.lead_status"
-                        :options="lead_status_options"
+                        id="booker-select"
+                        v-model="filter.employee_id"
+                        :options="employee_options"
                         @change="filterTable"
                         size="sm"
                     ></b-form-select>
@@ -59,6 +59,46 @@
             <!-- second filter start -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
+                    label="Confirmer"
+                    label-for="confirmer-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="confirmer-select"
+                        v-model="filter.confirmer_id"
+                        :options="confirmer_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Exhibitor"
+                    label-for="exhibitor-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="exhibitor-select"
+                        v-model="filter.exhibitor_id"
+                        :options="exhibitor_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+            <!-- second filter end -->
+
+            <!-- third filter start -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
                     label="Venue"
                     label-for="venue-select"
                     label-cols-sm="3"
@@ -94,9 +134,9 @@
                     ></b-form-select>
                 </b-form-group>
             </b-col>
-            <!-- second filter end -->
+            <!-- third filter end -->
 
-            <!-- third filter start -->
+            <!-- fourth filter start -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
                     label="Sort"
@@ -151,9 +191,9 @@
                     ></b-form-select>
                 </b-form-group>
             </b-col>
-            <!-- third filter end -->
+            <!-- fourth filter end -->
 
-            <!-- fourth filter start -->
+            <!-- fifth filter start -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
                     label="Start to"
@@ -163,11 +203,12 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <b-form-input
+                        type="date"
                         id="start-to"
                         v-model="filter.start_to"
-                        class="mb-2"
-                    ></b-form-datepicker>
+                        v-debounce:500ms="filterDate"
+                    ></b-form-input>
                 </b-form-group>
             </b-col>
 
@@ -180,14 +221,15 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <b-form-input
+                        type="date"
                         id="end-to"
                         v-model="filter.end_to"
-                        class="mb-2"
-                    ></b-form-datepicker>
+                        v-debounce:500ms="filterDate"
+                    ></b-form-input>
                 </b-form-group>
             </b-col>
-            <!-- fourth filter end -->
+            <!-- fifth filter end -->
 
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
@@ -268,42 +310,19 @@
             <!-- actions start -->
             <template #cell(actions)="row">
                 <Link
-                    :href="'assigned-employees/' + row.item.id"
+                    :href="'assigned-confirmers/' + row.item.id"
                     class="btn m-1 btn-info"
                     type="button"
-                    v-if="check_access('assigns', 'read')"
+                    v-if="check_access('confirms', 'read')"
                     >Show</Link
                 >
-                <b-button
-                    v-b-modal.remarks-modal
-                    variant="warning text-white"
-                    @click="selectedLead(row.item)"
-                    class="m-1"
-                    v-if="
-                        !row.item.assigned_employee.remarks &&
-                        check_access('assigns', 'update')
-                    "
-                    >Add remarks</b-button
-                >
-                <b-button
-                    v-b-modal.remarks-modal
-                    variant="danger"
-                    @click="selectedLead(row.item)"
-                    class="m-1"
-                    v-else
-                    >Edit remarks</b-button
-                >
-                <b-button
-                    v-if="
-                        row.item.assigned_employee.remarks &&
-                        check_access('assigns', 'update')
-                    "
-                    v-b-modal.done-modal
-                    variant="success"
-                    @click="selectedLead(row.item)"
-                    class="m-1"
-                    >Done</b-button
-                >
+
+                <ConfirmModal
+                    :form="formConfirmer"
+                    title="Confirm Lead"
+                    :status_list="confirmer_status_list"
+                    :isShow="false"
+                />
 
                 <RemarksModal
                     :form="form"
@@ -311,23 +330,14 @@
                     title="Remarks"
                     :venues="venues"
                     :status_list="status_list"
-                    :isShow="false"
-                    @submit-remarks="modifyRemarks"
-                />
-
-                <DoneModal
-                    v-if="row.item.assigned_employee.remarks"
-                    :status="status"
-                    :lead_id="row.item.id"
-                    :employee_type="employee_type"
-                    @submit-done="submitDone"
+                    :isShow="true"
                 />
             </template>
             <!-- actions end -->
 
             <!-- format assigned date start -->
-            <template #cell(assigned_employee.created_at)="row">
-                {{ formatDate(row.item.assigned_employee.created_at) }}
+            <template #cell(assigned_confirmer.updated_at)="row">
+                {{ formatDate(row.item.assigned_confirmer.updated_at) }}
             </template>
             <!-- format assigned date end -->
         </b-table>
@@ -338,31 +348,38 @@
 import { Link, router } from "@inertiajs/vue2";
 import RemarksModal from "../Modals/RemarksModal.vue";
 import DoneModal from "../Modals/DoneModal.vue";
+import ConfirmModal from "../Modals/ConfirmModal.vue";
 
 export default {
     props: {
-        fields: Array,
-        module: String,
         sort_by: String,
         sort_desc: Boolean,
         search_filter: String,
-        items: Object,
-        isBusy: Boolean,
-        module: String,
-        occupation_list: Array,
-        venues: Array,
-        sources: Array,
-        status_list: Array,
         occupationName: String,
         venueId: String,
         sourceName: String,
+        occupation_list: Array,
+        items: Object,
+        fields: Array,
+        module: String,
+        isBusy: Boolean,
         startTo: String,
         endTo: String,
-        leadStatus: String
+        employeeId: String,
+        confirmerId: String,
+        exhibitorId: String,
+        venues: Array,
+        sources: Array,
+        employees: Array,
+        confirmers: Array,
+        exhibitors: Array,
+        status_list: Array,
+        confirmer_status_list: Array,
     },
     components: {
         Link,
         RemarksModal,
+        ConfirmModal,
         DoneModal,
     },
     data() {
@@ -380,7 +397,9 @@ export default {
                 source_name: this.sourceName,
                 start_to: this.startTo,
                 end_to: this.endTo,
-                lead_status: this.leadStatus
+                employee_id: this.employeeId,
+                confirmer_id: this.confirmerId,
+                exhibitor_id: this.exhibitorId,
             },
             selectedIds: [],
             checkedAll: false,
@@ -411,17 +430,50 @@ export default {
                     };
                 }),
             ],
+            employee_options: [
+                { value: null, text: "-- select --" },
+                ...this.employees.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.last_name + ", " + item.first_name,
+                    };
+                }),
+            ],
+            confirmer_options: [
+                { value: null, text: "-- select --" },
+                ...this.confirmers.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.last_name + ", " + item.first_name,
+                    };
+                }),
+            ],
+            exhibitor_options: [
+                { value: null, text: "-- select --" },
+                ...this.exhibitors.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.last_name + ", " + item.first_name,
+                    };
+                }),
+            ],
             form: {
                 remarks: "",
                 lead_id: "",
-                lead_status: "",
+                lead_status: null,
                 venue_id: "",
                 presentation_date: null,
                 presentation_time: null,
+                employee_id: "",
+            },
+            formConfirmer: {
+                remarks: "",
+                lead_id: "",
+                lead_status: null,
             },
             updated_by: "",
             status: true,
-            employee_type: "employee"
+            employee_type: "confirmer",
         };
     },
     computed: {
@@ -440,11 +492,11 @@ export default {
         sortOptions() {
             return [
                 { text: "-- select --", value: null },
-                // ...this.fields
-                //     .filter((f) => f.isSortable)
-                //     .map((f) => {
-                //         return { text: f.label, value: f.key };
-                //     }),
+                ...this.fields
+                    .filter((f) => f.isSortable)
+                    .map((f) => {
+                        return { text: f.label, value: f.key };
+                    }),
             ];
         },
     },
@@ -474,6 +526,17 @@ export default {
 
             this.$emit("toggle-load-data", this.filter);
         },
+        filterDate() {
+            this.is_Busy = true;
+
+            if (
+                this.filter.start_to != null ||
+                (this.filter.start_to != "" && this.filter.end_to != null) ||
+                this.filter.end_to != ""
+            ) {
+                this.$emit("toggle-load-data", this.filter);
+            }
+        },
         selectAll() {
             this.selectedIds = [];
             if (this.checkedAll) {
@@ -492,10 +555,6 @@ export default {
                 this.selectedIds.push(item.id);
             }
         },
-        modifyRemarks(form) {
-            router.post("/remarks", form);
-            this.$bvModal.hide("remarks-modal");
-        },
         selectedLead(data) {
             this.form.lead_id = data.id;
             this.form.remarks = data.assigned_employee.remarks;
@@ -509,6 +568,14 @@ export default {
                     : "";
             this.form.presentation_date = data.presentation_date;
             this.form.presentation_time = data.presentation_time;
+
+            //confirmer
+            this.formConfirmer.lead_id = data.id;
+            if (data.is_confirm_assigned) {
+                this.formConfirmer.remarks = data.assigned_confirmer.remarks;
+                this.formConfirmer.lead_status =
+                    data.assigned_confirmer.lead_status;
+            }
         },
         formatDate(value) {
             let date_value = new Date(value);
@@ -518,10 +585,6 @@ export default {
                 " " +
                 date_value.toLocaleTimeString("en-US")
             );
-        },
-        submitDone(form) {
-            router.post("/done", form);
-            this.$bvModal.hide("done-modal");
         },
     },
 };

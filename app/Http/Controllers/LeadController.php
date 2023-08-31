@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Http\Requests\LeadFormRequest;
+use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\LeadResource;
+use App\Models\AssignedConfirmer;
 use App\Models\AssignedEmployee;
 use App\Models\Lead;
 use App\Services\AssignedEmployeeService;
@@ -13,6 +15,7 @@ use App\Services\LeadService;
 use App\Services\PropertyService;
 use App\Services\SourceService;
 use App\Services\VenueService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -178,20 +181,50 @@ class LeadController extends Controller
      *
      * @return void
      */
-    public function indexDoneLead()
+    public function indexDoneLead(Request $request)
     {
-        $leads = LeadResource::collection($this->leadService->indexDoneLead());
+        $this->authorize('read', AssignedConfirmer::class);
 
-        return Inertia::render('Confirms/IndexConfirm', [
-            'leads' => $leads,
-            'employees' => $this->employeeService->indexConfirmer(),
+        //set default value for lead name
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
+        }
+
+        // set default value for start to
+        if(!$request->has('start_to')) {
+            $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        // set default value for end to
+        if(!$request->has('end_to')) {
+            $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        $leads = LeadResource::collection($this->leadService->indexPaginateDoneLead($request->toArray()));
+
+        return Inertia::render('Confirms/IndexPaginateConfirm', [
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'occupation' => $request->occupation,
+            'venue_id' => $request->venue_id,
+            'source_name' => $request->source_name,
+            'module' => 'confirms',
+            'items' => $leads,
+            'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
-            'per_page' => 5,
-            'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => Helper::leadSource(),
             'status_list' => Helper::leadStatus(),
             'confirmer_status_list' => Helper::leadConfirmerStatus(),
-            'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource()
+            'start_to' => $request->start_to,
+            'end_to' => $request->end_to,
+            'start_time_to' => $request->start_time_to,
+            'end_time_to' => $request->end_time_to,
+            'lead_status' => $request->lead_status,
+            'employee_id' => $request->employee_id,
+            'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
         ]);
     }
 
@@ -297,6 +330,58 @@ class LeadController extends Controller
             'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => Helper::leadSource()
+        ]);
+    }
+
+    public function indexPaginateConfirmed(Request $request)
+    {
+        // $this->authorize('read', AssignedConfirmer::class);
+        
+        //set default value for lead name
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
+        }
+
+        // set default value for start to
+        if(!$request->has('start_to')) {
+            $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        // set default value for end to
+        if(!$request->has('end_to')) {
+            $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        // if sort by date
+        if($request->sort_by == 'assigned_confirmer.updated_at') {
+            $request->merge(['sort_by' => 'assigned_confirmers.updated_at']);
+        }
+
+        $leads = LeadResource::collection($this->leadService->indexPaginateConfirmedLead($request->toArray()));
+
+        return Inertia::render('Confirmeds/IndexPaginateConfirmed', [
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'occupation' => $request->occupation,
+            'venue_id' => $request->venue_id,
+            'source_name' => $request->source_name,
+            'start_to' => $request->start_to,
+            'end_to' => $request->end_to,
+            'employee_id' => $request->employee_id,
+            'confirmer_id' => $request->confirmer_id,
+            'exhibitor_id' => $request->exhibitor_id,
+            'items' => $leads,
+            'occupation_list' => Helper::occupationList(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => Helper::leadSource(),
+            'status_list' => Helper::leadStatus(),
+            'confirmer_status_list' => Helper::leadConfirmerStatus(),
+            'employees' => EmployeeResource::collection($this->employeeService->indexEncoder()),
+            'confirmers' => EmployeeResource::collection($this->employeeService->indexConfirmer()),
+            'exhibitors' => EmployeeResource::collection($this->employeeService->indexExhibitor()),
+            'module' => 'confirmeds',
         ]);
     }
 

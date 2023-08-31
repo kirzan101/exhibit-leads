@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -185,13 +186,13 @@ class Lead extends Model
      */
     public function getAssignedEmployee()
     {
-        $confirmer = Employee::select('employees.*')
+        $employee = Employee::select('employees.*')
             ->join('assigned_employees', 'assigned_employees.employee_id', '=', 'employees.id')
             ->where('assigned_employees.lead_id', $this->id)
             ->first();
 
-        if($confirmer) {
-            return $confirmer->getFullName();
+        if($employee) {
+            return $employee->getFullName();
         }
 
         return '-';
@@ -233,6 +234,18 @@ class Lead extends Model
         }
 
         return '-';
+    }
+
+    /**
+     * get the presentation date & time
+     *
+     * @return void
+     */
+    public function getPresentationDateTime() {
+        $time = Carbon::parse($this->presentation_time)->format('g:i A');
+        $date = Carbon::parse($this->presentation_date)->format('Y-m-d');
+
+        return sprintf('%s %s', $date, $time);
     }
 
     /**

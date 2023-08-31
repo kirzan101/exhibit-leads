@@ -149,7 +149,7 @@ export default {
                 },
                 { key: "venue.name", label: "Venue", isSortable: true },
                 { key: "source_complete", label: "Source", isSortable: true },
-                { key: "lead_status", label: "Status", isSortable: true },
+                { key: "assigned_employee.lead_status", label: "Status", isSortable: true },
                 {
                     key: "assigned_employee_name",
                     label: "Assigned To",

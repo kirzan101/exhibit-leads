@@ -86,7 +86,8 @@ Route::middleware('auth')->group(function () {
     Route::get('confirms', [LeadController::class, 'indexDoneLead'])->name('confirms');
 
     //confirmed
-    Route::get('/confirmed', [LeadController::class, 'indexConfirmed'])->name('confirmed');
+    // Route::get('/confirmed', [LeadController::class, 'indexConfirmed'])->name('confirmed');
+    Route::get('/confirmed', [LeadController::class, 'indexPaginateConfirmed'])->name('confirmed');
     // Route::get('/confirmed/remove', [LeadController::class, 'removeConfirmed']);
 
     // assign done status

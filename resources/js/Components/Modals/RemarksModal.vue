@@ -11,11 +11,13 @@
         <b-form-select
             v-model="form.lead_status"
             :options="lead_status_options"
+            :disabled="isShow"
         ></b-form-select>
         <p class="mt-2 mb-2">Venue:</p>
         <b-form-select
             v-model="form.venue_id"
             :options="venue_options"
+            :disabled="isShow"
         ></b-form-select>
         <p class="mt-2 mb-2">Presentation:</p>
         <b-input-group>
@@ -23,12 +25,14 @@
                 type="date"
                 id="presentation-date"
                 v-model="form.presentation_date"
+                :disabled="isShow"
             ></b-form-input>
             <b-form-input
                 type="time"
                 id="presentation-time"
                 v-if="form.presentation_date"
                 v-model="form.presentation_time"
+                :disabled="isShow"
             ></b-form-input>
             <b-form-input
                 type="time"
@@ -52,7 +56,10 @@
                 type="button"
                 @click="submit"
                 v-if="
-                    form.remarks != null && form.remarks.length > 0 && form.lead_status != null
+                    form.remarks != null &&
+                    form.remarks.length > 0 &&
+                    form.lead_status != null &&
+                    !isShow
                 "
                 >Submit</b-button
             >
@@ -66,12 +73,12 @@
 <script>
 export default {
     props: {
-        formData: Object,
         updated_by: String,
         title: String,
         venues: Array,
         status_list: Array,
-        form: Object
+        form: Object,
+        isShow: Boolean,
     },
     data() {
         return {
