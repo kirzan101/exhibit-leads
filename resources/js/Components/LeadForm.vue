@@ -75,23 +75,41 @@
             </b-row>
             <b-row>
                 <b-col sm="3">
-                    <b-form-group label="Alias" label-for="alias">
+                    <b-form-group
+                        label="Spouse/Partner First Name"
+                        label-for="spouse-first-name"
+                    >
                         <b-form-input
                             type="text"
-                            id="alias"
-                            v-model="form.alias"
+                            id="spouse-first-name"
+                            v-model="form.spouse_first_name"
+                            :state="errors.spouse_first_name ? false : null"
                             :disabled="is_disabled"
                         ></b-form-input>
+                        <b-form-invalid-feedback
+                            :state="errors.spouse_first_name ? false : null"
+                        >
+                            {{ errors.spouse_first_name }}
+                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-col>
                 <b-col sm="3">
-                    <b-form-group label="Suffix" label-for="suffix">
+                    <b-form-group
+                        label="Spouse/Partner Last Name"
+                        label-for="spouse-last-name"
+                    >
                         <b-form-input
                             type="text"
-                            id="suffix"
-                            v-model="form.suffix"
+                            id="spouse-last-name"
+                            v-model="form.spouse_last_name"
+                            :state="errors.spouse_last_name ? false : null"
                             :disabled="is_disabled"
                         ></b-form-input>
+                        <b-form-invalid-feedback
+                            :state="errors.spouse_last_name ? false : null"
+                        >
+                            {{ errors.spouse_last_name }}
+                        </b-form-invalid-feedback>
                     </b-form-group>
                 </b-col>
                 <b-col sm="3">
@@ -288,7 +306,7 @@
                 </b-col>
             </b-row>
             <b-row>
-                <b-col sm="6">
+                <b-col sm="12">
                     <b-form-group
                         label="Email"
                         label-for="email"
@@ -306,16 +324,6 @@
                         >
                             {{ errors.email }}
                         </b-form-invalid-feedback>
-                    </b-form-group>
-                </b-col>
-                <b-col sm="6">
-                    <b-form-group label="Fax" label-for="fax">
-                        <b-form-input
-                            type="text"
-                            id="fax"
-                            v-model="form.fax"
-                            :disabled="is_disabled"
-                        ></b-form-input>
                     </b-form-group>
                 </b-col>
             </b-row>
@@ -528,17 +536,38 @@
                         label="Presentation date"
                         label-for="presentation-date"
                     >
-                        <b-form-input
-                            type="date"
-                            id="presentation-date"
-                            v-model="form.presentation_date"
-                            :state="errors.presentation_date ? false : null"
-                            :disabled="is_disabled"
-                        ></b-form-input>
+                        <b-input-group>
+                            <b-form-input
+                                type="date"
+                                id="presentation-date"
+                                v-model="form.presentation_date"
+                                :disabled="is_disabled"
+                                :state="errors.presentation_date ? false : null"
+                            ></b-form-input>
+                            <b-form-input
+                                type="time"
+                                id="presentation-time"
+                                v-if="form.presentation_date"
+                                v-model="form.presentation_time"
+                                :disabled="is_disabled"
+                                :state="errors.presentation_time ? false : null"
+                            ></b-form-input>
+                            <b-form-input
+                                type="time"
+                                id="presentation-time"
+                                disabled
+                                v-else
+                            ></b-form-input>
+                        </b-input-group>
                         <b-form-invalid-feedback
                             :state="errors.presentation_date ? false : null"
                         >
                             {{ errors.presentation_date }}
+                        </b-form-invalid-feedback>
+                        <b-form-invalid-feedback
+                            :state="errors.presentation_time ? false : null"
+                        >
+                            {{ errors.presentation_time }}
                         </b-form-invalid-feedback>
                     </b-form-group>
                 </b-col>
@@ -712,6 +741,7 @@ export default {
                 property_id: this.lead.property_id,
                 contract_file: this.lead.contract_file,
                 presentation_date: this.lead.presentation_date,
+                presentation_time: this.lead.presentation_time,
                 source: this.lead.source,
                 source_prefix: this.lead.source_prefix,
                 membership_type: this.lead.membership_type,
@@ -720,6 +750,8 @@ export default {
                 is_confidential: this.lead.is_confidential,
                 venue_id: this.lead.venue_id,
                 id: this.lead.id,
+                spouse_first_name: this.lead.spouse_first_name,
+                spouse_last_name: this.lead.spouse_last_name,
             }),
             titles: [
                 { text: "-- select --", value: null },
