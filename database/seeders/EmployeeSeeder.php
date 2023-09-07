@@ -122,6 +122,22 @@ class EmployeeSeeder extends Seeder
             'user_group_id' => UserGroup::where('name', 'exhibit-admin')->first()->id
         ]);
 
+        // craete encoder account
+        $user_encoder = User::create([
+            'username' => 'encoder',
+            'email' => 'encoder@astoria.com.ph',
+            'password' => bcrypt('q')
+        ]);
+
+        Employee::create([
+            'first_name' => 'Encoder',
+            'last_name' => 'Account',
+            'position' => 'Encoder',
+            'property_id' => 1,
+            'user_id' => $user_encoder->id,
+            'user_group_id' => UserGroup::where('name', 'encoders')->first()->id
+        ]);
+
         //create default venue per employee
         $employees = Employee::all();
         $user_group = UserGroup::where('name', 'employees')->first();

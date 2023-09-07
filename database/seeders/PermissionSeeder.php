@@ -14,14 +14,14 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $modules = [
-            'leads',
-            'employees',
-            'assigns',
-            'usergroups',
-            'confirms',
-            'venues',
-            'sources',
-            'assign-exhibitors'
+            'leads', // leads crud
+            'employees', // employees crud
+            'assigns', // action to assign leads to an employee/booker
+            'usergroups', // user group crud
+            'confirms', // action to confirm leads
+            'venues', // venue crud
+            'sources', // source crud
+            'assign-exhibitors' // action to assign leads to an exhibitor
         ];
 
         $types = [

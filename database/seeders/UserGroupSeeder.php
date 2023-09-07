@@ -47,7 +47,13 @@ class UserGroupSeeder extends Seeder
                 'department' => 'AVLCI',
                 'description' => 'AVLCI',
                 'property_id' => $property->id,
-            ]
+            ],
+            [
+                'name' => 'encoders',
+                'department' => 'AVLCI',
+                'description' => 'AVLCI',
+                'property_id' => $property->id,
+            ],
         ];
 
         $admin_permissions = Permission::all();
@@ -66,6 +72,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->get();
+        $encoder_permissions = Permission::where('module', 'leads')->get();
 
         if ($admin_permissions->count() > 0) {
             foreach ($user_groups as $user_group) {
@@ -128,6 +135,13 @@ class UserGroupSeeder extends Seeder
                         'user_group_id' => $usergroup->id,
                         'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'update')->first()->id
                     ]);
+                } else if ($usergroup->name == 'encoders') {
+                    foreach ($encoder_permissions as $permission) {
+                        UserGroupPermission::create([
+                            'user_group_id' => $usergroup->id,
+                            'permission_id' => $permission->id
+                        ]);
+                    }
                 }
             }
         }

@@ -163,11 +163,12 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <b-form-input
+                        type="date"
                         id="start-to"
                         v-model="filter.start_to"
-                        class="mb-2"
-                    ></b-form-datepicker>
+                        v-debounce:500ms="filterDate"
+                    ></b-form-input>
                 </b-form-group>
             </b-col>
 
@@ -180,11 +181,12 @@
                     label-size="sm"
                     class="mb-0"
                 >
-                    <b-form-datepicker
+                    <b-form-input
+                        type="date"
                         id="end-to"
                         v-model="filter.end_to"
-                        class="mb-2"
-                    ></b-form-datepicker>
+                        v-debounce:500ms="filterDate"
+                    ></b-form-input>
                 </b-form-group>
             </b-col>
             <!-- fourth filter end -->
@@ -358,7 +360,7 @@ export default {
         sourceName: String,
         startTo: String,
         endTo: String,
-        leadStatus: String
+        leadStatus: String,
     },
     components: {
         Link,
@@ -380,7 +382,7 @@ export default {
                 source_name: this.sourceName,
                 start_to: this.startTo,
                 end_to: this.endTo,
-                lead_status: this.leadStatus
+                lead_status: this.leadStatus,
             },
             selectedIds: [],
             checkedAll: false,
@@ -421,7 +423,7 @@ export default {
             },
             updated_by: "",
             status: true,
-            employee_type: "employee"
+            employee_type: "employee",
         };
     },
     computed: {
@@ -471,8 +473,19 @@ export default {
         },
         filterTable() {
             this.is_Busy = true;
-
+            
             this.$emit("toggle-load-data", this.filter);
+        },
+        filterDate() {
+            this.is_Busy = true;
+
+            if (
+                this.filter.start_to != null ||
+                (this.filter.start_to != "" && this.filter.end_to != null) ||
+                this.filter.end_to != ""
+            ) {
+                this.$emit("toggle-load-data", this.filter);
+            }
         },
         selectAll() {
             this.selectedIds = [];
