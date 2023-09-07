@@ -36,7 +36,7 @@
                         <b-card-text
                             >Mark the leads as confirmed</b-card-text
                         >
-                        <Link href="/assigned-confirmers" class="btn btn-info" v-if="check_access('confirms', 'read')">Go to confirm</Link>
+                        <Link href="/confirms" class="btn btn-info" v-if="check_access('confirms', 'read')">Go to confirm</Link>
                         <b-btn variant="info" disabled v-else>Go to confirm</b-btn>
                     </b-card>
                 </b-card-group>

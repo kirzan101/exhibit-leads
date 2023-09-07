@@ -281,6 +281,7 @@
                 <b-form-checkbox
                     v-model="checkedAll"
                     @change="selectAll"
+                    v-if="check_access('confirms', 'create')"
                 ></b-form-checkbox>
             </template>
 
@@ -290,6 +291,7 @@
                         v-model="selectedIds"
                         :value="row.item.id"
                         :id="row.item.id + '-id'"
+                        v-if="check_access('confirms', 'create')"
                     ></b-form-checkbox>
                 </b-form-group>
             </template>
@@ -316,7 +318,7 @@
                     >Confirm</b-button
                 >
                 <b-button
-                    v-b-modal.remarks-modal
+                    v-b-modal.confirm-modal
                     variant="danger"
                     @click="selectedLead(row.item)"
                     class="m-1"
@@ -332,6 +334,7 @@
                     variant="success"
                     @click="selectedLead(row.item)"
                     class="m-1"
+                    :disabled="row.item.assigned_confirmer.lead_status != 'Confirm'"
                     >Done</b-button
                 >
 
@@ -339,7 +342,7 @@
                     :form="formConfirmer"
                     title="Confirm Lead"
                     :status_list="confirmer_status_list"
-                    :isShow="true"
+                    :isShow="false"
                     @submit-confirm="submitConfirm"
                 />
 

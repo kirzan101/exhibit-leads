@@ -161,19 +161,28 @@ class AssignedConfirmerService
         try {
             DB::beginTransaction();
 
-            $assigned_confirmer = AssignedConfirmer::create([
-                'lead_id' => $request['lead_id'],
-                'employee_id' => Auth::user()->employee->id,
-                'remarks' => $request['remarks'],
-                'lead_status' => $request['lead_status'],
-                'created_by' => Auth::user()->employee->id,
-            ]);
+            $assigned_confirmer = AssignedConfirmer::where('lead_id', $request['lead_id'])->first();
+            if($assigned_confirmer) {
+                $assigned_confirmer->update([
+                    'remarks' => $request['remarks'],
+                    'lead_status' => $request['lead_status'],
+                    'updated_by' => Auth::user()->employee->id,
+                ]);
+            } else {
+                $assigned_confirmer = AssignedConfirmer::create([
+                    'lead_id' => $request['lead_id'],
+                    'employee_id' => Auth::user()->employee->id,
+                    'remarks' => $request['remarks'],
+                    'lead_status' => $request['lead_status'],
+                    'created_by' => Auth::user()->employee->id,
+                ]);
 
-            $assigned_confirmer->lead->update([
-                'is_confirm_assigned' => true,
-                'is_done_confirmed' => false,
-                'updated_by' => Auth::user()->employee->id
-            ]);
+                $assigned_confirmer->lead->update([
+                    'is_confirm_assigned' => true,
+                    'is_done_confirmed' => false,
+                    'updated_by' => Auth::user()->employee->id
+                ]);
+            }
         } catch (Exception $e) {
             DB::rollBack();
 

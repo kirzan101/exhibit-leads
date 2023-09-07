@@ -304,9 +304,10 @@
                     variant="success"
                     @click="selectedLead(row.item)"
                     class="m-1"
+                    :disabled="row.item.assigned_employee.lead_status != 'Booked'"
                     >Done</b-button
                 >
-
+                
                 <RemarksModal
                     :form="form"
                     :updated_by="updated_by"
