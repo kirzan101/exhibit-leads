@@ -23,6 +23,7 @@ class LeadResource extends JsonResource
             'alias' => $this->alias,
             'suffix' => $this->suffix,
             'birth_date' => $this->birth_date,
+            'age' => $this->age,
             'address' => $this->address,
             'secondary_address' => $this->secondary_address,
             'nationality' => $this->nationality,

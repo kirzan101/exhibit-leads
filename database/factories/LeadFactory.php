@@ -21,6 +21,7 @@ class LeadFactory extends Factory
             'last_name' => fake()->lastName(),
             'title' => fake()->randomElement(['Mr.', 'Mrs.']),
             'birth_date' => fake()->date('Y-m-d', 'now'),
+            'age' => fake()->numberBetween(26, 65),
             'address' => fake()->address(),
             'nationality' => fake()->randomElement(['Filipino', 'American', 'Chinese', 'Japanese']),
             'gender' => fake()->randomElement(['Male', 'Female']),

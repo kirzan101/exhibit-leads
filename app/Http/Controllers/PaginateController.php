@@ -24,6 +24,11 @@ class PaginateController extends Controller
             $request->merge(['sort_by' => 'last_name']);
         }
 
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
+
         $leads = $this->leadService->indexPaginateLead($request->toArray());
 
         return Inertia::render('Paginates/LeadPaginate', [

@@ -125,18 +125,23 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group label="Birth date" label-for="birth-date">
+                        <b-form-group
+                            label="Age"
+                            label-for="age"
+                            label-class="required"
+                        >
                             <b-form-input
-                                type="date"
-                                id="birth-date"
-                                v-model="form.birth_date"
-                                :state="errors.birth_date ? false : null"
+                                type="number"
+                                id="age"
+                                min="0"
+                                v-model="form.age"
+                                :state="errors.age ? false : null"
                                 readonly
                             ></b-form-input>
                             <b-form-invalid-feedback
-                                :state="errors.birth_date ? false : null"
+                                :state="errors.age ? false : null"
                             >
-                                {{ errors.birth_date }}
+                                {{ errors.age }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -467,7 +472,10 @@
                             label="Other's specified"
                             label-for="others-specified"
                             v-slot="{ ariaDescribedby }"
-                            v-if="(form.owned_gadgets) && form.owned_gadgets.includes('Others')"
+                            v-if="
+                                form.owned_gadgets &&
+                                form.owned_gadgets.includes('Others')
+                            "
                         >
                             <b-form-input
                                 type="text"
@@ -714,11 +722,12 @@ export default {
     data() {
         return {
             form: this.$inertia.form({
+                title: this.lead.title,
                 first_name: this.lead.first_name,
                 middle_name: this.lead.middle_name,
                 last_name: this.lead.last_name,
                 suffix: this.lead.suffix,
-                birth_date: this.lead.birth_date,
+                age: this.lead.age,
                 address: this.lead.address,
                 secondary_address: this.lead.secondary_address,
                 nationality: this.lead.nationality,

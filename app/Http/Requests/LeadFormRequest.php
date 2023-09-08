@@ -29,6 +29,7 @@ class LeadFormRequest extends FormRequest
             'alias' => 'nullable|min:2',
             'suffix' => 'nullable|min:2',
             'birth_date' => 'nullable|date_format:Y-m-d',
+            'age' => 'required|numeric',
             'address' => 'required|min:2',
             'secondary_address' => 'nullable|min:2',
             'nationality' => 'nullable|min:2',

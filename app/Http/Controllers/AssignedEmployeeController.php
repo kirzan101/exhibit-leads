@@ -60,6 +60,11 @@ class AssignedEmployeeController extends Controller
             $request->merge(['sort_by' => 'last_name']);
         }
 
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
+
         // set default value for start to
         if(!$request->has('start_to')) {
             $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);

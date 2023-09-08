@@ -18,6 +18,7 @@ class Lead extends Model
         'alias',
         'suffix',
         'birth_date',
+        'age',
         'address',
         'secondary_address',
         'nationality',

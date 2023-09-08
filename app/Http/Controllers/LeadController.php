@@ -63,6 +63,11 @@ class LeadController extends Controller
             $request->merge(['sort_by' => 'last_name']);
         }
 
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
+
         $leads = LeadResource::collection($this->leadService->indexPaginateLead($request->toArray()));
 
         // set the default exhibitor.
@@ -189,6 +194,11 @@ class LeadController extends Controller
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
             $request->merge(['sort_by' => 'last_name']);
+        }
+
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
         }
 
         // set default value for start to
@@ -341,6 +351,11 @@ class LeadController extends Controller
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
             $request->merge(['sort_by' => 'last_name']);
+        }
+
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
         }
 
         // set default value for start to

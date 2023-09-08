@@ -122,17 +122,22 @@
                         </b-form-group>
                     </b-col>
                     <b-col sm="3">
-                        <b-form-group label="Birth date" label-for="birth-date">
+                        <b-form-group
+                            label="Age"
+                            label-for="age"
+                            label-class="required"
+                        >
                             <b-form-input
-                                type="date"
-                                id="birth-date"
-                                v-model="form.birth_date"
-                                :state="errors.birth_date ? false : null"
+                                type="number"
+                                min="0"
+                                id="age"
+                                v-model="form.age"
+                                :state="errors.age ? false : null"
                             ></b-form-input>
                             <b-form-invalid-feedback
-                                :state="errors.birth_date ? false : null"
+                                :state="errors.age ? false : null"
                             >
-                                {{ errors.birth_date }}
+                                {{ errors.age }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -732,7 +737,7 @@ export default {
                 middle_name: null,
                 last_name: null,
                 suffix: null,
-                birth_date: null,
+                age: null,
                 address: null,
                 secondary_address: null,
                 nationality: null,
