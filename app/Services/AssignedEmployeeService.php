@@ -311,6 +311,7 @@ class AssignedEmployeeService
             DB::beginTransaction();
 
             $assigned_employee = AssignedEmployee::where('lead_id', $request['lead_id'])->first();
+
             $assigned_employee = tap($assigned_employee)->update([
                 'remarks' => $request['remarks'],
                 'lead_status' => $request['lead_status'],

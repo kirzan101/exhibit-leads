@@ -58,7 +58,7 @@ class EmployeeController extends Controller
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' => $this->propertyService->indexProperty(),
-            'exhibitors' => $this->employeeService->indexExhibitor()
+            'exhibitors' => $this->employeeService->indexTeamLead()
         ]);
     }
 
@@ -99,7 +99,7 @@ class EmployeeController extends Controller
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' =>$this->propertyService->indexProperty(),
-            'exhibitors' => $this->employeeService->indexExhibitor()
+            'exhibitors' => $this->employeeService->indexTeamLead()
         ]);
     }
 
@@ -116,7 +116,7 @@ class EmployeeController extends Controller
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' => $this->propertyService->indexProperty(),
-            'exhibitors' => $this->employeeService->indexExhibitor()
+            'exhibitors' => $this->employeeService->indexTeamLead()
         ]);
     }
 

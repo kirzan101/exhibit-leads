@@ -95,7 +95,7 @@ class AssignedEmployeeController extends Controller
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource(),
+            'sources' => Helper::leadSource(null),
             'status_list' => Helper::leadStatus(),
             'start_to' => $request->start_to,
             'end_to' => $request->end_to,
@@ -111,6 +111,11 @@ class AssignedEmployeeController extends Controller
         $this->authorize('create', AssignedEmployee::class);
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->createAssignedEmployee($request->toArray());
+
+        //change route if module field exist
+        if($request->has('module')) {
+            return redirect()->route($request->module)->with($result, $message);
+        }
 
         return redirect()->route('leads.index')->with($result, $message);
     }

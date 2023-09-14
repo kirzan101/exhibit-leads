@@ -54,6 +54,18 @@ class UserGroupSeeder extends Seeder
                 'description' => 'AVLCI',
                 'property_id' => $property->id,
             ],
+            [
+                'name' => 'surveys',
+                'department' => 'AVLCI',
+                'description' => 'AVLCI',
+                'property_id' => $property->id,
+            ],
+            [
+                'name' => 'rois',
+                'department' => 'AVLCI',
+                'description' => 'AVLCI',
+                'property_id' => $property->id,
+            ],
         ];
 
         $admin_permissions = Permission::all();
@@ -73,6 +85,18 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'venues')
             ->get();
         $encoder_permissions = Permission::where('module', 'leads')->get();
+        $roi_permissions = Permission::where('module', 'rois')
+            ->orWhere('module', 'employees')
+            ->orWhere('module', 'confirms')
+            ->orWhere('module', 'sources')
+            ->orWhere('module', 'venues')
+            ->get();
+        $survey_permissions = Permission::where('module', 'surveys')
+            ->orWhere('module', 'employees')
+            ->orWhere('module', 'confirms')
+            ->orWhere('module', 'sources')
+            ->orWhere('module', 'venues')
+            ->get();
 
         if ($admin_permissions->count() > 0) {
             foreach ($user_groups as $user_group) {
@@ -137,6 +161,20 @@ class UserGroupSeeder extends Seeder
                     ]);
                 } else if ($usergroup->name == 'encoders') {
                     foreach ($encoder_permissions as $permission) {
+                        UserGroupPermission::create([
+                            'user_group_id' => $usergroup->id,
+                            'permission_id' => $permission->id
+                        ]);
+                    }
+                } else if ($usergroup->name == 'surveys') {
+                    foreach ($survey_permissions as $permission) {
+                        UserGroupPermission::create([
+                            'user_group_id' => $usergroup->id,
+                            'permission_id' => $permission->id
+                        ]);
+                    }
+                } else if ($usergroup->name == 'rois') {
+                    foreach ($roi_permissions as $permission) {
                         UserGroupPermission::create([
                             'user_group_id' => $usergroup->id,
                             'permission_id' => $permission->id

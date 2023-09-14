@@ -86,7 +86,7 @@ class LeadController extends Controller
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource(),
+            'sources' => Helper::leadSource(null),
             'exhibitors' => $this->employeeService->indexExhibitor(),
             'exhibitor' => $exhibitor->id // add value if only one exhibitor must be assign
         ]);
@@ -225,7 +225,7 @@ class LeadController extends Controller
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource(),
+            'sources' => Helper::leadSource(null),
             'status_list' => Helper::leadStatus(),
             'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'start_to' => $request->start_to,
@@ -339,7 +339,7 @@ class LeadController extends Controller
             'status_list' => Helper::leadStatus(),
             'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource()
+            'sources' => Helper::leadSource(null)
         ]);
     }
 
@@ -390,7 +390,7 @@ class LeadController extends Controller
             'items' => $leads,
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource(),
+            'sources' => Helper::leadSource(null),
             'status_list' => Helper::leadStatus(),
             'confirmer_status_list' => Helper::leadConfirmerStatus(),
             'employees' => EmployeeResource::collection($this->employeeService->indexEncoder()),

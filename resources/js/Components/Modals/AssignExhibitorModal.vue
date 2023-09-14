@@ -4,7 +4,7 @@
             <b-form-select
                 v-model="selectedExhibitorId"
                 :options="exhibitorList"
-                :disabled="true"
+                :disabled="false"
                 size="sm"
                 class="mt-3"
             ></b-form-select>

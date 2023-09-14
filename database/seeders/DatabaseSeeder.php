@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             UserGroupSeeder::class,
             VenueSeeder::class,
             EmployeeSeeder::class,
+            // LiveAccountSeeder::class
         ]);
 
         Lead::factory(50)->create();

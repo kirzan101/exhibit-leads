@@ -3,7 +3,7 @@
         <b-navbar toggleable="lg" type="dark" variant="info">
             <!-- <b-navbar-brand href="/">NavBar</b-navbar-brand> -->
             <Link href="/" target="_self" class="navbar-brand"
-                >Exhibit-Leads</Link
+                >LeadGen</Link
             >
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -12,6 +12,22 @@
                 <b-navbar-nav>
                     <li class="nav-item" v-if="check_access('leads', 'read')">
                         <Link class="nav-link" href="/leads">Leads</Link>
+                    </li>
+
+                    <li class="nav-item" v-if="check_access('rois', 'read')">
+                        <Link class="nav-link" href="/rois">ROIs</Link>
+                    </li>
+
+                    <li class="nav-item" v-if="check_access('surveys', 'read')">
+                        <Link class="nav-link" href="/surveys">Holiday Surveys</Link>
+                    </li>
+                    
+                    <li class="nav-item" v-if="check_access('exhibits', 'read')">
+                        <Link class="nav-link" href="/exhibits">Exhibit</Link>
+                    </li>
+
+                    <li class="nav-item" v-if="check_access('leads', 'read')">
+                        <Link class="nav-link" href="/lead-status">Lead Status</Link>
                     </li>
 
                     <li

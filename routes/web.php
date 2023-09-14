@@ -6,9 +6,13 @@ use App\Http\Controllers\AssignedExhibitorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ExhibitController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LeadStatusController;
 use App\Http\Controllers\PaginateController;
+use App\Http\Controllers\RoiController;
 use App\Http\Controllers\SourceController;
+use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\VenueController;
 use App\Models\AssignedExhibitor;
@@ -103,14 +107,35 @@ Route::middleware('auth')->group(function () {
 
     //venues
     Route::resource('/venues', VenueController::class);
-    
+
     //sources
     Route::resource('/sources', SourceController::class);
-    
+
     //user groups
     Route::get('/usergroups', [UserGroupController::class, 'index']);
 
     //lead paginate
     Route::get('/paginate/leads', [PaginateController::class, 'leadPaginate']);
     Route::get('/paginate/leads/request', [PaginateController::class, 'leadPaginateIndex']);
+
+    //ROI
+    Route::get('/rois', [RoiController::class, 'index'])->name('rois');
+    Route::get('/rois/{lead}', [RoiController::class, 'showLead'])->name('rois-lead-show');
+    Route::get('/rois/edit/{lead}', [RoiController::class, 'editLead']);
+    Route::put('/rois/{lead}', [RoiController::class, 'updateLead']);
+
+    //Survey
+    Route::get('/surveys', [SurveyController::class, 'index'])->name('surveys');
+    Route::get('/surveys/{lead}', [SurveyController::class, 'showLead'])->name('survey-lead-show');
+    Route::get('/surveys/edit/{lead}', [SurveyController::class, 'editLead']);
+    Route::put('/surveys/{lead}', [SurveyController::class, 'updateLead']);
+
+    //Exhibit
+    Route::get('/exhibits', [ExhibitController::class, 'index'])->name('exhibits');
+    Route::get('/exhibits/{lead}', [ExhibitController::class, 'showLead'])->name('exhibit-lead-show');
+    Route::get('/exhibits/edit/{lead}', [ExhibitController::class, 'editLead']);
+    Route::put('/exhibits/{lead}', [ExhibitController::class, 'updateLead']);
+    
+    //Lead Status
+    Route::get('/lead-status', [LeadStatusController::class, 'index'])->name('lead-status');
 });

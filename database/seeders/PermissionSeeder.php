@@ -21,7 +21,11 @@ class PermissionSeeder extends Seeder
             'confirms', // action to confirm leads
             'venues', // venue crud
             'sources', // source crud
-            'assign-exhibitors' // action to assign leads to an exhibitor
+            'assign-exhibitors', // action to assign leads to an exhibitor
+            'surveys',
+            'rois',
+            'exhibits',
+            'status'
         ];
 
         $types = [

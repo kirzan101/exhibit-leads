@@ -188,6 +188,11 @@ class EmployeeService
         return $confirmers;
     }
 
+    /**
+     * Index of encoders
+     *
+     * @return Collection
+     */
     public function indexEncoder(): Collection
     {
         $encoders = Employee::select('employees.*')
@@ -198,6 +203,26 @@ class EmployeeService
         return $encoders;
     }
 
+    /**
+     * Index of Exhibitors
+     *
+     * @return Collection
+     */
+    public function indexTeamLead(): Collection
+    {
+        $exhibitors = Employee::select('employees.*')
+        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+        ->whereIn('user_groups.name', ['exhibit', 'rois', 'surveys'])
+        ->get();
+
+        return $exhibitors;
+    }
+
+    /**
+     * Index of Exhibitors
+     *
+     * @return Collection
+     */
     public function indexExhibitor(): Collection
     {
         $exhibitors = Employee::select('employees.*')
@@ -206,5 +231,28 @@ class EmployeeService
         ->get();
 
         return $exhibitors;
+    }
+
+    /**
+     * Get the employee assigned to exhibitor
+     *
+     * @param integer|null $exhibitor_id
+     * @return void
+     */
+    public function indexTeamLeadEmployees(?int $exhibitor_id)
+    {
+        $employees = Employee::select('employees.*')
+        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+        ->where('user_groups.name', 'employees');
+
+        if($exhibitor_id) {
+            $isAdmin = (Employee::find($exhibitor_id)->user_group_id == 1) ? true : false;
+
+            if(!$isAdmin) {
+                $employees = $employees->where('employees.exhibitor_id', $exhibitor_id);
+            }
+        }
+
+        return $employees->orderBy('employees.id', 'desc')->get();
     }
 }

@@ -1,12 +1,12 @@
 <template>
     <div class="container lg:p-10">
         <head>
-            <title>Exhibit-Leads | Login</title>
+            <title>LeadGen | Login</title>
         </head>
         <div class="col-lg-4 col-md-6 mx-auto">
             <b-card class="mt-5">
                 <div class="mx-auto">
-                    <h1 class="text-center">Leads-Exhibits</h1>
+                    <h1 class="text-center">LeadGen</h1>
                     <h3 class="text-center">Login</h3>
                     <b-form @submit.prevent="login">
                         <b-form-group

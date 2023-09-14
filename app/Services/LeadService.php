@@ -31,6 +31,7 @@ class LeadService
             // get all the unassigned leads
             $leads = Lead::where('is_booker_assigned', false)
                 ->where('is_exhibitor_assigned', false)
+                ->whereIn('source_prefix', Helper::exhibitPrefixes())
                 ->orderBy('id', 'desc')
                 ->get();
         } else if (Auth::user()->employee->userGroup->name == 'exhibit') {
@@ -147,7 +148,7 @@ class LeadService
 
             $lead->owned_gadgets = $arrayed_owned_gadgets;
         }
-        
+
         if ($model->contract_file) {
             $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();
         }
@@ -488,5 +489,272 @@ class LeadService
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);
+    }
+
+    /**
+     * index of paginated ROI lead service
+     *
+     * @return Paginator
+     */
+    public function indexPaginateRoiLead(array $request): Paginator
+    {
+        $leads = Lead::where('is_booker_assigned', false)
+            ->whereIn('source_prefix', ['ROI', 'NMB', 'BROI', 'BNMB']);
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $leads->where('first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $leads->where('venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $leads->where('source_prefix', $prefix)
+                ->where('source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $leads->where('occupation', $request['occupation']);
+        }
+
+        return $leads->orderBy($sort_by, $sort)->paginate($per_page);
+    }
+
+    /**
+     * index of paginated Survey lead service
+     *
+     * @return Paginator
+     */
+    public function indexPaginateSurveyLead(array $request): Paginator
+    {
+        $leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', false)
+            ->where('leads.is_exhibitor_assigned', true)
+            ->whereIn('leads.source_prefix', ['SURVEY']);
+
+        // if current user is confirmer, get the same venue of leads
+        if (Auth::user()->employee->userGroup->name == 'confirmers') {
+
+            // get the assigned venue of employee
+            $venue_ids = Auth::user()->employee->employeeVenue->map(function (object $venue) {
+                return $venue->venue_id;
+            });
+
+            $leads = Lead::select('leads.*')
+                ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+                ->where('leads.is_booker_assigned', false)
+                ->where('leads.is_exhibitor_assigned', true)
+                ->whereIn('leads.source_prefix', ['SURVEY'])
+                ->whereIn('leads.venue_id', $venue_ids->toArray());
+        }
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $leads->where('leads.venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $leads->where('leads.source_prefix', $prefix)
+                ->where('leads.source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $leads->where('leads.occupation', $request['occupation']);
+        }
+
+        // lead_status
+        if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
+            $leads->where('assigned_employees.lead_status', $request['lead_status']);
+        }
+
+        // employee filter
+        if (array_key_exists('employee_id', $request) && !empty($request['employee_id'])) {
+            $leads->where('assigned_employees.employee_id', $request['employee_id']);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+        }
+
+        //time filter
+        if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+        }
+
+        return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
+    }
+
+    /**
+     * index of paginated Survey lead service
+     *
+     * @return Paginator
+     */
+    public function indexPaginateExhibitLead(array $request): Paginator
+    {
+        $leads = Lead::select('leads.*')
+                ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
+                ->where('leads.is_booker_assigned', false)
+                ->where('leads.is_exhibitor_assigned', true)
+                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
+                ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $leads->where('leads.venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $leads->where('leads.source_prefix', $prefix)
+                ->where('leads.source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $leads->where('leads.occupation', $request['occupation']);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+        }
+
+        //time filter
+        if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+        }
+
+        return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
+    }
+
+    /**
+     * index of paginated lead with booker & confirmer status service
+     *
+     * @return Paginator
+     */
+    public function indexPaginateLeadStatus(array $request): Paginator
+    {
+        $leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->where('assigned_employees.employee_id', Auth::user()->employee->id);
+
+        if(Auth::user()->employee->usergroup->name == 'admin') {
+            $leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id');
+        }
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        // venue filter
+        if (array_key_exists('venue_id', $request) && !empty($request['venue_id'])) {
+            $leads->where('leads.venue_id', $request['venue_id']);
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name']);
+            $leads->where('leads.source_prefix', $prefix)
+                ->where('leads.source', $suffix);
+        }
+
+        // occupation
+        if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
+            $leads->where('leads.occupation', $request['occupation']);
+        }
+
+        // lead_status
+        if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
+            $leads->where('assigned_employees.lead_status', $request['lead_status']);
+        }
+
+        // employee filter
+        if (array_key_exists('employee_id', $request) && !empty($request['employee_id'])) {
+            $leads->where('assigned_employees.employee_id', $request['employee_id']);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+        }
+
+        //time filter
+        if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+        }
+
+        return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
     }
 }

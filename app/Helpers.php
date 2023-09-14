@@ -232,19 +232,30 @@ class Helper
     }
 
     /**
-     * list the lead sources
+     * Get the List of Lead Source
      *
+     * @param string|null $team 
      * @return void
      */
-    public static function leadSource()
+    public static function leadSource(?string $team)
     {
         $lead_sources = DB::table('leads')
-            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"))
-            ->groupBy('source_prefix', 'source')
-            ->get()
-            ->toArray();
+            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"));
 
-        return $lead_sources;
+        if ($team) {
+
+            if ($team == 'ROI') {
+                $prefix = ['ROI', 'NMB', 'BROI', 'BNMB'];
+            } else if ($team == 'SURVEY') {
+                $prefix = ['SURVEY'];
+            } else if ($team == 'EXHIBIT') {
+                $prefix = ['LSR', 'ALM', 'PRJ'];
+            }
+
+            $lead_sources = $lead_sources->whereIn('source_prefix', $prefix);
+        }
+
+        return $lead_sources->get()->toArray();
     }
 
     /**
@@ -263,7 +274,7 @@ class Helper
         return $occupations;
     }
 
-    public static function sourcePrefix() : array
+    public static function sourcePrefix(): array
     {
         $prefix = [
             [
@@ -286,9 +297,95 @@ class Helper
             ],
             [
                 'name' => 'BNMB',
+            ],
+            [
+                'name' => 'SURVEY',
             ]
         ];
 
         return $prefix;
+    }
+
+    /**
+     * generate default email
+     *
+     * @param [type] $first
+     * @param [type] $last
+     * @return string
+     */
+    public static function createEmail($first, $last): string
+    {
+        // replace ñ to n
+        $first = str_replace('ñ', 'n', $first);
+        $last = str_replace('ñ', 'n', $last);
+
+        // replace Ñ to n
+        $first = str_replace('Ñ', 'n', $first);
+        $last = str_replace('Ñ', 'n', $last);
+
+        $email = sprintf('%s.%s@astoria.com.ph', $first, $last);
+
+        // check if email already exist
+        $is_exist = (User::where('email', $email)->count() > 0) ? true : false;
+
+        if ($is_exist) {
+            $count = 1;
+
+            do {
+                $is_exist = (User::where('email', $email)->count() > 0) ? true : false;
+
+                $email = sprintf('%s.%s%d@astoria.com.ph', $first, $last, $count);
+                $count++;
+            } while ($is_exist);
+        }
+
+        return strtolower($email);
+    }
+
+    /**
+     * Get the prefix of exhibit
+     *
+     * @return array
+     */
+    public static function exhibitPrefixes(): array
+    {
+        $array = [
+            'LSR',
+            'ALM',
+            'PRJ'
+        ];
+
+        return $array;
+    }
+
+    /**
+     * Get the prefix of ROI
+     *
+     * @return array
+     */
+    public static function roiPrefixes(): array
+    {
+        $array = [
+            'ROI',
+            'NMB',
+            'BROI',
+            'BNMB'
+        ];
+
+        return $array;
+    }
+
+    /**
+     * Get the prefix of Holiday survey
+     *
+     * @return array
+     */
+    public static function surveyPrefix(): array
+    {
+        $array = [
+            'SURVEY'
+        ];
+
+        return $array;
     }
 }
