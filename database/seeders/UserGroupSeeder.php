@@ -69,10 +69,9 @@ class UserGroupSeeder extends Seeder
         ];
 
         $admin_permissions = Permission::all();
-        $exhibit_permissions = Permission::where('module', 'leads')
+        $exhibit_permissions = Permission::where('module', 'exhibits')
             ->orWhere('module', 'employees')
             ->orWhere('module', 'assigns')
-            ->orWhere('module', 'confirms')
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->get();

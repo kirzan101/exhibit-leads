@@ -45,6 +45,8 @@ class ExhibitController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('read', Exhibit::class);
+
         //set default value for lead name
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
@@ -62,7 +64,7 @@ class ExhibitController extends Controller
 
         // set the default exhibitor.
         // replace value on live
-        $exhibitor = $this->employeeService->indexExhibitor()->first();
+        $exhibitor = $this->employeeService->indexExhibitor()->sortByDesc('id')->first();
 
         return Inertia::render('Exhibits/IndexPaginateExhibit', [
             'sortBy' => $sort_by,
@@ -90,6 +92,8 @@ class ExhibitController extends Controller
      */
     public function showLead(Lead $lead)
     {
+        $this->authorize('read', Exhibit::class);
+
         return Inertia::render('Exhibits/LeadFormOfExhibit', [
             'is_disabled' => true,
             'form_type' => 'exhibits',
@@ -108,6 +112,8 @@ class ExhibitController extends Controller
      */
     public function editLead(Lead $lead)
     {
+        $this->authorize('update', Exhibit::class);
+
         return Inertia::render('Exhibits/LeadFormOfExhibit', [
             'is_disabled' => false,
             'form_type' => 'exhibits',
@@ -127,6 +133,8 @@ class ExhibitController extends Controller
      */
     public function updateLead(LeadFormRequest $request, Lead $lead)
     {
+        $this->authorize('update', Exhibit::class);
+        
         ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
 
         return redirect()->route('exhibit-lead-show', $lead)->with($result, $message);

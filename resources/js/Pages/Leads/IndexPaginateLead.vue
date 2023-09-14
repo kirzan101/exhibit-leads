@@ -45,7 +45,7 @@
                             "
                         >
                             <!-- assign leads to an employee start -->
-                            <div v-if="check_access('assigns', 'create')">
+                            <!-- <div v-if="check_access('assigns', 'create')">
                                 <b-button
                                     class="btn btn-info m-1"
                                     v-b-modal.assign-modal
@@ -69,7 +69,7 @@
                                     title="Assign Employee"
                                     @submit-assigned-employee="submitAssigned"
                                 />
-                            </div>
+                            </div> -->
                             <!-- assign leads to an employee end -->
                         </div>
 

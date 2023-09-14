@@ -223,7 +223,7 @@
         </b-row>
 
         <br />
-        <i v-if="rows.length > 0"
+        <i
             >Showing <b>{{ filteredRows }}</b> items of
             <b>{{ rows }}</b> records</i
         >
@@ -304,10 +304,12 @@
                     variant="success"
                     @click="selectedLead(row.item)"
                     class="m-1"
-                    :disabled="row.item.assigned_employee.lead_status != 'Booked'"
+                    :disabled="
+                        row.item.assigned_employee.lead_status != 'Booked'
+                    "
                     >Done</b-button
                 >
-                
+
                 <RemarksModal
                     :form="form"
                     :updated_by="updated_by"
@@ -474,7 +476,7 @@ export default {
         },
         filterTable() {
             this.is_Busy = true;
-            
+
             this.$emit("toggle-load-data", this.filter);
         },
         filterDate() {

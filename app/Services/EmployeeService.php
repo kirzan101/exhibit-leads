@@ -10,6 +10,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeService
 {
@@ -199,6 +200,9 @@ class EmployeeService
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
             ->where('user_groups.name', 'employees')
             ->get();
+
+        //if loggedin is an exhibit, roi & survey team lead
+        // if(Auth::user()->user)
 
         return $encoders;
     }

@@ -45,6 +45,8 @@ class RoiController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('read', Roi::class);
+
         //set default value for lead name
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
@@ -90,6 +92,8 @@ class RoiController extends Controller
      */
     public function showLead(Lead $lead)
     {
+        $this->authorize('read', Survey::class);
+
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => true,
             'form_type' => 'rois',
@@ -108,6 +112,8 @@ class RoiController extends Controller
      */
     public function editLead(Lead $lead)
     {
+        $this->authorize('update', Survey::class);
+
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => false,
             'form_type' => 'rois',
@@ -127,6 +133,8 @@ class RoiController extends Controller
      */
     public function updateLead(LeadFormRequest $request, Lead $lead)
     {
+        $this->authorize('update', Survey::class);
+        
         ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
 
         return redirect()->route('rois-lead-show', $lead)->with($result, $message);

@@ -44,7 +44,7 @@ class LiveAccountSeeder extends Seeder
             [
                 'first_name' => 'Marie',
                 'last_name' => 'Admana',
-                'position' => 'Exhibitor',
+                'position' => 'Encoder',
                 'property_id' => 1,
                 'user_group' => 'encoders'
             ],

@@ -31,39 +31,33 @@
                 <div class="row">
                     <div class="col-sm-6">Exhibit Leads</div>
                     <div class="col-sm-6">
-                        <div
-                            v-if="
-                                user_group == 'exhibit' || user_group == 'admin'
-                            "
-                        >
-                            <!-- assign leads to an employee start -->
-                            <div v-if="check_access('assigns', 'create')">
-                                <b-button
-                                    class="btn btn-info m-1"
-                                    v-b-modal.assign-modal
-                                    style="float: right"
-                                    align-v="end"
-                                    v-if="selectedIds.length > 0"
-                                    >Assign</b-button
-                                >
-                                <b-button
-                                    class="btn btn-info m-1"
-                                    style="float: right"
-                                    align-v="end"
-                                    disabled
-                                    v-else
-                                    >Assign</b-button
-                                >
+                        <!-- assign leads to an employee start -->
+                        <div v-if="check_access('assigns', 'create')">
+                            <b-button
+                                class="btn btn-info m-1"
+                                v-b-modal.assign-modal
+                                style="float: right"
+                                align-v="end"
+                                v-if="selectedIds.length > 0"
+                                >Assign</b-button
+                            >
+                            <b-button
+                                class="btn btn-info m-1"
+                                style="float: right"
+                                align-v="end"
+                                disabled
+                                v-else
+                                >Assign</b-button
+                            >
 
-                                <AssignEmployeeModal
-                                    v-if="selectedIds.length > 0"
-                                    :employees="employees"
-                                    title="Assign Employee"
-                                    @submit-assigned-employee="submitAssigned"
-                                />
-                            </div>
-                            <!-- assign leads to an employee end -->
+                            <AssignEmployeeModal
+                                v-if="selectedIds.length > 0"
+                                :employees="employees"
+                                title="Assign Employee"
+                                @submit-assigned-employee="submitAssigned"
+                            />
                         </div>
+                        <!-- assign leads to an employee end -->
                     </div>
                 </div>
             </h5>
@@ -98,14 +92,12 @@
 import { Link, router } from "@inertiajs/vue2";
 import LeadPaginateTable from "../../Components/PaginateTable/LeadPaginateTable.vue";
 import AssignEmployeeModal from "../../Components/Modals/AssignEmployeeModal.vue";
-import AssignExhibitorModal from "../../Components/Modals/AssignExhibitorModal.vue";
 
 export default {
     components: {
         Link,
         LeadPaginateTable,
         AssignEmployeeModal,
-        AssignExhibitorModal,
     },
     props: {
         sortBy: String,
@@ -140,6 +132,7 @@ export default {
             form: {
                 employee_id: "",
                 lead_ids: [],
+                module: "exhibits",
             },
         };
     },

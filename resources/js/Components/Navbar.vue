@@ -26,7 +26,7 @@
                         <Link class="nav-link" href="/exhibits">Exhibit</Link>
                     </li>
 
-                    <li class="nav-item" v-if="check_access('leads', 'read')">
+                    <li class="nav-item" v-if="check_access('status', 'read')">
                         <Link class="nav-link" href="/lead-status">Lead Status</Link>
                     </li>
 

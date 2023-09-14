@@ -28,6 +28,8 @@ class LeadStatusController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('read', Status::class);
+
         //set default value for lead name
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
