@@ -16,7 +16,7 @@ class LiveAccountSeeder extends Seeder
      */
     public function run(): void
     {
-        $exhibitor_accounts = [
+        $accounts = [
             // exhibit
             [
                 'first_name' => 'Mimi',
@@ -276,7 +276,7 @@ class LiveAccountSeeder extends Seeder
         $survey_admin = '';
 
         // create exhibitor account
-        foreach ($exhibitor_accounts as $account) {
+        foreach ($accounts as $account) {
             $user = User::create([
                 'username' => Helper::username($account['first_name'], $account['last_name']),
                 'email' => Helper::createEmail($account['first_name'], $account['last_name']),

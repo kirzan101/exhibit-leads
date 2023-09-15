@@ -71,7 +71,6 @@ class UserGroupSeeder extends Seeder
         $admin_permissions = Permission::all();
         $exhibit_permissions = Permission::where('module', 'exhibits')
             ->orWhere('module', 'employees')
-            ->orWhere('module', 'assigns')
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->get();
@@ -115,6 +114,16 @@ class UserGroupSeeder extends Seeder
                             'permission_id' => $permission->id
                         ]);
                     }
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'read')->first()->id
+                    ]);
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'update')->first()->id
+                    ]);
                 } else if ($usergroup->name == 'exhibit-admin') {
                     foreach ($exhibit_admin_permissions as $permission) {
                         UserGroupPermission::create([
@@ -172,6 +181,11 @@ class UserGroupSeeder extends Seeder
                             'permission_id' => $permission->id
                         ]);
                     }
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'create')->first()->id
+                    ]);
                 } else if ($usergroup->name == 'rois') {
                     foreach ($roi_permissions as $permission) {
                         UserGroupPermission::create([
@@ -179,6 +193,11 @@ class UserGroupSeeder extends Seeder
                             'permission_id' => $permission->id
                         ]);
                     }
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'assigns')->where('type', 'create')->first()->id
+                    ]);
                 }
             }
         }

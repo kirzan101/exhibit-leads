@@ -227,9 +227,16 @@ class LeadService
             $leads = Lead::select('leads.*')
                 ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
                 ->where('leads.is_done', true)
-                // ->where('leads.is_confirm_assigned', false)
                 ->where('leads.is_done_confirmed', false)
                 ->whereIn('leads.venue_id', $venue_ids->toArray());
+        }
+
+        if (Auth::user()->employee->userGroup->name == 'rois') {
+            $leads->whereIn('leads.source_prefix', Helper::roiPrefixes());
+        }
+
+        if (Auth::user()->employee->userGroup->name == 'surveys') {
+            $leads->whereIn('leads.source_prefix', Helper::surveyPrefix());
         }
 
         //set default values
@@ -439,7 +446,8 @@ class LeadService
         if (Auth::user()->employee->userGroup->name == 'exhibit-admin') {
             // get all the unassigned leads
             $leads = Lead::where('is_booker_assigned', false)
-                ->where('is_exhibitor_assigned', false);
+                ->where('is_exhibitor_assigned', false)
+                ->whereIn('source_prefix', Helper::exhibitPrefixes());
         } else if (Auth::user()->employee->userGroup->name == 'exhibit') {
             // get the list of leads that assigned to the exhibitor
             $leads = Lead::select('leads.*')
@@ -545,27 +553,8 @@ class LeadService
      */
     public function indexPaginateSurveyLead(array $request): Paginator
     {
-        $leads = Lead::select('leads.*')
-            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
-            ->where('leads.is_booker_assigned', false)
-            ->where('leads.is_exhibitor_assigned', true)
-            ->whereIn('leads.source_prefix', ['SURVEY']);
-
-        // if current user is confirmer, get the same venue of leads
-        if (Auth::user()->employee->userGroup->name == 'confirmers') {
-
-            // get the assigned venue of employee
-            $venue_ids = Auth::user()->employee->employeeVenue->map(function (object $venue) {
-                return $venue->venue_id;
-            });
-
-            $leads = Lead::select('leads.*')
-                ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
-                ->where('leads.is_booker_assigned', false)
-                ->where('leads.is_exhibitor_assigned', true)
-                ->whereIn('leads.source_prefix', ['SURVEY'])
-                ->whereIn('leads.venue_id', $venue_ids->toArray());
-        }
+        $leads = Lead::where('is_booker_assigned', false)
+            ->whereIn('source_prefix', Helper::surveyPrefix());
 
         //set default values
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;

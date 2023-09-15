@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\Helper;
 use App\Models\Employee;
 use App\Models\EmployeeVenue;
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Models\Venue;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,143 +18,188 @@ class EmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $employees = [
+        //create default users
+        $accounts = [
             [
                 'first_name' => 'Admin',
                 'last_name' => 'Account',
-                'position' => 'Administrator',
+                'position' => 'Admin',
                 'property_id' => 1,
-                'user_id' => 1,
-                'user_group_id' => 1
+                'user_group' => 'admin',
+                'email' => 'admin@astoria.com.ph'
             ],
             [
                 'first_name' => 'Christian',
                 'last_name' => 'Escamilla',
-                'position' => 'Administrator',
+                'position' => 'Admin',
                 'property_id' => 1,
-                'user_id' => 1,
-                'user_group_id' => 1
-            ]
-        ];
-
-        $users = [
-            [
-                'username' => 'admin',
-                'email' => 'admin@astoria.com.ph',
-                'password' => bcrypt('q')
+                'user_group' => 'admin',
+                'email' => ''
             ],
             [
-                'username' => 'cescamilla',
-                'email' => 'christian.escamilla@astoria.com.ph',
-                'password' => bcrypt('q')
-            ]
+                'first_name' => 'Exhibitor admin',
+                'last_name' => 'Account',
+                'position' => 'Exhibitor Admin',
+                'property_id' => 1,
+                'user_group' => 'exhibit-admin',
+                'email' => 'exhibitor-admin@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Exhibitor',
+                'last_name' => 'Account',
+                'position' => 'Exhibitor',
+                'property_id' => 1,
+                'user_group' => 'exhibit',
+                'email' => 'exhibitor@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'ROI',
+                'last_name' => 'Account',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'rois',
+                'email' => 'roi@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Survey',
+                'last_name' => 'Account',
+                'position' => 'Survey',
+                'property_id' => 1,
+                'user_group' => 'surveys',
+                'email' => 'survey@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Encoder',
+                'last_name' => 'Account',
+                'position' => 'Encoder',
+                'property_id' => 1,
+                'user_group' => 'encoders',
+                'email' => 'encoder@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Confirmer1',
+                'last_name' => 'Account',
+                'position' => 'Confirmer',
+                'property_id' => 1,
+                'user_group' => 'confirmers',
+                'email' => 'confirmer1@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Confirmer2',
+                'last_name' => 'Account',
+                'position' => 'Confirmer',
+                'property_id' => 1,
+                'user_group' => 'confirmers',
+                'email' => 'confirmer2@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Booker1',
+                'last_name' => 'Account',
+                'position' => 'Booker',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'booker1@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Booker2',
+                'last_name' => 'Account',
+                'position' => 'Booker',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'booker2@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'ROI1',
+                'last_name' => 'Account',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'roi-booker1@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'ROI2',
+                'last_name' => 'Account',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'roi-booker2@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Survey1',
+                'last_name' => 'Account',
+                'position' => 'Survey',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'survey-booker1@astoria.com.ph'
+            ],
+            [
+                'first_name' => 'Survey2',
+                'last_name' => 'Account',
+                'position' => 'Survey',
+                'property_id' => 1,
+                'user_group' => 'employees',
+                'email' => 'survey-booker2@astoria.com.ph'
+            ],
         ];
 
-        $usergroup = UserGroup::where('name', 'admin')->first(); //admin
+        $exhibit_admin = '';
+        $roi_admin = '';
+        $survey_admin = '';
 
-        foreach ($employees as $key => $employee) {
-            $user = User::create($users[$key]);
+        foreach ($accounts as $account) {
+            $email = ($account['email'] != '') ? $account['email'] : Helper::createEmail($account['first_name'], $account['last_name']);
 
-            $employee['user_id'] = $user->id;
-            $employee['user_group_id'] = $usergroup->id;
-            Employee::create($employee);
-        }
-
-        // create employee account
-        $user_emp = User::create([
-            'username' => 'employee',
-            'email' => 'employee@astoria.com.ph',
-            'password' => bcrypt('q')
-        ]);
-
-        Employee::create([
-            'first_name' => 'Employee',
-            'last_name' => 'Account',
-            'position' => 'Employee',
-            'property_id' => 1,
-            'user_id' => $user_emp->id,
-            'user_group_id' => UserGroup::where('name', 'employees')->first()->id,
-        ]);
-
-        // create exhibitor account
-        $user_exhibitor = User::create([
-            'username' => 'exhibitor',
-            'email' => 'exhibitor@astoria.com.ph',
-            'password' => bcrypt('q')
-        ]);
-
-        Employee::create([
-            'first_name' => 'Exhibitor',
-            'last_name' => 'Account',
-            'position' => 'Exhibitor',
-            'property_id' => 1,
-            'user_id' => $user_exhibitor->id,
-            'user_group_id' => UserGroup::where('name', 'exhibit')->first()->id
-        ]);
-
-        // create confirmer account
-        $user_confirmer = User::create([
-            'username' => 'confirmer',
-            'email' => 'confirmer@astoria.com.ph',
-            'password' => bcrypt('q')
-        ]);
-
-        Employee::create([
-            'first_name' => 'Confirmer',
-            'last_name' => 'Account',
-            'position' => 'Confirmer',
-            'property_id' => 1,
-            'user_id' => $user_confirmer->id,
-            'user_group_id' => UserGroup::where('name', 'confirmers')->first()->id
-        ]);
-
-        // create exhibitor account
-        $user_exhibitor_admin = User::create([
-            'username' => 'exhibitor-admin',
-            'email' => 'exhibitor-admin@astoria.com.ph',
-            'password' => bcrypt('q')
-        ]);
-
-        Employee::create([
-            'first_name' => 'Exhibitor Admin',
-            'last_name' => 'Account',
-            'position' => 'Exhibitor Admin',
-            'property_id' => 1,
-            'user_id' => $user_exhibitor_admin->id,
-            'user_group_id' => UserGroup::where('name', 'exhibit-admin')->first()->id
-        ]);
-
-        // craete encoder account
-        $user_encoder = User::create([
-            'username' => 'encoder',
-            'email' => 'encoder@astoria.com.ph',
-            'password' => bcrypt('q')
-        ]);
-
-        Employee::create([
-            'first_name' => 'Encoder',
-            'last_name' => 'Account',
-            'position' => 'Encoder',
-            'property_id' => 1,
-            'user_id' => $user_encoder->id,
-            'user_group_id' => UserGroup::where('name', 'encoders')->first()->id
-        ]);
-
-        //create default venue per employee
-        $employees = Employee::all();
-        $user_group = UserGroup::where('name', 'employees')->first();
-        foreach($employees as $employee) {
-            EmployeeVenue::create([
-                'employee_id' => $employee->id,
-                'venue_id' => 1
+            $user = User::create([
+                'username' => Helper::username($account['first_name'], $account['last_name']),
+                'email' => $email,
+                'password' => bcrypt('q')
             ]);
 
-            // set default exhibitor
-            // id 4: Exhibitor account
-            if($employee->user_group_id == $user_group->id) {
+            $employee = Employee::create([
+                'first_name' => $account['first_name'],
+                'last_name' => $account['last_name'],
+                'position' => $account['position'],
+                'property_id' => $account['property_id'],
+                'user_id' => $user->id,
+                'user_group_id' => UserGroup::where('name', $account['user_group'])->first()->id
+            ]);
+
+            // get the admin Ids
+            if ($account['user_group'] == 'exhibit') {
+                $exhibit_admin = $employee->id;
+            } else if ($account['user_group'] == 'surveys') {
+                $survey_admin = $employee->id;
+            } else if ($account['user_group'] == 'rois') {
+                $roi_admin = $employee->id;
+            }
+
+            // update employee exhibitor id
+            if ($account['position'] == 'Booker' && $account['user_group'] != 'exhibit') {
                 $employee->update([
-                    'exhibitor_id' => 4
+                    'exhibitor_id' => $exhibit_admin,
+                    'updated_at' => now()
                 ]);
+            } else if ($account['position'] == 'Survey' && $account['user_group'] != 'surveys') {
+                $employee->update([
+                    'exhibitor_id' => $survey_admin,
+                    'updated_at' => now()
+                ]);
+            } else if ($account['position'] == 'ROI' && $account['user_group'] != 'rois') {
+                $employee->update([
+                    'exhibitor_id' => $roi_admin,
+                    'updated_at' => now()
+                ]);
+            }
+
+            // add confirmer venues
+            $venues = Venue::all();
+            if ($account['user_group'] == 'confirmers' || $account['user_group'] == 'employees') {
+                foreach($venues as $venue) {
+                    EmployeeVenue::create([
+                        'employee_id' => $employee->id,
+                        'venue_id' => $venue->id
+                    ]);
+                }
             }
         }
     }

@@ -74,6 +74,11 @@ class LeadController extends Controller
         // replace value on live
         $exhibitor = $this->employeeService->indexExhibitor()->first();
 
+        $sources = Helper::leadSource(NULL);
+        if(Auth::user()->employee->usergroup->name == 'exhibit-admin') {
+            $sources = Helper::leadSource('EXHIBIT');
+        }
+
         return Inertia::render('Leads/IndexPaginateLead', [
             'sortBy' => $sort_by,
             'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
@@ -86,7 +91,7 @@ class LeadController extends Controller
             'employees' => $this->employeeService->indexEncoder(),
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
-            'sources' => Helper::leadSource(null),
+            'sources' => $sources,
             'exhibitors' => $this->employeeService->indexExhibitor(),
             'exhibitor' => $exhibitor->id // add value if only one exhibitor must be assign
         ]);

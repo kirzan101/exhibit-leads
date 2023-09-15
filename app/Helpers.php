@@ -240,7 +240,8 @@ class Helper
     public static function leadSource(?string $team)
     {
         $lead_sources = DB::table('leads')
-            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"));
+            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"))
+            ->distinct('source_prefix');
 
         if ($team) {
 
@@ -255,7 +256,7 @@ class Helper
             $lead_sources = $lead_sources->whereIn('source_prefix', $prefix);
         }
 
-        return $lead_sources->get()->toArray();
+        return $lead_sources->orderBy('source')->get()->toArray();
     }
 
     /**
@@ -323,6 +324,12 @@ class Helper
         $first = str_replace('Ñ', 'n', $first);
         $last = str_replace('Ñ', 'n', $last);
 
+        //get the first name
+        $first = strtok($first, ' ');
+
+        // concat if last name has space
+        $last = str_replace(' ', '', $last);
+
         $email = sprintf('%s.%s@astoria.com.ph', $first, $last);
 
         // check if email already exist
@@ -331,6 +338,7 @@ class Helper
         if ($is_exist) {
             $count = 1;
 
+            // create again if email is existed
             do {
                 $is_exist = (User::where('email', $email)->count() > 0) ? true : false;
 
