@@ -29,7 +29,23 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">Confirmed</div>
+                    <div class="col-sm-6">
+                        Confirmed |
+                        <b-button
+                            class="btn btn-success m-1"
+                            v-b-modal.download-modal
+                            align-v="end"
+                            v-if="items.data.length > 0"
+                            >Download</b-button
+                        >
+                        <b-button
+                            class="btn btn-success m-1"
+                            align-v="end"
+                            disabled
+                            v-else
+                            >Download</b-button
+                        >
+                    </div>
                     <div class="col-sm-6">
                         <div v-if="check_access('confirms', 'create')">
                             <b-button
@@ -87,6 +103,11 @@
                 @submit-remove="submitRemove"
             />
 
+            <DownloadModal
+                message="Confirm Download?"
+                @submit-download="submitDownload"
+            />
+
             <ConfirmedPaginateTable
                 :sort_by="sortBy"
                 :sort_desc="sortDesc"
@@ -124,12 +145,14 @@
 import { Link, router } from "@inertiajs/vue2";
 import ConfirmedPaginateTable from "../../Components/PaginateTable/ConfirmedPaginateTable.vue";
 import RemoveModal from "../../Components/Modals/RemoveModal.vue";
+import DownloadModal from "../../Components/Modals/DownloadModal.vue";
 
 export default {
     components: {
         Link,
         ConfirmedPaginateTable,
         RemoveModal,
+        DownloadModal,
     },
     props: {
         sortBy: String,
@@ -196,6 +219,19 @@ export default {
             alert: false,
             selected_employee: "",
             selectedIds: [],
+            download_filter: {
+                sort_by: this.sort_by,
+                is_sort_desc: this.sort_desc,
+                search: this.search_filter,
+                occupation: this.occupationName,
+                venue_id: this.venueId,
+                source_name: this.sourceName,
+                start_to: this.startTo,
+                end_to: this.endTo,
+                employee_id: this.employeeId,
+                confirmer_id: this.confirmerId,
+                exhibitor_id: this.exhibitorId,
+            }
         };
     },
     methods: {
@@ -237,7 +273,7 @@ export default {
                     "lead_status",
                     "employee_id",
                     "confirmer_id",
-                    "exhibitor_id"
+                    "exhibitor_id",
                 ],
             });
         },
@@ -251,6 +287,20 @@ export default {
 
             router.post("/done/cancel", this.form);
             this.selected_lead = [];
+        },
+        submitDownload() {
+            this.$bvModal.hide("download-modal");
+            // window.open("/reports/confirmed", "_blank");
+
+            // console.log(router.get("/reports/confirmed", this.form));
+            router.visit("/reports/confirmed", {
+                data: this.download_filter,
+                method: 'get',
+                onBefore: visit => {
+                    // console.log(visit.url.href)
+                    window.open(visit.url.href);
+                }
+            });
         },
     },
 };

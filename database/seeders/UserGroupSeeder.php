@@ -73,6 +73,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'employees')
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
+            ->orWhere('module', 'assigns')
             ->get();
         $employee_permissions = Permission::where('module', 'leads')->get();
         $confirmer_permissions = Permission::where('module', 'confirms')->get();

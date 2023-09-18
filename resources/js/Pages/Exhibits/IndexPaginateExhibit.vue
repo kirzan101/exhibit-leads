@@ -62,7 +62,7 @@
                 </div>
             </h5>
 
-            <LeadPaginateTable
+            <ExhibitPaginateTable
                 :items="items"
                 :fields="fields"
                 :sort_by="sortBy"
@@ -90,14 +90,14 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import LeadPaginateTable from "../../Components/PaginateTable/LeadPaginateTable.vue";
+import ExhibitPaginateTable from "../../Components/PaginateTable/ExhibitPaginateTable.vue";
 import AssignEmployeeModal from "../../Components/Modals/AssignEmployeeModal.vue";
 
 export default {
     components: {
         Link,
-        LeadPaginateTable,
         AssignEmployeeModal,
+        ExhibitPaginateTable,
     },
     props: {
         sortBy: String,

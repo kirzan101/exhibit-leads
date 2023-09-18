@@ -10,6 +10,7 @@ use App\Http\Controllers\ExhibitController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadStatusController;
 use App\Http\Controllers\PaginateController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoiController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\SurveyController;
@@ -138,4 +139,7 @@ Route::middleware('auth')->group(function () {
     
     //Lead Status
     Route::get('/lead-status', [LeadStatusController::class, 'index'])->name('lead-status');
+
+    //reports
+    Route::get('/reports/confirmed', [ReportController::class, 'confirmedReport']);
 });
