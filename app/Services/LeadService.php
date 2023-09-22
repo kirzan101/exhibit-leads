@@ -108,6 +108,15 @@ class LeadService
             DB::beginTransaction();
 
             $lead = tap($lead)->update($request);
+
+            // save file
+            if ($request['contract_file']) {
+                $result = Helper::uploadFile($request['contract_file'], $lead);
+
+                if (!$result) {
+                    throw ValidationException::withMessages(['error on file upload']);
+                }
+            }
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -149,9 +158,9 @@ class LeadService
             $lead->owned_gadgets = $arrayed_owned_gadgets;
         }
 
-        if ($model->contract_file) {
-            $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();
-        }
+        // if ($model->contract_file) {
+        //     $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();
+        // }
 
         return $lead;
     }

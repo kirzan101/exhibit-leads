@@ -23,21 +23,18 @@ class Helper
     public static function uploadFile($file, Lead $lead): bool
     {
         $file_name = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads'), $file_name);
-        $file_path = 'uploads/' . $file_name;
 
-        // $file_name = time().'_'.$file->getClientOriginalName();
-        // if($lead->contract_file) {
-        //     if(Storage::disk('public')->exists($lead->contract_file)) {
-        //         Storage::disk('public')->delete($lead->contract_file);
-        //     }
-        // }
+        // for testing local
+        // $file_path = Storage::disk('uploads')->getConfig()['root'];
+        // Storage::disk('uploads')->put($file_name, file_get_contents($file));
 
-        // $file_path = $file->store('uploads', 'public');
+        $file_path = Storage::disk('public')->getConfig()['root'];
+        Storage::disk('public')->put($file_name, file_get_contents($file));
 
         try {
             $result = $lead->update([
-                'contract_file' => $file_path
+                'contract_file' => $file_path,
+                'file_name' => $file_name
             ]);
 
             return $result;
@@ -250,7 +247,7 @@ class Helper
             } else if ($team == 'SURVEY') {
                 $prefix = ['SURVEY'];
             } else if ($team == 'EXHIBIT') {
-                $prefix = ['LSR', 'ALM', 'PRJ'];
+                $prefix = ['LSR', 'ALM', 'PRJ', 'LS', 'IP'];
             }
 
             $lead_sources = $lead_sources->whereIn('source_prefix', $prefix);
@@ -283,6 +280,12 @@ class Helper
             ],
             [
                 'name' => 'ALM',
+            ],
+            [
+                'name' => 'LS',
+            ],
+            [
+                'name' => 'IP',
             ],
             [
                 'name' => 'PRJ',
@@ -360,7 +363,9 @@ class Helper
         $array = [
             'LSR',
             'ALM',
-            'PRJ'
+            'PRJ',
+            'LS',
+            'IP'
         ];
 
         return $array;

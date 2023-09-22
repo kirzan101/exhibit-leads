@@ -97,7 +97,7 @@ class ExhibitController extends Controller
         return Inertia::render('Exhibits/LeadFormOfExhibit', [
             'is_disabled' => true,
             'form_type' => 'exhibits',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),
@@ -117,7 +117,7 @@ class ExhibitController extends Controller
         return Inertia::render('Exhibits/LeadFormOfExhibit', [
             'is_disabled' => false,
             'form_type' => 'exhibits',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class LeadResource extends JsonResource
 {
@@ -48,8 +49,9 @@ class LeadResource extends JsonResource
             'spouse_occupation' => $this->spouse_occupation,
             'property_id' => $this->property_id,
             'property' => $this->property,
-            'contract_file_name' => $this->getFileName(),
-            'uploaded_contract_file' => ($this->contract_file) ? asset($this->contract_file) : null, //($this->contract_file) ? Storage::disk('public')->get($this->contract_file) : null,
+            'contract_file_name' => $this->file_name,
+            'uploaded_contract_file' => ($this->contract_file) ? Storage::disk('public')->url($this->file_name) : null,
+            'a_uploaded_contract_file' => ($this->contract_file) ? Storage::disk('public')->url($this->file_name) : null,
             'is_booker_assigned' => (bool) $this->is_booker_assigned,
             'is_done' => (bool) $this->is_done,
             'is_done_confirmed' => (bool) $this->is_done_confirmed,

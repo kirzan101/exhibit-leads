@@ -97,7 +97,7 @@ class SurveyController extends Controller
         return Inertia::render('Surveys/LeadFormOfSurvey', [
             'is_disabled' => true,
             'form_type' => 'surveys',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),
@@ -117,7 +117,7 @@ class SurveyController extends Controller
         return Inertia::render('Surveys/LeadFormOfSurvey', [
             'is_disabled' => false,
             'form_type' => 'surveys',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),

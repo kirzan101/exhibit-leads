@@ -130,7 +130,7 @@ class AssignedEmployeeController extends Controller
         return Inertia::render('AssignedEmployees/LeadFormOfAssignedEmployee', [
             'is_disabled' => true,
             'form_type' => 'assigned-employees',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),
@@ -150,7 +150,7 @@ class AssignedEmployeeController extends Controller
         return Inertia::render('AssignedEmployees/LeadFormOfAssignedEmployee', [
             'is_disabled' => false,
             'form_type' => 'assigned-employees',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),

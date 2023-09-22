@@ -97,7 +97,7 @@ class RoiController extends Controller
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => true,
             'form_type' => 'rois',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),
@@ -117,7 +117,7 @@ class RoiController extends Controller
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => false,
             'form_type' => 'rois',
-            'lead' => $this->leadService->showLead($lead),
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
             'properties' => $this->propertyService->indexProperty(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => $this->sourceService->indexSource(),

@@ -42,6 +42,7 @@ class Lead extends Model
         'nature_of_business',
         'property_id',
         'contract_file',
+        'file_name',
         'is_booker_assigned',
         'is_done',
         'is_done_confirmed',

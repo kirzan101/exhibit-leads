@@ -517,12 +517,13 @@
                                 accept="image/png, image/jpg, image/jpeg"
                             ></b-form-file>
                             <div class="mt-3">
-                                Selected file:
-                                <b>{{
-                                    form.contract_file
-                                        ? form.contract_file.name
-                                        : ""
-                                }}</b>
+                                Selected file: 
+                                <b-button
+                                    class="btn btn-warning"
+                                    v-if="form.contract_file"
+                                    v-b-modal.image-modal
+                                    >{{ form.contract_file.name }}</b-button
+                                >
                             </div>
                         </b-form-group>
                     </b-col>
@@ -714,14 +715,19 @@
                 </div>
             </b-form>
         </div>
+
+        <UploadModal :url="image" />
     </b-container>
 </template>
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
+import UploadModal from "../../Components/Modals/UploadModal.vue";
+
 export default {
     components: {
         Link,
+        UploadModal,
     },
     props: {
         errors: Object,
@@ -835,5 +841,14 @@ export default {
             });
         },
     },
+    computed: {
+        image() {
+            if(this.form.contract_file) {
+                return URL.createObjectURL(this.form.contract_file)
+            }
+
+            return null;
+        }
+    }
 };
 </script>
