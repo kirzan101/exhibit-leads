@@ -57,7 +57,7 @@ class LeadService
     /**
      * create lead service
      *
-     * @param Request $request
+     * @param array $request
      * @return array
      */
     public function createLead(array $request): array
@@ -74,11 +74,13 @@ class LeadService
             $lead = Lead::create($request);
 
             // save file
-            if ($request['contract_file']) {
-                $result = Helper::uploadFile($request['contract_file'], $lead);
+            if (array_key_exists('contract_file', $request)) {
+                if ($request['contract_file']) {
+                    $result = Helper::uploadFile($request['contract_file'], $lead);
 
-                if (!$result) {
-                    throw ValidationException::withMessages(['error on file upload']);
+                    if (!$result) {
+                        throw ValidationException::withMessages(['error on file upload']);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -107,14 +109,28 @@ class LeadService
         try {
             DB::beginTransaction();
 
+            $current_file_name = null;
+
+            if($lead->file_name != null) {
+                $current_file_name = $lead->file_name;
+            }
+
             $lead = tap($lead)->update($request);
 
             // save file
-            if ($request['contract_file']) {
-                $result = Helper::uploadFile($request['contract_file'], $lead);
+            if (array_key_exists('contract_file', $request)) {
+                if ($request['contract_file']) {
 
-                if (!$result) {
-                    throw ValidationException::withMessages(['error on file upload']);
+                    // delete previous uploads
+                    if($current_file_name) {
+                        Helper::deleteFile($current_file_name);
+                    }
+
+                    $result = Helper::uploadFile($request['contract_file'], $lead);
+
+                    if (!$result) {
+                        throw ValidationException::withMessages(['error on file upload']);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -630,11 +646,11 @@ class LeadService
     public function indexPaginateExhibitLead(array $request): Paginator
     {
         $leads = Lead::select('leads.*')
-                ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
-                ->where('leads.is_booker_assigned', false)
-                ->where('leads.is_exhibitor_assigned', true)
-                ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
-                ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
+            ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', false)
+            ->where('leads.is_exhibitor_assigned', true)
+            ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
+            ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
 
         //set default values
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
@@ -694,9 +710,9 @@ class LeadService
             ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
             ->where('assigned_employees.employee_id', Auth::user()->employee->id);
 
-        if(Auth::user()->employee->usergroup->name == 'admin') {
+        if (Auth::user()->employee->usergroup->name == 'admin') {
             $leads = Lead::select('leads.*')
-            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id');
+                ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id');
         }
 
         //set default values

@@ -47,6 +47,27 @@ class Helper
     }
 
     /**
+     * Delete uploaded lead contract image
+     *
+     * @param string $file_name
+     * @return boolean
+     */
+    public static function deleteFile(string $file_name): bool
+    {
+        
+        try {
+
+            Storage::disk('public')->delete($file_name);
+            
+        } catch (Exception $ex) {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Generate unique username
      * Username format: {first name initial}{last name}
      * Example result: Juan Dela Cruz => jdelacruz
