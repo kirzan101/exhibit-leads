@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
 use App\Http\Requests\AssignedExhibitorFormRequest;
+use App\Http\Requests\LeadFormRequest;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedExhibitor;
@@ -14,8 +15,10 @@ use App\Services\LeadService;
 use App\Services\PropertyService;
 use App\Services\SourceService;
 use App\Services\VenueService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -47,20 +50,56 @@ class AssignedExhibitorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', AssignedExhibitor::class);
 
-        $leads = $this->assignedExhibitorService->indexLeadsAssignedExhibitor();
-        $employees = $this->employeeService->indexExhibitor();
+        //set default value for lead name
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'lead_full_name') {
+            $request->merge(['sort_by' => 'last_name']);
+        }
 
-        return Inertia::render('AssignedExhibitors/IndexAssignedExhibitor', [
-            'leads' => LeadResource::collection($leads),
-            'employees' => EmployeeResource::collection($employees),
-            'status_list' => Helper::leadStatus(),
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
+
+        // set default value for start to
+        if (!$request->has('start_to')) {
+            $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        // set default value for end to
+        if (!$request->has('end_to')) {
+            $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
+        }
+
+        $isEmployee = (Auth::user()->employee->userGroup->name == 'employees') ?? false;
+
+        $leads = LeadResource::collection($this->assignedExhibitorService->indexAssignedExhibitorPaginate($request->toArray()));
+
+        if ($isEmployee) {
+            $leads = LeadResource::collection($this->assignedExhibitorService->indexAssignedExhibitorPaginate($request->toArray()));
+        }
+
+        return Inertia::render('AssignedExhibitors/IndexPaginateAssignedExhibitor', [
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'occupation' => $request->occupation,
+            'venue_id' => $request->venue_id,
+            'source_name' => $request->source_name,
+            'module' => 'assigned-exhibitors',
+            'items' => $leads,
+            'employees' => $this->employeeService->indexExhibitor(),
             'occupation_list' => Helper::occupationList(),
-            'venue_list' => $this->venueService->indexVenueService(),
-            'per_page' => 5
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => Helper::leadSource(null),
+            'status_list' => Helper::leadStatus(),
+            'start_to' => $request->start_to,
+            'end_to' => $request->end_to,
+            'lead_status' => $request->lead_status,
         ]);
     }
 
@@ -86,6 +125,23 @@ class AssignedExhibitorController extends Controller
     }
 
     /**
+     * Show specific lead of assigned employee
+     */
+    public function showLead(Lead $lead)
+    {
+        $this->authorize('read', AssignedExhibitor::class);
+
+        return Inertia::render('AssignedExhibitors/LeadFormOfAssignedExhibitor', [
+            'is_disabled' => true,
+            'form_type' => 'assigned-exhibitors',
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
+            'properties' => $this->propertyService->indexProperty(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
+        ]);
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show($id)
@@ -106,19 +162,39 @@ class AssignedExhibitorController extends Controller
             ]);
         }
 
-        return redirect()->route('assigned-exhibitors.index')->with('error', 'Lead not found.');
+        return redirect('/assigned-exhibitors')->with('error', 'Lead not found.');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Edit specific lead of assigned exhibitor
+     *
+     * @param Lead $lead
+     * @return void
      */
-    public function update(Request $request, AssignedExhibitor $assignedExhibitor)
+    public function editLead(Lead $lead)
     {
         $this->authorize('update', AssignedExhibitor::class);
 
-        $this->assignedExhibitorService->updateAssignedExhibitor($request->toArray(), $assignedExhibitor);
+        return Inertia::render('AssignedExhibitors/LeadFormOfAssignedExhibitor', [
+            'is_disabled' => false,
+            'form_type' => 'assigned-exhibitors',
+            'lead' => new LeadResource($this->leadService->showLead($lead)),
+            'properties' => $this->propertyService->indexProperty(),
+            'venues' => $this->venueService->indexVenueService(),
+            'sources' => $this->sourceService->indexSource(),
+        ]);
+    }
 
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully reassigned');
+    /**
+     * Update specific lead of assigned exhibitor.
+     */
+    public function updateLead(LeadFormRequest $request, Lead $lead)
+    {
+        $this->authorize('update', AssignedExhibitor::class);
+
+        ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
+
+        return redirect()->route('assigned-exhibitors-show', $lead)->with($result, $message);
     }
 
     /**
@@ -142,7 +218,7 @@ class AssignedExhibitorController extends Controller
         }
 
         DB::commit();
-        return redirect()->route('assigned-exhibitors.index')->with('success', 'Successfully reassigned!');
+        return redirect('/assigned-exhibitors')->with('success', 'Successfully reassigned!');
     }
 
     /**
@@ -162,9 +238,9 @@ class AssignedExhibitorController extends Controller
         $result = $this->assignedExhibitorService->removedAssignedExhibitor($request);
 
         if (!$result) {
-            return redirect()->route('assigned-employees.index')->with('error', 'Error on removing assignment!');
+            return redirect('/assigned-exhibitors')->with('error', 'Error on removing assignment!');
         }
 
-        return redirect()->route('assigned-employees.index')->with('success', 'Successfully removed assignment!');
+        return redirect('/assigned-exhibitors')->with('success', 'Successfully removed assignment!');
     }
 }
