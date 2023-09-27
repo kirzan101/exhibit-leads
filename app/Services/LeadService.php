@@ -84,10 +84,10 @@ class LeadService
                 }
             }
         } catch (Exception $e) {
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead];
         }
 
-        return ['result' => 'success', 'message' => 'Successfully saved!'];
+        return ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $lead];
     }
 
     /**
@@ -136,11 +136,11 @@ class LeadService
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead];
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Succefully updated!'];
+        return ['result' => 'success', 'message' => 'Succefully updated!', 'subject' => $lead];
     }
 
     /**
@@ -347,16 +347,16 @@ class LeadService
                     'updated_by' => Auth::user()->id
                 ]);
             } else {
-                return ['result' => 'error', 'message' => 'Incorrect employee type!'];
+                return ['result' => 'error', 'message' => 'Incorrect employee type!', 'subject' => $lead];
             }
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead];
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully Done!'];
+        return ['result' => 'success', 'message' => 'Successfully Done!', 'subject' => $lead];
     }
 
     /**
