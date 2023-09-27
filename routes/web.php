@@ -72,9 +72,12 @@ Route::middleware('auth')->group(function () {
     Route::post('remove-assign-confirmer', [AssignedConfirmerController::class, 'removeAssignment']);
 
     //assign exhibitor
-    Route::resource('assigned-exhibitors', AssignedExhibitorController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'edit', 'update', 'create']]);
-    Route::get('assigned-exhibitors/{id}', [AssignedExhibitorController::class, 'show']);
+    // Route::resource('assigned-exhibitors', AssignedExhibitorController::class, ['except' => ['store', 'destroy', 'reassignConfirmer', 'show', 'edit', 'update', 'create']]);
+    Route::get('assigned-exhibitors', [AssignedExhibitorController::class, 'index'])->name('assigned-confirmers');
+    Route::get('assigned-exhibitors/{lead}', [AssignedExhibitorController::class, 'showLead'])->name('assigned-exhibitors-show');
     Route::post('assign-exhibitor', [AssignedExhibitorController::class, 'store']);
+    Route::get('assigned-exhibitors/edit/{lead}', [AssignedExhibitorController::class, 'editLead']);
+    Route::put('assigned-exhibitors/{lead}', [AssignedExhibitorController::class, 'updateLead']);
     Route::post('reassign-exhibitor', [AssignedExhibitorController::class, 'reassignExhibitor']);
     Route::post('remove-assign-exhibitor', [AssignedExhibitorController::class, 'removeAssignment']);
 
