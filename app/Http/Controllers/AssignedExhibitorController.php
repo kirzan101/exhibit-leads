@@ -235,12 +235,8 @@ class AssignedExhibitorController extends Controller
             'lead_ids' => 'required|array'
         ]);
 
-        $result = $this->assignedExhibitorService->removedAssignedExhibitor($request);
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->removedAssignedExhibitor($request);
 
-        if (!$result) {
-            return redirect('/assigned-exhibitors')->with('error', 'Error on removing assignment!');
-        }
-
-        return redirect('/assigned-exhibitors')->with('success', 'Successfully removed assignment!');
+        return redirect('/assigned-exhibitors')->with($result, $message);
     }
 }

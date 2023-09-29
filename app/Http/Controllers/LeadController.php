@@ -30,8 +30,6 @@ class LeadController extends Controller
     private PropertyService $propertyService;
     private VenueService $venueService;
     private SourceService $sourceService;
-    private AssignedEmployeeService $assignedEmployeeService;
-    private ActivityLogService $activityLogService;
     public $module_name = 'leads';
 
     public function __construct(
@@ -40,16 +38,12 @@ class LeadController extends Controller
         PropertyService $propertyService,
         VenueService $venueService,
         SourceService $sourceService,
-        AssignedEmployeeService $assignedEmployeeService,
-        ActivityLogService $activityLogService
     ) {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
         $this->sourceService = $sourceService;
-        $this->assignedEmployeeService = $assignedEmployeeService;
-        $this->activityLogService = $activityLogService;
     }
 
     /**
@@ -130,15 +124,6 @@ class LeadController extends Controller
         // add lead
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->createLead($request->toArray());
 
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => $message,
-            'event' => 'create',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
-
         return redirect()->route('leads.index')->with($result, $message);
     }
 
@@ -187,15 +172,6 @@ class LeadController extends Controller
         }
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->updateLead($request->toArray(), $lead);
-
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => $message,
-            'event' => 'update',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
 
         return redirect()->route('leads.index')->with($result, $message);
     }
@@ -280,15 +256,6 @@ class LeadController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => $message,
-            'event' => 'update',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
-
         return redirect()->route('assigned-employees')->with($result, $message);
     }
 
@@ -312,15 +279,6 @@ class LeadController extends Controller
             return redirect()->route('done')->with('error', $e->getMessage());
         }
 
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => 'Successfully removed from done!',
-            'event' => 'update',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
-
         return redirect()->route('done')->with('success', 'Successfully removed from done!');
     }
 
@@ -338,15 +296,6 @@ class LeadController extends Controller
         $lead = Lead::find($request->lead_id);
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
-
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => $message,
-            'event' => 'update',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
 
         return redirect()->route('confirms')->with($result, $message);
     }
@@ -368,26 +317,9 @@ class LeadController extends Controller
                 ['subject' => $subject] = $this->leadService->done($lead, false, $request->employee_type);
             }
         } catch (Exception $e) {
-            //log action
-            $this->activityLogService->createActivityLog([
-                'name' => $this->module_name,
-                'description' => $e->getMessage(),
-                'event' => 'update',
-                'properties' => json_encode($request->toArray()),
-                'subject_id' => ($subject) ? $subject['id'] : null
-            ]);
 
             return redirect()->route('done')->with('error', $e->getMessage());
         }
-
-        //log action
-        $this->activityLogService->createActivityLog([
-            'name' => $this->module_name,
-            'description' => 'Successfully removed from confirms!',
-            'event' => 'update',
-            'properties' => json_encode($request->toArray()),
-            'subject_id' => ($subject) ? $subject['id'] : null
-        ]);
 
         return redirect()->route('confirms')->with('success', 'Successfully removed from confirms!');
     }

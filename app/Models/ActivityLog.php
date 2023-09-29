@@ -13,6 +13,7 @@ class ActivityLog extends Model
         'name',
         'description',
         'event',
+        'status',
         'browser',
         'properties',
         'subject_id',

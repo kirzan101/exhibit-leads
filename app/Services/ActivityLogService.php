@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class ActivityLogService
 {
+    public $last_id = null;
+
     public function indexActivityLogPaginate(array $request): Paginator
     {
         $activity_logs = ActivityLog::select('activity_logs.*')
@@ -57,23 +59,27 @@ class ActivityLogService
         try {
             DB::beginTransaction();
 
-            ActivityLog::create([
+            $activityLog = ActivityLog::create([
                 'name' => $request['name'],
                 'description' => $request['description'],
                 'event' => $request['event'],
+                'status' => $request['status'],
                 'browser' => json_encode(Helper::deviceInfo()),
                 'properties' => $request['properties'],
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $request['subject_id']
             ]);
+
+            $this->last_id = $activityLog->id;
+
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
         }
 
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully saved!'];
+        return ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $this->last_id];
     }
 }

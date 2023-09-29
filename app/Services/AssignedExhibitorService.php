@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Helpers\Helper;
+use App\Models\ActivityLog;
 use App\Models\AssignedExhibitor;
 use App\Models\Lead;
 use Carbon\Carbon;
@@ -12,6 +14,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AssignedExhibitorService
 {
+    public $last_id = null;
+    public $module_name = 'assigned_exhibitors';
+
     /**
      * list of leads that has assigned to an exhibitor
      *
@@ -32,15 +37,15 @@ class AssignedExhibitorService
      * create assigned exhibitor service
      *
      * @param array $request
-     * @return boolean
+     * @return array
      */
-    public function createAssignedExhbitor(array $request): bool
+    public function createAssignedExhbitor(array $request): array
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
 
-                if(!$lead->is_exhibitor_assigned) {
+                if (!$lead->is_exhibitor_assigned) {
                     AssignedExhibitor::create([
                         'lead_id' => $lead->getKey(),
                         'employee_id' => $request['employee_id'],
@@ -52,22 +57,51 @@ class AssignedExhibitorService
                         'updated_by' => Auth::user()->employee->id
                     ]);
 
+                    $this->last_id = $lead->id;
+
+                    $return_values = ['result' => 'success', 'message' => 'Succefully created!', 'subject' => $this->last_id];
+
+                    //log activity
+                    ActivityLog::create([
+                        'name' => $this->module_name,
+                        'description' => $return_values['message'],
+                        'event' => 'create',
+                        'status' => $return_values['result'],
+                        'browser' => json_encode(Helper::deviceInfo()),
+                        'properties' => json_encode($request),
+                        'causer_id' => Auth::user()->id,
+                        'subject_id' => $return_values['subject']
+                    ]);
                 }
             }
         } catch (Exception $e) {
-            return false;
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'delete',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => '{"lead_id" => ' . $this->last_id . '}',
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
 
-        return true;
+        return ['result' => 'success', 'message' => 'Succefully Assigned!', 'subject' => $this->last_id];
     }
 
     /**
      * update assigned exhibitor service
      *
      * @param array $request
-     * @return boolean
+     * @return array
      */
-    public function updateAssignedExhibitor(array $request): bool
+    public function updateAssignedExhibitor(array $request): array
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
@@ -87,22 +121,52 @@ class AssignedExhibitorService
                         'updated_by' => Auth::user()->employee->id
                     ]);
 
+                    $this->last_id = $lead->id;
+
+                    $return_values = ['result' => 'success', 'message' => 'Succefully updated!', 'subject' => $this->last_id];
+
+                    //log activity
+                    ActivityLog::create([
+                        'name' => $this->module_name,
+                        'description' => $return_values['message'],
+                        'event' => 'update',
+                        'status' => $return_values['result'],
+                        'browser' => json_encode(Helper::deviceInfo()),
+                        'properties' => json_encode($request),
+                        'causer_id' => Auth::user()->id,
+                        'subject_id' => $return_values['subject']
+                    ]);
                 }
             }
         } catch (Exception $e) {
-            return false;
+
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'update',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
 
-        return true;
+        return $return_values;
     }
 
     /**
      * delete assigned exhibitor service
      *
      * @param AssignedExhibitor $assignedExhibitor
-     * @return boolean
+     * @return array
      */
-    public function deleteAssignedExhibitor(AssignedExhibitor $assignedExhibitor): bool
+    public function deleteAssignedExhibitor(AssignedExhibitor $assignedExhibitor): array
     {
         try {
             $lead = Lead::find($assignedExhibitor->lead_id);
@@ -112,21 +176,50 @@ class AssignedExhibitorService
                 'updated_by' => Auth::user()->employee->id
             ]);
 
+            $this->last_id = $assignedExhibitor->id;
             $assignedExhibitor->delete();
         } catch (Exception $e) {
-            return false;
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'delete',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => '{"lead_id" => ' . $this->last_id . '}',
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
 
-        return true;
+        $return_values = ['result' => 'error', 'message' => 'Successfully Deleted', 'subject' => $this->last_id];
+
+        //log activity
+        ActivityLog::create([
+            'name' => $this->module_name,
+            'description' => $return_values['message'],
+            'event' => 'delete',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' =>  '{"lead_id" => ' . $this->last_id . '}',
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+        return $return_values;
     }
 
     /**
      * removed assigned employee in a lead
      *
      * @param array $request
-     * @return boolean
+     * @return array
      */
-    public function removedAssignedExhibitor(array $request): bool
+    public function removedAssignedExhibitor(array $request): array
     {
         try {
             foreach ($request['lead_ids'] as $lead) {
@@ -138,13 +231,43 @@ class AssignedExhibitorService
                 ]);
 
                 $assigned_exhibitor = AssignedExhibitor::where('lead_id', $lead->id);
+                $this->last_id = $assigned_exhibitor->id;
+
+                $return_values = ['result' => 'success', 'message' => 'Successfully Removed assignment', 'subject' => $this->last_id];
+
                 $assigned_exhibitor->delete();
+
+                //log activity
+                ActivityLog::create([
+                    'name' => $this->module_name,
+                    'description' => $return_values['message'],
+                    'event' => 'delete',
+                    'status' => $return_values['result'],
+                    'browser' => json_encode(Helper::deviceInfo()),
+                    'properties' =>  '{"lead_id" => ' . $this->last_id . '}',
+                    'causer_id' => Auth::user()->id,
+                    'subject_id' => $return_values['subject']
+                ]);
             }
-        } catch (Exception $ex) {
-            return false;
+        } catch (Exception $e) {
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'delete',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => '{"lead_id" => ' . $this->last_id . '}',
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
 
-        return true;
+        return ['result' => 'success', 'message' => 'Successfully Removed assignment', 'subject' => $this->last_id];
     }
 
     /**

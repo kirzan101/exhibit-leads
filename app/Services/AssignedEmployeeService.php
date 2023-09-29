@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Helpers\Helper;
+use App\Models\ActivityLog;
 use App\Models\AssignedEmployee;
 use App\Models\Contract;
 use App\Models\Lead;
@@ -15,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 
 class AssignedEmployeeService
 {
+    public $last_id = null;
+    public $module_name = 'assigned_employees';
+
     /**
      * index of assigned employee service
      *
@@ -182,7 +187,7 @@ class AssignedEmployeeService
                 $lead = Lead::find($lead);
 
                 if (!$lead->is_booker_assigned) {
-                    AssignedEmployee::create([
+                    $assignedEmployee = AssignedEmployee::create([
                         'lead_id' => $lead->getKey(),
                         'employee_id' => $request['employee_id'],
                         'created_by' => Auth::user()->employee->id,
@@ -192,16 +197,45 @@ class AssignedEmployeeService
                         'is_booker_assigned' => true,
                         'updated_by' => Auth::user()->employee->id
                     ]);
+
+                    $this->last_id = $assignedEmployee->id;
+                    $return_values = ['result' => 'success', 'message' => 'Succefully assigned!', 'subject' => $this->last_id];
+
+                    //log activity
+                    ActivityLog::create([
+                        'name' => $this->module_name,
+                        'description' => $return_values['message'],
+                        'event' => 'create',
+                        'status' => $return_values['result'],
+                        'browser' => json_encode(Helper::deviceInfo()),
+                        'properties' => json_encode($request),
+                        'causer_id' => Auth::user()->id,
+                        'subject_id' => $return_values['subject']
+                    ]);
                 }
             }
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'create',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfuly assigned!'];
+        return $return_values;
     }
 
     /**
@@ -230,16 +264,45 @@ class AssignedEmployeeService
                         'is_exhibitor_assigned' => true,
                         'updated_by' => Auth::user()->employee->id
                     ]);
+
+                    $this->last_id = $assignedEmployee->id;
+                    $return_values = ['result' => 'success', 'message' => 'Succefully updated!', 'subject' => $this->last_id];
+
+                    //log activity
+                    ActivityLog::create([
+                        'name' => $this->module_name,
+                        'description' => $return_values['message'],
+                        'event' => 'update',
+                        'status' => $return_values['result'],
+                        'browser' => json_encode(Helper::deviceInfo()),
+                        'properties' => json_encode($request),
+                        'causer_id' => Auth::user()->id,
+                        'subject_id' => $return_values['subject']
+                    ]);
                 }
             }
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'update',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully updated!'];
+        return $return_values;
     }
 
     /**
@@ -287,16 +350,46 @@ class AssignedEmployeeService
                     'updated_by' => Auth::user()->employee->id
                 ]);
 
+                $assignedEmployee = $lead->assignedEmployee;
                 $lead->assignedEmployee->delete();
+
+                $this->last_id = $assignedEmployee->id;
+                $return_values = ['result' => 'success', 'message' => 'Succefully removed assignment!', 'subject' => $this->last_id];
+
+                //log activity
+                ActivityLog::create([
+                    'name' => $this->module_name,
+                    'description' => $return_values['message'],
+                    'event' => 'delete',
+                    'status' => $return_values['result'],
+                    'browser' => json_encode(Helper::deviceInfo()),
+                    'properties' => json_encode($request),
+                    'causer_id' => Auth::user()->id,
+                    'subject_id' => $return_values['subject']
+                ]);
             }
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'delete',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
 
         DB::commit();
-        return ['result' => 'success', 'message' => 'Successfully removed assignment'];
+        return $return_values;
     }
 
     /**
@@ -324,13 +417,42 @@ class AssignedEmployeeService
                 'presentation_time' => $request['presentation_time'],
                 'updated_by' => Auth::user()->employee->id
             ]);
+
+            $this->last_id = $assigned_employee->id;
+            $return_values = ['result' => 'success', 'message' => 'Successfully saved modified!', 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'update',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
 
-            return ['result' => 'error', 'message' => $e->getMessage()];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+
+            //log activity
+            ActivityLog::create([
+                'name' => $this->module_name,
+                'description' => $return_values['message'],
+                'event' => 'update',
+                'status' => $return_values['result'],
+                'browser' => json_encode(Helper::deviceInfo()),
+                'properties' => json_encode($request),
+                'causer_id' => Auth::user()->id,
+                'subject_id' => $return_values['subject']
+            ]);
+
+            return $return_values;
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully saved!'];
+        return $return_values;
     }
 }

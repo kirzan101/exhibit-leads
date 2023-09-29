@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('event');
+            $table->string('status');
             $table->longText('browser')->nullable();
             $table->longText('properties')->nullable();
             $table->integer('subject_id')->nullable();
