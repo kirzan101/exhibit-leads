@@ -164,9 +164,35 @@
                     v-if="check_access(module, 'update')"
                     >Edit</Link
                 >
+                <b-button
+                    variant="danger"
+                    class="mx-1"
+                    @click="selectedEmployee(row.item)"
+                    v-b-modal.reset-modal
+                    >Reset</b-button
+                >
             </template>
             <!-- actions end -->
         </b-table>
+
+        <!-- Reset modal -->
+        <b-modal id="reset-modal" title="Notice">
+            <p class="my-4">Reset employee password?</p>
+            <template #modal-footer>
+                <b-button
+                    variant="danger"
+                    type="button"
+                    @click="$bvModal.hide('reset-modal')"
+                    >Close</b-button
+                >
+                <b-button
+                    variant="success"
+                    type="button"
+                    @click="resetEmployee()"
+                    >Yes</b-button
+                >
+            </template>
+        </b-modal>
     </b-container>
 </template>
 
@@ -199,6 +225,7 @@ export default {
             },
             selected_ids: [],
             checkedAll: false,
+            selected_row_id: "",
         };
     },
     computed: {
@@ -268,6 +295,20 @@ export default {
             } else {
                 this.selected_ids.push(item.id);
             }
+        },
+        selectedEmployee(data) {
+            this.selected_row_id = data.id;
+        },
+        resetEmployee() {
+            this.$bvModal.hide("reset-modal");
+
+            if (this.selected_row_id != "") {
+                router.post(
+                    `/employees/reset-password/${this.selected_row_id}`
+                );
+            }
+
+            this.selected_row_id = "";
         },
     },
 };

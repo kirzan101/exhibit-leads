@@ -31,6 +31,6 @@ class GenericPaginateService
             $query->where('name', 'LIKE', '%' . $request['search'] . '%');
         }
 
-        return $query->orderBy($sort_by, $sort)->paginate($per_page);;
+        return $query->orderBy($sort_by, $sort)->paginate($per_page);
     }
 }

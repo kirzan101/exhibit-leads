@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\VenueFormRequest;
 use App\Http\Resources\VenueResource;
 use App\Models\Venue;
+use App\Services\GenericPaginateService;
 use App\Services\VenueService;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,24 +15,37 @@ use Inertia\Inertia;
 class VenueController extends Controller
 {
     private VenueService $venueService;
+    private GenericPaginateService $genericPaginateService;
+    public $table = 'venues';
 
-    public function __construct(VenueService $venueService)
+    public function __construct(VenueService $venueService, GenericPaginateService $genericPaginateService)
     {
         $this->venueService = $venueService;
+        $this->genericPaginateService = $genericPaginateService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', Venue::class);
+        //set default value for lead name
+        $sort_by = $request->sort_by;
 
-        $venues = $this->venueService->indexVenueService();
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
 
-        return Inertia::render('Venues/IndexVenue', [
-            'venues' => VenueResource::collection($venues),
-            'per_page' => 5
+        $venues = VenueResource::collection($this->genericPaginateService->index($this->table, $request->toArray()));
+
+        return Inertia::render('Venues/IndexPaginateVenue',[
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'module' => 'venues',
+            'items' => $venues,
         ]);
     }
 

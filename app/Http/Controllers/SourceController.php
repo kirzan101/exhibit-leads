@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SourceFormRequest;
 use App\Http\Resources\SourceResource;
 use App\Models\Source;
+use App\Services\GenericPaginateService;
 use App\Services\SourceService;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,24 +16,37 @@ use function Termwind\render;
 class SourceController extends Controller
 {
     private SourceService $sourceService;
+    private GenericPaginateService $genericPaginateService;
+    public $table = 'sources';
 
-    public function __construct(SourceService $sourceService)
+    public function __construct(SourceService $sourceService, GenericPaginateService $genericPaginateService)
     {
         $this->sourceService = $sourceService;
+        $this->genericPaginateService = $genericPaginateService;
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', Source::class);
+        //set default value for lead name
+        $sort_by = $request->sort_by;
 
-        $sources = $this->sourceService->indexSource();
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
 
-        return Inertia::render('Sources/IndexSource', [
-            'sources' => SourceResource::collection($sources),
-            'per_page' => 5
+        $sources = SourceResource::collection($this->genericPaginateService->index($this->table, $request->toArray()));
+
+        return Inertia::render('Sources/IndexPaginateSource',[
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'module' => 'sources',
+            'items' => $sources,
         ]);
     }
 

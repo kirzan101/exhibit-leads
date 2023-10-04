@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\EmployeeVenue;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,7 @@ class EmployeeService
             'exhibitor_id' => $request['exhibitor_id']
         ]);
 
-        foreach($request['venue_ids'] as $venue_id) {
+        foreach ($request['venue_ids'] as $venue_id) {
             EmployeeVenue::create([
                 'employee_id' => $employee->id,
                 'venue_id' => $venue_id
@@ -90,7 +91,7 @@ class EmployeeService
             'exhibitor_id' => $request['exhibitor_id']
         ]);
 
-        foreach($request['venue_ids'] as $venue_id) {
+        foreach ($request['venue_ids'] as $venue_id) {
             EmployeeVenue::create([
                 'employee_id' => $employee->id,
                 'venue_id' => $venue_id
@@ -113,7 +114,7 @@ class EmployeeService
 
         // get the user id
         $user_id = $employee->user_id;
-        
+
         // delete employee record
         $result = $employee->delete();
 
@@ -215,9 +216,9 @@ class EmployeeService
     public function indexTeamLead(): Collection
     {
         $exhibitors = Employee::select('employees.*')
-        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
-        ->whereIn('user_groups.name', ['exhibit', 'rois', 'surveys'])
-        ->get();
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->whereIn('user_groups.name', ['exhibit', 'rois', 'surveys'])
+            ->get();
 
         return $exhibitors;
     }
@@ -230,9 +231,9 @@ class EmployeeService
     public function indexExhibitor(): Collection
     {
         $exhibitors = Employee::select('employees.*')
-        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
-        ->where('user_groups.name', 'exhibit')
-        ->get();
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->where('user_groups.name', 'exhibit')
+            ->get();
 
         return $exhibitors;
     }
@@ -246,17 +247,46 @@ class EmployeeService
     public function indexTeamLeadEmployees(?int $exhibitor_id)
     {
         $employees = Employee::select('employees.*')
-        ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
-        ->where('user_groups.name', 'employees');
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->where('user_groups.name', 'employees');
 
-        if($exhibitor_id) {
+        if ($exhibitor_id) {
             $isAdmin = (Employee::find($exhibitor_id)->user_group_id == 1) ? true : false;
 
-            if(!$isAdmin) {
+            if (!$isAdmin) {
                 $employees = $employees->where('employees.exhibitor_id', $exhibitor_id);
             }
         }
 
         return $employees->orderBy('employees.id', 'desc')->get();
+    }
+
+    /**
+     * index of paginate employees service
+     *
+     * @return Paginator
+     */
+    public function indexEmployeePaginate(array $request): Paginator
+    {
+        $employees = Employee::select('employees.*')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('employees.user_group_id', '!=', '1');
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        // search filter
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $employees->where('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('employees.position', 'LIKE', '%' . $request['search'] . '%');
+        }
+
+        return $employees->orderBy($sort_by, $sort)->paginate($per_page);
     }
 }

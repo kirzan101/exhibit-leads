@@ -35,15 +35,28 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('read', Employee::class);
 
-        $employees = EmployeeResource::collection($this->employeeService->indexEmployee());
+        $sort_by = $request->sort_by;
+        if ($request->sort_by == 'full_name') {
+            $request->merge(['sort_by' => 'employees.last_name']);
+        }
 
-        return Inertia::render('Employees/IndexEmployee', [
-            'employees' => $employees,
-            'per_page' => 5,
+        // set default to desc
+        if ($request->is_sort_desc == null) {
+            $request->merge(['is_sort_desc' => true]);
+        }
+
+        $employees = EmployeeResource::collection($this->employeeService->indexEmployeePaginate($request->toArray()));
+
+        return Inertia::render('Employees/IndexPaginateEmployee',[
+            'sortBy' => $sort_by,
+            'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
+            'search' => $request->search,
+            'module' => 'employees',
+            'items' => $employees,
         ]);
     }
 
