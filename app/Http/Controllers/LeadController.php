@@ -9,6 +9,7 @@ use App\Http\Resources\LeadResource;
 use App\Models\AssignedConfirmer;
 use App\Models\AssignedEmployee;
 use App\Models\Lead;
+use App\Services\ActivityLogService;
 use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
 use App\Services\LeadService;
@@ -29,7 +30,7 @@ class LeadController extends Controller
     private PropertyService $propertyService;
     private VenueService $venueService;
     private SourceService $sourceService;
-    private AssignedEmployeeService $assignedEmployeeService;
+    public $module_name = 'leads';
 
     public function __construct(
         LeadService $leadService,
@@ -37,14 +38,12 @@ class LeadController extends Controller
         PropertyService $propertyService,
         VenueService $venueService,
         SourceService $sourceService,
-        AssignedEmployeeService $assignedEmployeeService
     ) {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
         $this->sourceService = $sourceService;
-        $this->assignedEmployeeService = $assignedEmployeeService;
     }
 
     /**
@@ -75,7 +74,7 @@ class LeadController extends Controller
         $exhibitor = $this->employeeService->indexExhibitor()->first();
 
         $sources = Helper::leadSource(NULL);
-        if(Auth::user()->employee->usergroup->name == 'exhibit-admin') {
+        if (Auth::user()->employee->usergroup->name == 'exhibit-admin') {
             $sources = Helper::leadSource('EXHIBIT');
         }
 
@@ -123,7 +122,7 @@ class LeadController extends Controller
         }
 
         // add lead
-        ['result' => $result, 'message' => $message] = $this->leadService->createLead($request->toArray());
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->createLead($request->toArray());
 
         return redirect()->route('leads.index')->with($result, $message);
     }
@@ -151,7 +150,6 @@ class LeadController extends Controller
     public function edit(Lead $lead)
     {
         $this->authorize('update', Lead::class);
-        // dd($lead->getUploadedFile(), Storage::disk('public'));
         $lead = $this->leadService->showLead($lead);
 
         return Inertia::render('Leads/EditLead', [
@@ -173,7 +171,7 @@ class LeadController extends Controller
             $request->merge(['owned_gadgets' => null]);
         }
 
-        ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->updateLead($request->toArray(), $lead);
 
         return redirect()->route('leads.index')->with($result, $message);
     }
@@ -207,12 +205,12 @@ class LeadController extends Controller
         }
 
         // set default value for start to
-        if(!$request->has('start_to')) {
+        if (!$request->has('start_to')) {
             $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
         }
 
         // set default value for end to
-        if(!$request->has('end_to')) {
+        if (!$request->has('end_to')) {
             $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
         }
 
@@ -256,7 +254,7 @@ class LeadController extends Controller
 
         $lead = Lead::find($request->lead_id);
 
-        ['result' => $result, 'message' => $message] = $this->leadService->done($lead, $request->status, $request->employee_type);
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
         return redirect()->route('assigned-employees')->with($result, $message);
     }
@@ -275,7 +273,7 @@ class LeadController extends Controller
             foreach ($request->lead_ids as $lead_id) {
                 $lead = Lead::find($lead_id);
 
-                $lead = $this->leadService->done($lead, false, $request->employee_type);
+                ['subject' => $subject] = $this->leadService->done($lead, false, $request->employee_type);
             }
         } catch (Exception $e) {
             return redirect()->route('done')->with('error', $e->getMessage());
@@ -297,7 +295,7 @@ class LeadController extends Controller
 
         $lead = Lead::find($request->lead_id);
 
-        ['result' => $result, 'message' => $message] = $this->leadService->done($lead, $request->status, $request->employee_type);
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
         return redirect()->route('confirms')->with($result, $message);
     }
@@ -316,9 +314,10 @@ class LeadController extends Controller
             foreach ($request->lead_ids as $lead_id) {
                 $lead = Lead::find($lead_id);
 
-                $lead = $this->leadService->done($lead, false, $request->employee_type);
+                ['subject' => $subject] = $this->leadService->done($lead, false, $request->employee_type);
             }
         } catch (Exception $e) {
+
             return redirect()->route('done')->with('error', $e->getMessage());
         }
 
@@ -351,7 +350,7 @@ class LeadController extends Controller
     public function indexPaginateConfirmed(Request $request)
     {
         // $this->authorize('read', AssignedConfirmer::class);
-        
+
         //set default value for lead name
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'lead_full_name') {
@@ -364,17 +363,17 @@ class LeadController extends Controller
         }
 
         // set default value for start to
-        if(!$request->has('start_to')) {
+        if (!$request->has('start_to')) {
             $request->merge(['start_to' => Carbon::now()->format('Y-m-d')]);
         }
 
         // set default value for end to
-        if(!$request->has('end_to')) {
+        if (!$request->has('end_to')) {
             $request->merge(['end_to' => Carbon::now()->format('Y-m-d')]);
         }
 
         // if sort by date
-        if($request->sort_by == 'assigned_confirmer.updated_at') {
+        if ($request->sort_by == 'assigned_confirmer.updated_at') {
             $request->merge(['sort_by' => 'assigned_confirmers.updated_at']);
         }
 
@@ -403,28 +402,5 @@ class LeadController extends Controller
             'exhibitors' => EmployeeResource::collection($this->employeeService->indexExhibitor()),
             'module' => 'confirmeds',
         ]);
-    }
-
-    /**
-     * set the lead as showed
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function showedLead(Request $request)
-    {
-        $request->validate([
-            'lead_id' => 'required|exists:leads,id',
-            'status' => 'required'
-        ]);
-
-        try {
-
-            $this->leadService->showed($request->toArray());
-        } catch (Exception $e) {
-            return redirect()->route('confirmed')->with('error', 'Unsuccessful to mark as showed!');
-        }
-
-        return redirect()->route('confirmed')->with('success', 'Successfully mark as showed!');
     }
 }

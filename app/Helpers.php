@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Jenssegers\Agent\Agent;
 
 class Helper
 {
@@ -421,5 +422,21 @@ class Helper
         ];
 
         return $array;
+    }
+
+    /**
+     * Get the device information used by the user
+     *
+     * @return array
+     */
+    public static function deviceInfo() : array
+    {
+        $agent = new Agent();
+
+        return [
+            'device' => $agent->device(),
+            'platform' => $agent->platform(),
+            'browser' => $agent->browser()
+        ];
     }
 }

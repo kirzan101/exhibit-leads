@@ -51,16 +51,11 @@ class SourceController extends Controller
      */
     public function store(SourceFormRequest $request)
     {
-        try {
-            $this->authorize('create', Source::class);
+        $this->authorize('create', Source::class);
 
-            $this->sourceService->createSource($request->toArray());
+        ['result' => $result, 'message' => $message] = $this->sourceService->createSource($request->toArray());
 
-        } catch (Exception $e) {
-            return redirect()->route('sources.index')->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('sources.index')->with('success', 'Successfully saved!');
+        return redirect()->route('sources.index')->with($result, $message);
     }
 
     /**
@@ -96,16 +91,9 @@ class SourceController extends Controller
      */
     public function update(SourceFormRequest $request, Source $source)
     {
-        try {
-            $this->authorize('update', Source::class);
+        ['result' => $result, 'message' => $message] = $this->sourceService->updateSource($request->toArray(), $source);
 
-            $this->sourceService->updateSource($request->toArray(), $source);
-
-        } catch (Exception $e) {
-            return redirect()->route('sources.index')->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('sources.index')->with('success', 'Successfully updated!');
+        return redirect()->route('sources.index')->with($result, $message);
     }
 
     /**
@@ -113,15 +101,8 @@ class SourceController extends Controller
      */
     public function destroy(Source $source)
     {
-        try {
-            $this->authorize('delete', Source::class);
+        ['result' => $result, 'message' => $message] = $this->sourceService->deleteSource($source);
 
-            $this->sourceService->deleteSource($source);
-
-        } catch (Exception $e) {
-            return redirect()->route('sources.index')->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('sources.index')->with('success', 'Successfully deleted!');
+        return redirect()->route('sources.index')->with($result, $message);
     }
 }

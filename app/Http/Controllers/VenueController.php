@@ -52,20 +52,9 @@ class VenueController extends Controller
     {
         $this->authorize('create', Venue::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->venueService->createVenueService($request->toArray());
 
-            $this->venueService->createVenueService($request->toArray());
-
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return redirect()->route('venues.index')->with('error', $e->getMessage());
-
-        }
-
-        DB::commit();
-        return redirect()->route('venues.index')->with('success', 'Successfully created!');
+        return redirect()->route('venues.index')->with($result, $message);
     }
 
     /**
@@ -101,20 +90,9 @@ class VenueController extends Controller
     {
         $this->authorize('update', Venue::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->venueService->updateVenueService($request->toArray(), $venue);
 
-            $this->venueService->updateVenueService($request->toArray(), $venue);
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            
-            return redirect()->route('venues.index')->with('error', $e->getMessage());
-
-        }
-        DB::commit();
-
-        return redirect()->route('venues.index')->with('success', 'Successfully updated!');
+        return redirect()->route('venues.index')->with($result, $message);
     }
 
     /**
@@ -124,19 +102,8 @@ class VenueController extends Controller
     {
         $this->authorize('delete', Venue::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->venueService->deleteVenueService($venue);
 
-            $this->venueService->deleteVenueService($venue);
-
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return redirect()->route('venues.index')->with('error', $e->getMessage());
-
-        }
-        DB::commit();
-        
-        return redirect()->route('venues.index')->with('success', 'Successfully deleted');
+        return redirect()->route('venues.index')->with($result, $message);
     }
 }
