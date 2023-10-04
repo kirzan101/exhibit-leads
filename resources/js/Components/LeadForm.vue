@@ -314,9 +314,7 @@
                 <b-col sm="12">
                     <b-form-group
                         label="Email"
-                        label-for="email"
-                        label-class="required"
-                    >
+                        label-for="email"                    >
                         <b-form-input
                             type="email"
                             id="email"
