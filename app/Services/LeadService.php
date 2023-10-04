@@ -727,7 +727,7 @@ class LeadService
             'event' => 'delete',
             'status' => $return_values['result'],
             'browser' => json_encode(Helper::deviceInfo()),
-            'properties' => '{"lead_id" => ' . $this->last_id . '}',
+            'properties' => '{"lead_id":' . $this->last_id . '}',
             'causer_id' => Auth::user()->id,
             'subject_id' => $return_values['subject']
         ]);

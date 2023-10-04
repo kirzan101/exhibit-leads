@@ -208,7 +208,7 @@ class AssignedEmployeeService
                         'event' => 'create',
                         'status' => $return_values['result'],
                         'browser' => json_encode(Helper::deviceInfo()),
-                        'properties' => json_encode($request),
+                        'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                         'causer_id' => Auth::user()->id,
                         'subject_id' => $return_values['subject']
                     ]);
@@ -226,7 +226,7 @@ class AssignedEmployeeService
                 'event' => 'create',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);
@@ -275,7 +275,7 @@ class AssignedEmployeeService
                         'event' => 'update',
                         'status' => $return_values['result'],
                         'browser' => json_encode(Helper::deviceInfo()),
-                        'properties' => json_encode($request),
+                        'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                         'causer_id' => Auth::user()->id,
                         'subject_id' => $return_values['subject']
                     ]);
@@ -293,7 +293,7 @@ class AssignedEmployeeService
                 'event' => 'update',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);
@@ -306,37 +306,10 @@ class AssignedEmployeeService
     }
 
     /**
-     * delete assigned employee service
-     *
-     * @param AssignedEmployee $assignedEmployee
-     * @return boolean
-     */
-    public function deleteAssignedEmployee(AssignedEmployee $assignedEmployee): bool
-    {
-        try {
-
-            // update lead
-            $lead = Lead::find($assignedEmployee->lead_id);
-            $lead->update([
-                'is_booker_assigned' => false,
-                'remarks' => null,
-                'updated_by' => Auth::user()->employee->id
-            ]);
-
-            // delete record here
-            $assignedEmployee->delete();
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * removed assigned employee in a lead
      *
      * @param array $request
-     * @return boolean
+     * @return array
      */
     public function removedAssigned(array $request): array
     {
@@ -363,7 +336,7 @@ class AssignedEmployeeService
                     'event' => 'delete',
                     'status' => $return_values['result'],
                     'browser' => json_encode(Helper::deviceInfo()),
-                    'properties' => json_encode($request),
+                    'properties' => '{"lead_id":' . $lead->id . ',"employee_id":""}',
                     'causer_id' => Auth::user()->id,
                     'subject_id' => $return_values['subject']
                 ]);
@@ -380,7 +353,7 @@ class AssignedEmployeeService
                 'event' => 'delete',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":""}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);

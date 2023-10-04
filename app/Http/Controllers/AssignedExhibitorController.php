@@ -110,18 +110,9 @@ class AssignedExhibitorController extends Controller
     {
         $this->authorize('create', AssignedExhibitor::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->createAssignedExhbitor($request->toArray());
 
-            $this->assignedExhibitorService->createAssignedExhbitor($request->toArray());
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('leads.index')->with('success', 'Successfully assigned!');
+        return redirect()->route('leads.index')->with($result, $message);
     }
 
     /**
@@ -207,18 +198,9 @@ class AssignedExhibitorController extends Controller
     {
         $this->authorize('create', AssignedExhibitor::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->updateAssignedExhibitor($request->toArray());
 
-            $this->assignedExhibitorService->updateAssignedExhibitor($request->toArray());
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect('/assigned-exhibitors')->with('success', 'Successfully reassigned!');
+        return redirect('/assigned-exhibitors')->with($result, $message);
     }
 
     /**

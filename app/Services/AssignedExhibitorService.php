@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AssignedExhibitorService
 {
@@ -46,7 +47,7 @@ class AssignedExhibitorService
                 $lead = Lead::find($lead);
 
                 if (!$lead->is_exhibitor_assigned) {
-                    AssignedExhibitor::create([
+                    $assigned_exhibitor = AssignedExhibitor::create([
                         'lead_id' => $lead->getKey(),
                         'employee_id' => $request['employee_id'],
                         'created_by' => Auth::user()->employee->id,
@@ -57,7 +58,7 @@ class AssignedExhibitorService
                         'updated_by' => Auth::user()->employee->id
                     ]);
 
-                    $this->last_id = $lead->id;
+                    $this->last_id = $assigned_exhibitor->id;
 
                     $return_values = ['result' => 'success', 'message' => 'Succefully created!', 'subject' => $this->last_id];
 
@@ -68,7 +69,7 @@ class AssignedExhibitorService
                         'event' => 'create',
                         'status' => $return_values['result'],
                         'browser' => json_encode(Helper::deviceInfo()),
-                        'properties' => json_encode($request),
+                        'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                         'causer_id' => Auth::user()->id,
                         'subject_id' => $return_values['subject']
                     ]);
@@ -84,7 +85,7 @@ class AssignedExhibitorService
                 'event' => 'delete',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => '{"lead_id" => ' . $this->last_id . '}',
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);
@@ -121,7 +122,7 @@ class AssignedExhibitorService
                         'updated_by' => Auth::user()->employee->id
                     ]);
 
-                    $this->last_id = $lead->id;
+                    $this->last_id = $assignedExhibitor->id;
 
                     $return_values = ['result' => 'success', 'message' => 'Succefully updated!', 'subject' => $this->last_id];
 
@@ -132,7 +133,7 @@ class AssignedExhibitorService
                         'event' => 'update',
                         'status' => $return_values['result'],
                         'browser' => json_encode(Helper::deviceInfo()),
-                        'properties' => json_encode($request),
+                        'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                         'causer_id' => Auth::user()->id,
                         'subject_id' => $return_values['subject']
                     ]);
@@ -149,7 +150,7 @@ class AssignedExhibitorService
                 'event' => 'update',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $request['employee_id'] . '}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);
@@ -168,7 +169,12 @@ class AssignedExhibitorService
      */
     public function deleteAssignedExhibitor(AssignedExhibitor $assignedExhibitor): array
     {
+        $this->last_id = $assignedExhibitor->id;
+        $employee_id = $assignedExhibitor->employee_id;
+
         try {
+            DB::beginTransaction();
+
             $lead = Lead::find($assignedExhibitor->lead_id);
 
             $lead->update([
@@ -176,27 +182,15 @@ class AssignedExhibitorService
                 'updated_by' => Auth::user()->employee->id
             ]);
 
-            $this->last_id = $assignedExhibitor->id;
             $assignedExhibitor->delete();
+
+            $return_values = ['result' => 'error', 'message' => 'Successfully Deleted', 'subject' => $this->last_id];
         } catch (Exception $e) {
+            DB::rollBack();
+            
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
-
-            //log activity
-            ActivityLog::create([
-                'name' => $this->module_name,
-                'description' => $return_values['message'],
-                'event' => 'delete',
-                'status' => $return_values['result'],
-                'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => '{"lead_id" => ' . $this->last_id . '}',
-                'causer_id' => Auth::user()->id,
-                'subject_id' => $return_values['subject']
-            ]);
-
-            return $return_values;
         }
-
-        $return_values = ['result' => 'error', 'message' => 'Successfully Deleted', 'subject' => $this->last_id];
+        DB::commit();
 
         //log activity
         ActivityLog::create([
@@ -205,7 +199,7 @@ class AssignedExhibitorService
             'event' => 'delete',
             'status' => $return_values['result'],
             'browser' => json_encode(Helper::deviceInfo()),
-            'properties' =>  '{"lead_id" => ' . $this->last_id . '}',
+            'properties' => '{"lead_id":' . $lead->id . ',"employee_id":' . $employee_id . '}',
             'causer_id' => Auth::user()->id,
             'subject_id' => $return_values['subject']
         ]);
@@ -222,6 +216,7 @@ class AssignedExhibitorService
     public function removedAssignedExhibitor(array $request): array
     {
         try {
+            DB::beginTransaction();
             foreach ($request['lead_ids'] as $lead) {
                 $lead = Lead::find($lead);
 
@@ -230,13 +225,13 @@ class AssignedExhibitorService
                     'updated_by' => Auth::user()->employee->id
                 ]);
 
-                $assigned_exhibitor = AssignedExhibitor::where('lead_id', $lead->id);
+                $assigned_exhibitor = AssignedExhibitor::where('lead_id', $lead->id)->first();
                 $this->last_id = $assigned_exhibitor->id;
 
                 $return_values = ['result' => 'success', 'message' => 'Successfully Removed assignment', 'subject' => $this->last_id];
 
-                $assigned_exhibitor->delete();
 
+                $assigned_exhibitor->delete();
                 //log activity
                 ActivityLog::create([
                     'name' => $this->module_name,
@@ -244,12 +239,14 @@ class AssignedExhibitorService
                     'event' => 'delete',
                     'status' => $return_values['result'],
                     'browser' => json_encode(Helper::deviceInfo()),
-                    'properties' =>  '{"lead_id" => ' . $this->last_id . '}',
+                    'properties' => '{"lead_id":' . $lead->id . ',"employee_id":""}',
                     'causer_id' => Auth::user()->id,
                     'subject_id' => $return_values['subject']
                 ]);
             }
         } catch (Exception $e) {
+            DB::rollBack();
+
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
 
             //log activity
@@ -259,15 +256,14 @@ class AssignedExhibitorService
                 'event' => 'delete',
                 'status' => $return_values['result'],
                 'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => '{"lead_id" => ' . $this->last_id . '}',
+                'properties' => '{"lead_id":' . $lead->id . ',"employee_id":""}',
                 'causer_id' => Auth::user()->id,
                 'subject_id' => $return_values['subject']
             ]);
-
-            return $return_values;
         }
+        DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully Removed assignment', 'subject' => $this->last_id];
+        return $return_values;
     }
 
     /**

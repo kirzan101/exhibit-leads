@@ -157,18 +157,9 @@ class AssignedConfirmerController extends Controller
     {
         $this->authorize('create', AssignedConfirmer::class);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->updateAssignedConfirmer($request->toArray());
 
-            $this->assignedConfirmerService->updateAssignedConfirmer($request->toArray());
-        } catch (Exception $ex) {
-
-            DB::rollBack();
-            return redirect()->route('leads.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully reassigned!');
+        return redirect()->route('assigned-confirmers.index')->with($result, $message);
     }
 
     /**
@@ -185,13 +176,9 @@ class AssignedConfirmerController extends Controller
             'lead_ids' => 'required|array'
         ]);
 
-        $result = $this->assignedConfirmerService->removedAssigned($request);
+        ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->removedAssigned($request);
 
-        if (!$result) {
-            return redirect()->route('assigned-confirmers.index')->with('error', 'Error on removing assignment!');
-        }
-
-        return redirect()->route('assigned-confirmers.index')->with('success', 'Successfully removed assignment!');
+        return redirect()->route('assigned-confirmers.index')->with($result, $message);
     }
 
     /**
