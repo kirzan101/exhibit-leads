@@ -19,4 +19,13 @@ class ActivityLog extends Model
         'subject_id',
         'causer_id',
     ];
+
+    /**
+     * associate user to causer_id
+     *
+     * @return void
+     */
+    public function causer() {
+        return $this->belongsTo(User::class, 'causer_id');
+    }
 }

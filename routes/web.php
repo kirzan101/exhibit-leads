@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AssignedConfirmerController;
 use App\Http\Controllers\AssignedEmployeeController;
 use App\Http\Controllers\AssignedExhibitorController;
@@ -145,4 +146,7 @@ Route::middleware('auth')->group(function () {
 
     //reports
     Route::get('/reports/confirmed', [ReportController::class, 'confirmedReport']);
+
+    // activity logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
 });

@@ -16,7 +16,8 @@ class ActivityLogService
     public function indexActivityLogPaginate(array $request): Paginator
     {
         $activity_logs = ActivityLog::select('activity_logs.*')
-            ->join('users', 'users.id', '=', 'activity_logs.causer_id');
+            ->join('users', 'users.id', '=', 'activity_logs.causer_id')
+            ->join('employees', 'employees.user_id', '=', 'users.id');
 
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
         $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
@@ -29,8 +30,8 @@ class ActivityLogService
         if (array_key_exists('search', $request) && !empty($request['search'])) {
             $activity_logs->where('activity_logs.name', 'LIKE', '%' . $request['search'] . '%')
                 ->orWhere('activity_logs.description', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('users.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('users.last_name', 'LIKE', '%' . $request['search'] . '%');
+                ->orWhere('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
+                ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%');
         }
 
         if (array_key_exists('event', $request) && !empty($request['event'])) {

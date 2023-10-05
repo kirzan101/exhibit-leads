@@ -25,7 +25,8 @@ class PermissionSeeder extends Seeder
             'surveys',
             'rois',
             'exhibits',
-            'status'
+            'status',
+            'activity-logs'
         ];
 
         $types = [

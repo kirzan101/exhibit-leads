@@ -95,6 +95,15 @@
                                 href="/confirmed"
                                 >Confirmed</Link
                             >
+                            <Link
+                                v-if="check_access('activity-logs', 'read')"
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                @click="closeDropDown"
+                                href="/activity-logs"
+                                >Activity Logs</Link
+                            >
                         </li>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
@@ -170,7 +179,7 @@ export default {
         check_manage_access() {
             //checker for manage drop down
             let result = [];
-            let modules = ["employees", "venues", "sources", "confirms"];
+            let modules = ["employees", "venues", "sources", "confirms", "activity-logs"];
             let permissions = this.$page.props.auth.permissions;
 
             modules.forEach((module) => {

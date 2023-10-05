@@ -9,7 +9,7 @@
             <br />
 
             <div>
-                <b-card-group deck>
+                <b-card-group class="my-4" deck>
                     <b-card
                         title="Leads"
                     >
@@ -17,7 +17,7 @@
                             >Add lead information</b-card-text
                         >
                         <Link href="/leads" class="btn btn-info" v-if="check_access('leads', 'read')">Go to leads</Link>
-                        <b-btn variant="success" disabled v-else>Go to leads</b-btn>
+                        <b-btn variant="info" disabled v-else>Go to leads</b-btn>
                     </b-card>
 
                     <b-card
@@ -38,6 +38,38 @@
                         >
                         <Link href="/confirms" class="btn btn-info" v-if="check_access('confirms', 'read')">Go to confirm</Link>
                         <b-btn variant="info" disabled v-else>Go to confirm</b-btn>
+                    </b-card>
+                </b-card-group>
+
+                <b-card-group class="my-4" deck>
+                    <b-card
+                        title="Venues"
+                    >
+                        <b-card-text
+                            >Create venues</b-card-text
+                        >
+                        <Link href="/venues" class="btn btn-info" v-if="check_access('venues', 'read')">Go to venues</Link>
+                        <b-btn variant="info" disabled v-else>Go to venues</b-btn>
+                    </b-card>
+
+                    <b-card
+                        title="Sources"
+                    >
+                        <b-card-text
+                            >Create sources</b-card-text
+                        >
+                        <Link href="/sources" class="btn btn-info" v-if="check_access('sources', 'read')">Go to sources</Link>
+                        <b-btn variant="info" disabled v-else>Go to sources</b-btn>
+                    </b-card>
+
+                    <b-card
+                        title="Employees"
+                    >
+                        <b-card-text
+                            >Create employees</b-card-text
+                        >
+                        <Link href="/employees" class="btn btn-info" v-if="check_access('employees', 'read')">Go to employees</Link>
+                        <b-btn variant="info" disabled v-else>Go to employees</b-btn>
                     </b-card>
                 </b-card-group>
             </div>
