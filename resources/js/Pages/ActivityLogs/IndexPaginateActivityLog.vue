@@ -29,9 +29,7 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">
-                        Activity Logs
-                    </div>
+                    <div class="col-sm-6">Activity Logs</div>
                     <div class="col-sm-6">&nbsp;</div>
                 </div>
             </h5>
@@ -75,6 +73,8 @@ export default {
                 { key: "description", label: "Description", isSortable: false },
                 { key: "event", label: "Event", isSortable: false },
                 { key: "status", label: "Status", isSortable: false },
+                { key: "browser", label: "Browser", isSortable: false },
+                { key: "properties", label: "Properties", isSortable: false },
                 { key: "subject_id", label: "Subject ID", isSortable: false },
                 { key: "causer_full_name", label: "Causer", isSortable: false },
                 { key: "created_at", label: "Accessed at", isSortable: true },

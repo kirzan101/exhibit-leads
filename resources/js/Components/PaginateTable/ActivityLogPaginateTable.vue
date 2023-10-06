@@ -128,17 +128,46 @@
             </template>
             <!-- loader end -->
 
+            <!-- browser start -->
+            <template #cell(browser)="row">
+                <b-button
+                    variant="primary"
+                    v-b-modal.modal-json
+                    @click="viewJson(row.item.browser, 'Browser')"
+                    >View</b-button
+                >
+            </template>
+            <!-- browser end -->
+
+            <!-- properties start -->
+            <template #cell(properties)="row">
+                <b-button
+                    variant="success"
+                    v-b-modal.modal-json
+                    @click="viewJson(row.item.properties, 'Properties')"
+                    >View</b-button
+                >
+            </template>
+            <!-- properties end -->
+
             <!-- format assigned date start -->
             <template #cell(created_at)="row">
                 {{ formatDate(row.item.created_at) }}
             </template>
             <!-- format assigned date end -->
         </b-table>
+
+        <JsonViewModal
+            v-if="jsonModal.jsonData || jsonModal.title"
+            :title="jsonModal.title"
+            :jsonData="jsonModal.jsonData"
+        />
     </b-container>
 </template>
 
 <script>
 import { Link } from "@inertiajs/vue2";
+import JsonViewModal from "../Modals/JsonViewModal.vue";
 
 export default {
     props: {
@@ -152,6 +181,7 @@ export default {
     },
     components: {
         Link,
+        JsonViewModal,
     },
     data() {
         return {
@@ -163,8 +193,11 @@ export default {
                 is_sort_desc: this.sort_desc,
                 per_page: this.items.meta.per_page,
                 search: this.search_filter,
-            }
-
+            },
+            jsonModal: {
+                title: null,
+                jsonData: null,
+            },
         };
     },
     computed: {
@@ -222,6 +255,10 @@ export default {
                 " " +
                 date_value.toLocaleTimeString("en-US")
             );
+        },
+        viewJson(data, title) {
+            this.jsonModal.jsonData = data;
+            this.jsonModal.title = title;
         },
     },
 };
