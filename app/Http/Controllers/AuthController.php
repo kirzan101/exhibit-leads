@@ -74,7 +74,7 @@ class AuthController extends Controller
     public function logout()
     {
         $log = [
-            'name' => 'login',
+            'name' => 'logout',
             'description' => 'Successfully logged in!',
             'event' => 'auth',
             'status' => 'success',
