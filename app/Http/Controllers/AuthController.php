@@ -48,9 +48,9 @@ class AuthController extends Controller
 
             // log access
             $log = [
-                'name' => 'login',
+                'name' => 'auth',
                 'description' => 'Successfully logged in!',
-                'event' => 'auth',
+                'event' => 'login',
                 'status' => 'success',
                 'properties' => json_encode($request),
                 'subject_id' => Auth::user()->id
@@ -74,9 +74,9 @@ class AuthController extends Controller
     public function logout()
     {
         $log = [
-            'name' => 'logout',
+            'name' => 'auth',
             'description' => 'Successfully logged in!',
-            'event' => 'auth',
+            'event' => 'logout',
             'status' => 'success',
             'properties' => '{"user_id":' . Auth::user()->id . '}',
             'subject_id' => Auth::user()->id
