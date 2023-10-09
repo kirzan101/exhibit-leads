@@ -59,6 +59,7 @@ class LeadFormRequest extends FormRequest
             'venue_id' => 'nullable|exists:venues,id',
             'spouse_first_name' => 'nullable|min:2',
             'spouse_last_name' => 'nullable|min:2',
+            'date_filled' => 'nullable|date_format:Y-m-d'
         ];
     }
 

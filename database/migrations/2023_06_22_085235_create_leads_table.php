@@ -65,6 +65,7 @@ return new class extends Migration
             $table->boolean('is_confidential')->default(false);
             $table->boolean('is_showed')->default(false);
             $table->unsignedBigInteger('venue_id')->nullable();
+            $table->date('date_filled')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

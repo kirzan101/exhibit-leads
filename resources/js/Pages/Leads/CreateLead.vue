@@ -631,7 +631,22 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="4">
+                    <b-col sm="3">
+                        <b-form-group label="Date Filled" label-for="date-filled">
+                            <b-form-input
+                                type="date"
+                                id="date-filled"
+                                v-model="form.date_filled"
+                                :state="errors.date_filled ? false : null"
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.date_filled ? false : null"
+                            >
+                                {{ errors.date_filled }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="3">
                         <b-form-group label="Refer By" label-for="refer-by">
                             <b-form-input
                                 type="text"
@@ -646,7 +661,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Holiday Consultant"
                             label-for="holiday-consultant"
@@ -668,7 +683,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Is Confidential?"
                             label-for="is-confidential"
@@ -775,6 +790,7 @@ export default {
                 venue_id: null,
                 spouse_first_name: null,
                 spouse_last_name: null,
+                date_filled: null,
             },
             titles: [
                 { text: "-- select --", value: null },

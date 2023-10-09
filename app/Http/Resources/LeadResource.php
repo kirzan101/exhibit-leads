@@ -79,6 +79,7 @@ class LeadResource extends JsonResource
             'is_confidential' => (bool) $this->is_confidential,
             'venue' => $this->venue,
             'venue_id' => $this->venue_id,
+            'date_filled' => $this->date_filled,
             'created_at' => $this->created_at,
             'created_by' => $this->createdBy,
             'updated_at' => $this->updated_at,
