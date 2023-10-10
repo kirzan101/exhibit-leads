@@ -392,7 +392,8 @@ class AssignedEmployeeService
             ]);
 
             $this->last_id = $assigned_employee->id;
-            $return_values = ['result' => 'success', 'message' => 'Successfully saved modified!', 'subject' => $this->last_id];
+            // $return_values = ['result' => 'success', 'message' => 'Successfully saved modified!', 'subject' => $this->last_id];
+            $return_values = ['result' => 'success', 'message' => 'Successfully set "' . $request['lead_status'] . '" status', 'subject' => $this->last_id];
 
             //log activity
             ActivityLog::create([

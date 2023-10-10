@@ -199,4 +199,21 @@ class AssignedConfirmerController extends Controller
 
         return redirect()->route('confirms')->with($result, $message);
     }
+
+    /**
+     * removed confirmed leads
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function removeConfirmedLeads(Request $request)
+    {
+        $request->validate([
+            'lead_ids' => 'required'
+        ]);
+
+        ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->removeConfirmedLead($request->toArray());
+
+        return redirect()->route('confirmed')->with($result, $message);
+    }
 }

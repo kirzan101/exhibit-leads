@@ -75,7 +75,7 @@ class AuthController extends Controller
     {
         $log = [
             'name' => 'auth',
-            'description' => 'Successfully logged in!',
+            'description' => 'Successfully logged out!',
             'event' => 'logout',
             'status' => 'success',
             'properties' => '{"user_id":' . Auth::user()->id . '}',

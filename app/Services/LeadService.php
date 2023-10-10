@@ -779,21 +779,21 @@ class LeadService
                     'updated_by' => Auth::user()->id
                 ]);
 
-                $return_values = ['result' => 'success', 'message' => 'Successfully Done!', 'subject' => $lead];
+                $return_values = ['result' => 'success', 'message' => 'Successfully Done!', 'subject' => $lead->id];
             } else if ($employee_type === 'confirmer') {
                 $lead = tap($lead)->update([
                     'is_done_confirmed' => $status,
                     'updated_by' => Auth::user()->id
                 ]);
 
-                $return_values = ['result' => 'success', 'message' => 'Successfully Done!', 'subject' => $lead];
+                $return_values = ['result' => 'success', 'message' => 'Successfully Confirmed Done!', 'subject' => $lead->id];
             } else {
-                $return_values = ['result' => 'error', 'message' => 'Incorrect employee type!', 'subject' => $lead];
+                $return_values = ['result' => 'error', 'message' => 'Incorrect employee type!', 'subject' => $lead->id];
             }
         } catch (Exception $e) {
             DB::rollBack();
 
-            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead->id];
         }
         DB::commit();
 
@@ -828,10 +828,10 @@ class LeadService
                 'updated_by' => Auth::user()->employee->id
             ]);
 
-            $return_values = ['result' => 'error', 'message' => 'Successfully set as showed', 'subject' => $lead];
+            $return_values = ['result' => 'error', 'message' => 'Successfully set as showed', 'subject' => $lead->id];
 
         } catch (Exception $e) {
-            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead];
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead->id];
         }
 
         //log activity
@@ -841,7 +841,7 @@ class LeadService
             'event' => 'update',
             'status' => $return_values['result'],
             'browser' => json_encode(Helper::deviceInfo()),
-            'properties' => json_encode($lead),
+            'properties' => json_encode($lead->id),
             'causer_id' => Auth::user()->id,
             'subject_id' => $return_values['subject']
         ]);

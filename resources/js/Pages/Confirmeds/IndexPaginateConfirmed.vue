@@ -66,32 +66,6 @@
                                 >Remove</b-button
                             >
                         </div>
-                        <!-- remove done -->
-                        <b-modal title="Notice:" id="remove-modal">
-                            <p>Remove Done remarks?</p>
-                            <template #modal-footer>
-                                <b-button
-                                    variant="danger"
-                                    type="button"
-                                    @click="$bvModal.hide('remove-modal')"
-                                    >Close</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
-                                    @click="submitDone()"
-                                    v-if="selected_employee != ''"
-                                    >Yes</b-button
-                                >
-                                <b-button
-                                    variant="success"
-                                    type="button"
-                                    disabled
-                                    v-else
-                                    >Yes</b-button
-                                >
-                            </template>
-                        </b-modal>
                     </div>
                 </div>
             </h5>
@@ -231,7 +205,7 @@ export default {
                 employee_id: this.employeeId,
                 confirmer_id: this.confirmerId,
                 exhibitor_id: this.exhibitorId,
-            }
+            },
         };
     },
     methods: {
@@ -285,7 +259,7 @@ export default {
 
             this.$bvModal.hide("remove-modal");
 
-            router.post("/done/cancel", this.form);
+            router.post("/confirmed/remove", this.form);
             this.selected_lead = [];
         },
         submitDownload() {
@@ -295,11 +269,11 @@ export default {
             // console.log(router.get("/reports/confirmed", this.form));
             router.visit("/reports/confirmed", {
                 data: this.download_filter,
-                method: 'get',
-                onBefore: visit => {
+                method: "get",
+                onBefore: (visit) => {
                     // console.log(visit.url.href)
                     window.open(visit.url.href);
-                }
+                },
             });
         },
     },

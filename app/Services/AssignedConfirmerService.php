@@ -280,41 +280,27 @@ class AssignedConfirmerService
             }
 
             $this->last_id = $assigned_confirmer->id;
-            $return_values = ['result' => 'success', 'message' => 'Successfully confirmed!', 'subject' => $this->last_id];
-
-            //log activity
-            ActivityLog::create([
-                'name' => $this->module_name,
-                'description' => $return_values['message'],
-                'event' => 'update',
-                'status' => $return_values['result'],
-                'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
-                'causer_id' => Auth::user()->id,
-                'subject_id' => $return_values['subject']
-            ]);
-
-            return $return_values;
+            $return_values = ['result' => 'success', 'message' => 'Successfully set "' . $request['lead_status'] . '" status', 'subject' => $this->last_id];
         } catch (Exception $e) {
             DB::rollBack();
 
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
-
-            //log activity
-            ActivityLog::create([
-                'name' => $this->module_name,
-                'description' => $return_values['message'],
-                'event' => 'update',
-                'status' => $return_values['result'],
-                'browser' => json_encode(Helper::deviceInfo()),
-                'properties' => json_encode($request),
-                'causer_id' => Auth::user()->id,
-                'subject_id' => $return_values['subject']
-            ]);
-
-            return $return_values;
         }
         DB::commit();
+
+        //log activity
+        ActivityLog::create([
+            'name' => $this->module_name,
+            'description' => $return_values['message'],
+            'event' => 'update',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+        return $return_values;
     }
 
     /**
@@ -336,7 +322,7 @@ class AssignedConfirmerService
             ]);
 
             $this->last_id = $assigned_confirmer->id;
-            $return_values = ['result' => 'success', 'message' => 'Successfully confirmed!', 'subject' => $this->last_id];
+            $return_values = ['result' => 'success', 'message' => 'Successfully set "' . $request['lead_status'] . '" status', 'subject' => $this->last_id];
 
             //log activity
             ActivityLog::create([
@@ -385,7 +371,7 @@ class AssignedConfirmerService
 
             foreach ($request['lead_ids'] as $lead_id) {
                 $lead = Lead::find($lead_id);
-                $lead = $lead->update([
+                $lead = tap($lead)->update([
                     'is_done_confirmed' => false,
                     'is_confirm_assigned' => false,
                     'updated_by' => Auth::user()->employee->id
@@ -394,7 +380,7 @@ class AssignedConfirmerService
                 $this->last_id = $lead->assignedConfirmer->id;
                 $lead->assignedConfirmer->delete();
 
-                $return_values = ['result' => 'success', 'message' => 'Successfully removed!', 'subject' => $this->last_id];
+                $return_values = ['result' => 'success', 'message' => 'Successfully removed confirmed!', 'subject' => $this->last_id];
 
                 //log activity
                 ActivityLog::create([
@@ -408,8 +394,6 @@ class AssignedConfirmerService
                     'subject_id' => $return_values['subject']
                 ]);
             }
-
-            return $return_values;
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -430,5 +414,7 @@ class AssignedConfirmerService
             return $return_values;
         }
         DB::commit();
+
+        return $return_values;
     }
 }
