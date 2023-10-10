@@ -46,13 +46,16 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            //encrypt passwords
+            $request->merge(['password' => bcrypt($request->password)]);
+
             // log access
             $log = [
                 'name' => 'auth',
                 'description' => 'Successfully logged in!',
                 'event' => 'login',
                 'status' => 'success',
-                'properties' => json_encode($request),
+                'properties' => json_encode($request->toArray()),
                 'subject_id' => Auth::user()->id
             ];
 
