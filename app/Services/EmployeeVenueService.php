@@ -3,79 +3,131 @@
 namespace App\Services;
 
 use App\Models\EmployeeVenue;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeVenueService
 {
+    public $last_id;
+    public $module_name = 'employee_venues';
+
     /**
      * create employee venue record
      *
      * @param array $request
-     * @return EmployeeVenue
+     * @return array
      */
-    public function createMultipleEmployeeVenue(array $request) : bool
+    public function createMultipleEmployeeVenue(array $request): array
     {
-        $error = 0;
-        foreach($request['venue_ids'] as $venue) {
-            $employeeVenue = EmployeeVenue::create([
-                'employee_id' => $request['employee_id'],
-                'venue_id' => $venue
-            ]);
+        try {
+            DB::beginTransaction();
 
-            if(!$employeeVenue) {
-                $error++;
+            $error = 0;
+            foreach ($request['venue_ids'] as $venue) {
+                $employeeVenue = EmployeeVenue::create([
+                    'employee_id' => $request['employee_id'],
+                    'venue_id' => $venue
+                ]);
+
+                if (!$employeeVenue) {
+                    $error++;
+                }
+
+                $this->last_id = $employeeVenue->id;
             }
-        }
 
-        if($error > 0) {
-            return false;
-        }
+            if ($error > 0) {
+                DB::rollBack();
+                return ['result' => 'error', 'message' => 'Error on adding venues', 'subject' => $this->last_id];
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        return true;
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfully created employee venues', 'subject' => $this->last_id];
     }
 
     /**
      * update employee venue record
      *
      * @param array $request
-     * @return EmployeeVenue
+     * @return array
      */
-    public function updateMultipleEmployeeVenue(array $request) : bool
+    public function updateMultipleEmployeeVenue(array $request): array
     {
         //delete previous records
-        $employee_venue = EmployeeVenue::where($request['employee_id']);
-        $employee_venue->delete();
+        $employee_venues = EmployeeVenue::where('employee_id', $request['employee_id'])->get();
 
-        // create new records
-        $error = 0;
-        foreach($request['venue_ids'] as $venue) {
-            $employeeVenue = EmployeeVenue::create([
-                'employee_id' => $request['employee_id'],
-                'venue_id' => $venue
-            ]);
-
-            if(!$employeeVenue) {
-                $error++;
+        if ($employee_venues->count() > 0) {
+            foreach ($employee_venues as $employee_venue) {
+                $employee_venue->delete();
             }
         }
 
-        if($error > 0) {
-            return false;
-        }
+        // create new records
+        $error = 0;
+        try {
+            DB::beginTransaction();
 
-        return true;
+            $error = 0;
+            foreach ($request['venue_ids'] as $venue) {
+                $employeeVenue = EmployeeVenue::create([
+                    'employee_id' => $request['employee_id'],
+                    'venue_id' => $venue
+                ]);
+
+                if (!$employeeVenue) {
+                    $error++;
+                }
+
+                $this->last_id = $employeeVenue->id;
+            }
+
+            if ($error > 0) {
+                DB::rollBack();
+                return ['result' => 'error', 'message' => 'Error on adding venues', 'subject' => $this->last_id];
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        return ['result' => 'success', 'message' => 'Successfully updated employee venues', 'subject' => $this->last_id];
     }
-    
+
     /**
      * delete employee venue by employee id
      *
      * @param integer $id
-     * @return boolean
+     * @return array
      */
-    public function deleteEmployeeVenueByEmployeeId(int $id) : bool
+    public function deleteEmployeeVenueByEmployeeId(int $id): array
     {
-        $employee_venue = EmployeeVenue::where('employee_id', $id)->first();
+        $this->last_id = $id;
+        try {
+            DB::beginTransaction();
+            $employee_venues = EmployeeVenue::where('employee_id', $id)->get();
 
-        $result = $employee_venue->delete();
+            if ($employee_venues->count() > 0) {
+                foreach ($employee_venues as $employee_venue) {
+                    $employee_venue->delete();
+                }
+
+                $result = ['result' => 'success', 'message' => 'Successfully deleted employee venues', 'subject' => $this->last_id];
+            } else {
+                $result = ['result' => 'success', 'message' => 'Employee has no venues', 'subject' => $this->last_id];
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ['result' => 'success', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+
+        DB::commit();
 
         return $result;
     }
@@ -86,9 +138,9 @@ class EmployeeVenueService
      * @param integer $employee_id
      * @return array
      */
-    public function employeeVenueIds(int $employee_id) : array
+    public function employeeVenueIds(int $employee_id): array
     {
-        $venue_ids = EmployeeVenue::select('venue')->where('employee_id', $employee_id)->get();
+        $venue_ids = EmployeeVenue::select('venue_id')->where('employee_id', $employee_id)->get();
 
         return $venue_ids->toArray();
     }
