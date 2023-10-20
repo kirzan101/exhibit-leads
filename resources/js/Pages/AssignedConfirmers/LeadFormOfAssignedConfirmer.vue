@@ -80,6 +80,18 @@ export default {
         sources: Array,
     },
     methods: {
+        check_access(module, type) {
+            let permissions = this.$page.props.auth.permissions;
+
+            let access = permissions
+                .filter((item) => item.module === module)
+                .map((element) => ({
+                    module: element.module,
+                    type: element.type,
+                }));
+
+            return access.some((item) => item.type === type);
+        },
         showAlert(data) {
             this.alert = data ? true : false;
 

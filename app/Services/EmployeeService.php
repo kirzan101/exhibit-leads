@@ -135,6 +135,11 @@ class EmployeeService
      */
     public function showEmployee(Employee $employee): Employee
     {
+        // removes admin account
+        if ($employee->userGroup->id == 1) {
+            return abort(404);
+        }
+
         return $employee;
     }
 
@@ -282,9 +287,11 @@ class EmployeeService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $employees->where('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('employees.position', 'LIKE', '%' . $request['search'] . '%');
+            $employees->where(function ($query) use ($request) {
+                $query->where('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('employees.position', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         return $employees->orderBy($sort_by, $sort)->paginate($per_page);

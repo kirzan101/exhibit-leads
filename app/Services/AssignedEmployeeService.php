@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\Helper;
 use App\Models\ActivityLog;
 use App\Models\AssignedEmployee;
+use App\Models\AssignedExhibitor;
 use App\Models\Contract;
 use App\Models\Lead;
 use Carbon\Carbon;
@@ -75,11 +76,14 @@ class AssignedEmployeeService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $assigned_leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $assigned_leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -106,7 +110,7 @@ class AssignedEmployeeService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
         }
 
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
@@ -135,11 +139,14 @@ class AssignedEmployeeService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $assigned_leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $assigned_leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -166,7 +173,7 @@ class AssignedEmployeeService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
         }
 
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
@@ -193,10 +200,23 @@ class AssignedEmployeeService
                         'created_by' => Auth::user()->employee->id,
                     ]);
 
-                    $lead->update([
+                    $lead = tap($lead)->update([
                         'is_booker_assigned' => true,
                         'updated_by' => Auth::user()->employee->id
                     ]);
+
+                    // if lead is from roi or survey
+                    if (!$lead->is_exhibitor_assigned && (Auth::user()->employee->user_group_id == 7 || Auth::user()->employee->user_group_id == 8)) {
+                        AssignedExhibitor::create([
+                            'lead_id' => $lead->getKey(),
+                            'employee_id' => $request['employee_id'],
+                            'created_by' => Auth::user()->employee->id,
+                        ]);
+
+                        $lead->update([
+                            'is_exhibitor_assigned' => true,
+                        ]);
+                    }
 
                     $this->last_id = $assignedEmployee->id;
                     $return_values = ['result' => 'success', 'message' => 'Succefully assigned!', 'subject' => $this->last_id];

@@ -334,34 +334,11 @@
                     variant="success"
                     @click="selectedLead(row.item)"
                     class="m-1"
-                    :disabled="row.item.assigned_confirmer.lead_status != 'Confirm'"
+                    :disabled="
+                        row.item.assigned_confirmer.lead_status != 'Confirm'
+                    "
                     >Done</b-button
                 >
-
-                <ConfirmModal
-                    :form="formConfirmer"
-                    title="Confirm Lead"
-                    :status_list="confirmer_status_list"
-                    :isShow="false"
-                    @submit-confirm="submitConfirm"
-                />
-
-                <RemarksModal
-                    :form="form"
-                    :updated_by="updated_by"
-                    title="Remarks"
-                    :venues="venues"
-                    :status_list="status_list"
-                    :isShow="true"
-                />
-
-                <DoneModal
-                    v-if="row.item.assigned_employee.remarks"
-                    :status="status"
-                    :lead_id="row.item.id"
-                    :employee_type="employee_type"
-                    @submit-done="submitDone"
-                />
             </template>
             <!-- actions end -->
 
@@ -370,7 +347,42 @@
                 {{ formatDate(row.item.assigned_employee.created_at) }}
             </template>
             <!-- format assigned date end -->
+
+            <!-- format refer by start -->
+            <template #head(refer_by)="column">
+                {{ user_group == "rois" ? column.label : "" }}
+            </template>
+
+            <template #cell(refer_by)="row">
+                {{ user_group == "rois" ? row.item.refer_by : "" }}
+            </template>
+            <!-- format refer by end -->
         </b-table>
+
+        <ConfirmModal
+            :form="formConfirmer"
+            title="Confirm Lead"
+            :status_list="confirmer_status_list"
+            :isShow="false"
+            @submit-confirm="submitConfirm"
+        />
+
+        <RemarksModal
+            :form="form"
+            :updated_by="updated_by"
+            title="Remarks"
+            :venues="venues"
+            :status_list="status_list"
+            :isShow="true"
+        />
+
+        <DoneModal
+            v-if="formConfirmer.remarks"
+            :status="status"
+            :lead_id="formConfirmer.lead_id"
+            :employee_type="employee_type"
+            @submit-done="submitDone"
+        />
     </b-container>
 </template>
 
@@ -486,6 +498,9 @@ export default {
             updated_by: "",
             status: true,
             employee_type: "confirmer",
+            selectedRow: {
+                lead_id: "",
+            },
         };
     },
     computed: {
@@ -510,6 +525,9 @@ export default {
                         return { text: f.label, value: f.key };
                     }),
             ];
+        },
+        user_group() {
+            return this.$page.props.auth.user.employee.user_group.name;
         },
     },
     watch: {
@@ -587,6 +605,10 @@ export default {
                 this.formConfirmer.remarks = data.assigned_confirmer.remarks;
                 this.formConfirmer.lead_status =
                     data.assigned_confirmer.lead_status;
+            } else {
+                // empty form confirmer
+                this.formConfirmer.remarks = null,
+                this.formConfirmer.lead_status = null
             }
         },
         formatDate(value) {
@@ -601,13 +623,33 @@ export default {
         submitDone(form) {
             router.post("/confirmer/done", form);
 
+            this.emptyForm();
+            
             this.$bvModal.hide("done-modal");
         },
         submitConfirm(form) {
+            this.$emit("toggle-clear-notif");
+            
             router.post("/confirm", form);
+
+            this.emptyForm();
 
             this.$bvModal.hide("confirm-modal");
         },
+        emptyForm() {
+            //empty form
+            this.form.lead_id = null;
+            this.form.remarks = null;
+            this.form.lead_status = null;
+            this.form.venue_id = null;
+            this.updated_by = null;
+            this.form.presentation_date = null;
+            this.form.presentation_time = null;
+
+            this.formConfirmer.lead_id = null;
+            this.formConfirmer.remarks = null;
+            this.formConfirmer.lead_status = null;
+        }
     },
 };
 </script>

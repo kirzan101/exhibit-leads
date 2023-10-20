@@ -28,7 +28,9 @@ class GenericPaginateService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $query->where('name', 'LIKE', '%' . $request['search'] . '%');
+            $query->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         return $query->orderBy($sort_by, $sort)->paginate($per_page);

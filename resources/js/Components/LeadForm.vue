@@ -312,9 +312,7 @@
             </b-row>
             <b-row>
                 <b-col sm="12">
-                    <b-form-group
-                        label="Email"
-                        label-for="email"                    >
+                    <b-form-group label="Email" label-for="email">
                         <b-form-input
                             type="email"
                             id="email"
@@ -624,12 +622,16 @@
             </b-row>
             <b-row>
                 <b-col sm="3">
-                    <b-form-group label="Date Filled" label-for="date-filled">
+                    <b-form-group
+                        label="Date Filled"
+                        label-for="date-filled"
+                        label-class="required"
+                    >
                         <b-form-input
                             type="date"
                             id="date-filled"
                             v-model="form.date_filled"
-                            :disabled="true"
+                            :disabled="is_disabled"
                             :state="errors.date_filled ? false : null"
                         ></b-form-input>
                         <b-form-invalid-feedback

@@ -309,24 +309,6 @@
                     "
                     >Done</b-button
                 >
-
-                <RemarksModal
-                    :form="form"
-                    :updated_by="updated_by"
-                    title="Remarks"
-                    :venues="venues"
-                    :status_list="status_list"
-                    :isShow="false"
-                    @submit-remarks="modifyRemarks"
-                />
-
-                <DoneModal
-                    v-if="row.item.assigned_employee.remarks"
-                    :status="status"
-                    :lead_id="row.item.id"
-                    :employee_type="employee_type"
-                    @submit-done="submitDone"
-                />
             </template>
             <!-- actions end -->
 
@@ -336,6 +318,24 @@
             </template>
             <!-- format assigned date end -->
         </b-table>
+
+        <RemarksModal
+            :form="form"
+            :updated_by="updated_by"
+            title="Remarks"
+            :venues="venues"
+            :status_list="status_list"
+            :isShow="false"
+            @submit-remarks="modifyRemarks"
+        />
+
+        <DoneModal
+            v-if="form.remarks"
+            :status="status"
+            :lead_id="form.lead_id"
+            :employee_type="employee_type"
+            @submit-done="submitDone"
+        />
     </b-container>
 </template>
 
@@ -510,6 +510,9 @@ export default {
         },
         modifyRemarks(form) {
             router.post("/remarks", form);
+
+            this.emptyForm();
+            
             this.$bvModal.hide("remarks-modal");
         },
         selectedLead(data) {
@@ -536,9 +539,24 @@ export default {
             );
         },
         submitDone(form) {
+            this.$emit("toggle-clear-notif");
+
             router.post("/done", form);
+
+            this.emptyForm();
+
             this.$bvModal.hide("done-modal");
         },
+        emptyForm() {
+            //empty form
+            this.form.lead_id = null;
+            this.form.remarks = null;
+            this.form.lead_status = null;
+            this.form.venue_id = null;
+            this.updated_by = null;
+            this.form.presentation_date = null;
+            this.form.presentation_time = null;
+        }
     },
 };
 </script>

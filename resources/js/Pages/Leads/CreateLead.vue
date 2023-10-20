@@ -517,7 +517,7 @@
                                 accept="image/png, image/jpg, image/jpeg"
                             ></b-form-file>
                             <div class="mt-3">
-                                Selected file: 
+                                Selected file:
                                 <b-button
                                     class="btn btn-warning"
                                     v-if="form.contract_file"
@@ -632,7 +632,11 @@
                 </b-row>
                 <b-row>
                     <b-col sm="3">
-                        <b-form-group label="Date Filled" label-for="date-filled">
+                        <b-form-group
+                            label="Date Filled"
+                            label-for="date-filled"
+                            label-class="required"
+                        >
                             <b-form-input
                                 type="date"
                                 id="date-filled"
@@ -859,12 +863,12 @@ export default {
     },
     computed: {
         image() {
-            if(this.form.contract_file) {
-                return URL.createObjectURL(this.form.contract_file)
+            if (this.form.contract_file) {
+                return URL.createObjectURL(this.form.contract_file);
             }
 
             return null;
-        }
-    }
+        },
+    },
 };
 </script>

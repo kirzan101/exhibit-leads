@@ -102,6 +102,7 @@
                 :leadStatus="lead_status"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
+                @toggle-clear-notif="clearNotif"
             />
         </b-container>
 
@@ -161,6 +162,10 @@ export default {
                     key: "assigned_employee.lead_status",
                     label: "Status",
                     isSortable: true,
+                },
+                {
+                    key: "refer_by",
+                    label: "Refer By"
                 },
                 {
                     key: "assigned_employee_name",

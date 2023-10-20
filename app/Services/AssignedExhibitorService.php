@@ -288,11 +288,13 @@ class AssignedExhibitorService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $assigned_leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $assigned_leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -319,7 +321,7 @@ class AssignedExhibitorService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $assigned_leads->whereBetween('assigned_exhibitors.created_at', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $assigned_leads->whereBetween('assigned_exhibitors.created_at', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
         }
 
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);

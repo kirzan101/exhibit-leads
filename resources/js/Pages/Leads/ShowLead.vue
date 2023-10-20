@@ -654,7 +654,11 @@
                 </b-row>
                 <b-row>
                     <b-col sm="3">
-                        <b-form-group label="Date Filled" label-for="date-filled">
+                        <b-form-group
+                            label="Date Filled"
+                            label-for="date-filled"
+                            label-class="required"
+                        >
                             <b-form-input
                                 type="date"
                                 id="date-filled"

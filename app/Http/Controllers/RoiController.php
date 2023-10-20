@@ -92,7 +92,7 @@ class RoiController extends Controller
      */
     public function showLead(Lead $lead)
     {
-        $this->authorize('read', Survey::class);
+        $this->authorize('read', Roi::class);
 
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => true,
@@ -112,7 +112,7 @@ class RoiController extends Controller
      */
     public function editLead(Lead $lead)
     {
-        $this->authorize('update', Survey::class);
+        $this->authorize('update', Roi::class);
 
         return Inertia::render('Rois/LeadFormOfRoi', [
             'is_disabled' => false,
@@ -133,7 +133,7 @@ class RoiController extends Controller
      */
     public function updateLead(LeadFormRequest $request, Lead $lead)
     {
-        $this->authorize('update', Survey::class);
+        $this->authorize('update', Roi::class);
         
         ['result' => $result, 'message' => $message] = $this->leadService->updateLead($request->toArray(), $lead);
 

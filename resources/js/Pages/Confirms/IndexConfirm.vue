@@ -92,6 +92,7 @@
                 :venues="venues"
                 :sources="sources"
                 @selected_lead="getSelectedLead($event)"
+                @toggle-clear-notif="clearNotif"
             />
         </b-container>
 

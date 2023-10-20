@@ -134,11 +134,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         //booker lead status filter
@@ -173,12 +176,12 @@ class LeadService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d')]);
         }
 
         //time filter
         if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
-            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay()->format('H:i:s'), Carbon::parse($request['end_time_to'])->endOfDay()->format('H:i:s')]);
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
@@ -223,11 +226,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -270,11 +276,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -317,11 +326,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -353,12 +365,12 @@ class LeadService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d')]);
         }
 
         //time filter
         if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
-            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->format('H:i:s'), Carbon::parse($request['end_time_to'])->format('H:i:s')]);
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
@@ -388,11 +400,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -414,12 +429,12 @@ class LeadService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d')]);
         }
 
         //time filter
         if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
-            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->format('H:i:s'), Carbon::parse($request['end_time_to'])->format('H:i:s')]);
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
@@ -451,11 +466,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -487,12 +505,12 @@ class LeadService
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
-            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay(), Carbon::parse($request['end_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d')]);
         }
 
         //time filter
         if ((array_key_exists('start_time_to', $request) && !empty($request['start_time_to'])) && (array_key_exists('end_time_to', $request) && !empty($request['end_time_to']))) {
-            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->startOfDay(), Carbon::parse($request['end_time_to'])->endOfDay()]);
+            $leads->whereBetween('leads.presentation_time', [Carbon::parse($request['start_time_to'])->format('H:i:s'), Carbon::parse($request['end_time_to'])->format('H:i:s')]);
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);;
@@ -537,11 +555,14 @@ class LeadService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter
@@ -829,7 +850,6 @@ class LeadService
             ]);
 
             $return_values = ['result' => 'error', 'message' => 'Successfully set as showed', 'subject' => $lead->id];
-
         } catch (Exception $e) {
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $lead->id];
         }

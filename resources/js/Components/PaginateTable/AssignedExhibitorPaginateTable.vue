@@ -486,8 +486,21 @@ export default {
         },
         submitDone(form) {
             router.post("/done", form);
+
+            this.emptyForm();
+
             this.$bvModal.hide("done-modal");
         },
+        emptyForm() {
+            //empty form
+            this.form.lead_id = null;
+            this.form.remarks = null;
+            this.form.lead_status = null;
+            this.form.venue_id = null;
+            this.updated_by = null;
+            this.form.presentation_date = null;
+            this.form.presentation_time = null;
+        }
     },
 };
 </script>

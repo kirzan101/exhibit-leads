@@ -655,6 +655,7 @@
                         <b-form-group
                             label="Date Filled"
                             label-for="date-filled"
+                            label-class="required"
                         >
                             <b-form-input
                                 type="date"

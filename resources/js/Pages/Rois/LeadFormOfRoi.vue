@@ -37,7 +37,7 @@
                 <Link
                     class="btn btn-success float-right"
                     v-if="is_disabled"
-                    :href="'/' + form_type + '/edit/' + lead.id"
+                    :href="'/' + form_type + '/' + lead.id + '/edit'"
                     >Edit Lead</Link
                 >
             </div>

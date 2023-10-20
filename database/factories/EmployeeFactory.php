@@ -20,7 +20,9 @@ class EmployeeFactory extends Factory
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'position' => fake()->jobTitle(),
-            'property' => fake()->randomElement(['Astoria Plaza', 'Astoria Greenbelt', 'Astoria Current', 'Astoria Palawan'])
+            'property_id' => 1,
+            'user_id' => 1,
+            'user_group_id' => 1,
         ];
     }
 }

@@ -42,7 +42,8 @@ class LeadFactory extends Factory
             'exhibit_code' => fake()->randomElement(['Sales Deck', 'Palawan', 'Bora']),
             'venue_id' => fake()->numberBetween(1, 3),
             'source_prefix' => fake()->randomElement(['LSR', 'ALM', 'PRJ', 'ROI', 'SURVEY']),
-            'source' => fake()->randomElement(['AA', 'BB', 'CC', 'DD', 'EE'])
+            'source' => fake()->randomElement(['AA', 'BB', 'CC', 'DD', 'EE']),
+            'refer_by' => fake()->name()
         ];
     }
 }

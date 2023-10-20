@@ -31,11 +31,14 @@ class ReportService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $leads->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+            $leads->where(function ($query) use ($request) {
+                $query->where('leads.first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+            });
         }
 
         // venue filter

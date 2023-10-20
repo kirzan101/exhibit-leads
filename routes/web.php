@@ -127,19 +127,19 @@ Route::middleware('auth')->group(function () {
     //ROI
     Route::get('/rois', [RoiController::class, 'index'])->name('rois');
     Route::get('/rois/{lead}', [RoiController::class, 'showLead'])->name('rois-lead-show');
-    Route::get('/rois/edit/{lead}', [RoiController::class, 'editLead']);
+    Route::get('/rois/{lead}/edit', [RoiController::class, 'editLead']);
     Route::put('/rois/{lead}', [RoiController::class, 'updateLead']);
 
     //Survey
     Route::get('/surveys', [SurveyController::class, 'index'])->name('surveys');
     Route::get('/surveys/{lead}', [SurveyController::class, 'showLead'])->name('survey-lead-show');
-    Route::get('/surveys/edit/{lead}', [SurveyController::class, 'editLead']);
+    Route::get('/surveys/{lead}/edit', [SurveyController::class, 'editLead']);
     Route::put('/surveys/{lead}', [SurveyController::class, 'updateLead']);
 
     //Exhibit
     Route::get('/exhibits', [ExhibitController::class, 'index'])->name('exhibits');
     Route::get('/exhibits/{lead}', [ExhibitController::class, 'showLead'])->name('exhibit-lead-show');
-    Route::get('/exhibits/edit/{lead}', [ExhibitController::class, 'editLead']);
+    Route::get('/exhibits/{lead}/edit', [ExhibitController::class, 'editLead']);
     Route::put('/exhibits/{lead}', [ExhibitController::class, 'updateLead']);
     
     //Lead Status

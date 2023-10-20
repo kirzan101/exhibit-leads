@@ -84,6 +84,7 @@
                 :employeeId="employee_id"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
+                @toggle-clear-notif="clearNotif"
             />
         </b-container>
 
@@ -142,6 +143,10 @@ export default {
                 },
                 { key: "venue.name", label: "Venue", isSortable: true },
                 { key: "source_complete", label: "Source", isSortable: true },
+                {
+                    key: "refer_by",
+                    label: "Refer By"
+                },
                 {
                     key: "assigned_employee_name",
                     label: "Booker",

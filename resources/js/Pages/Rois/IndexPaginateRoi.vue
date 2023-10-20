@@ -134,6 +134,7 @@ export default {
                 { key: "mobile_number", label: "Mobile No." },
                 { key: "source_complete", label: "Source" },
                 { key: "venue.name", label: "Venue" },
+                { key: "refer_by", label: "Refer By" },
                 { key: "actions", label: "Actions" },
             ],
             alert: false,
