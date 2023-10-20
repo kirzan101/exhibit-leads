@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Helpers\Helper;
+use App\Models\ActivityLog;
 use App\Models\EmployeeVenue;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeVenueService
@@ -97,7 +100,21 @@ class EmployeeVenueService
         }
         DB::commit();
 
-        return ['result' => 'success', 'message' => 'Successfully updated employee venues', 'subject' => $this->last_id];
+        $return_values = ['result' => 'success', 'message' => 'Successfully updated employee venues', 'subject' => $this->last_id];
+
+        //log activity
+        ActivityLog::create([
+            'name' => $this->module_name,
+            'description' => $return_values['message'],
+            'event' => 'update',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+        return $return_values;
     }
 
     /**
