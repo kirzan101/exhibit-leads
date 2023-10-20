@@ -91,7 +91,7 @@ class EmployeeVenueService
 
             if ($error > 0) {
                 DB::rollBack();
-                return ['result' => 'error', 'message' => 'Error on adding venues', 'subject' => $this->last_id];
+                return ['result' => 'error', 'message' => 'Error on adding venue', 'subject' => $this->last_id];
             }
         } catch (Exception $e) {
             DB::rollBack();
@@ -100,7 +100,7 @@ class EmployeeVenueService
         }
         DB::commit();
 
-        $return_values = ['result' => 'success', 'message' => 'Successfully updated employee venues', 'subject' => $this->last_id];
+        $return_values = ['result' => 'success', 'message' => 'Successfully updated confirmer venue', 'subject' => $this->last_id];
 
         //log activity
         ActivityLog::create([
