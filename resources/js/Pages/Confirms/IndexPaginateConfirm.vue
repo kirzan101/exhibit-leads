@@ -86,6 +86,14 @@
                 @selected-ids="getSelectedIds"
                 @toggle-clear-notif="clearNotif"
             />
+
+            <ConfirmerVenueModal
+                v-if="employee_venues.length == 0 && user_group == 'confirmers'"
+                :employee_id="employee_id"
+                :venue_list="venues"
+                :employee_venue_list="employee_venues"
+                title="Notice:"
+            />
         </b-container>
 
         <br />
@@ -97,12 +105,14 @@ import { Link, router } from "@inertiajs/vue2";
 import AssignedEmployeePaginateTable from "../../Components/PaginateTable/AssignedEmployeePaginateTable.vue";
 import ConfirmPaginateTable from "../../Components/PaginateTable/ConfirmPaginateTable.vue";
 import RemoveModal from "../../Components/Modals/RemoveModal.vue";
+import ConfirmerVenueModal from "../../Components/Modals/ConfirmerVenueModal.vue";
 
 export default {
     components: {
         Link,
         ConfirmPaginateTable,
         RemoveModal,
+        ConfirmerVenueModal,
     },
     props: {
         sortBy: String,
@@ -124,7 +134,8 @@ export default {
         start_time_to: String,
         end_time_to: String,
         lead_status: String,
-        employee_id: String
+        employee_id: String,
+        employee_venues: Array,
     },
     data() {
         return {
@@ -145,7 +156,7 @@ export default {
                 { key: "source_complete", label: "Source", isSortable: true },
                 {
                     key: "refer_by",
-                    label: "Refer By"
+                    label: "Refer By",
                 },
                 {
                     key: "assigned_employee_name",
@@ -211,7 +222,7 @@ export default {
                     "start_time_to",
                     "end_time_to",
                     "lead_status",
-                    "employee_id"
+                    "employee_id",
                 ],
             });
         },
