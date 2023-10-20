@@ -134,37 +134,6 @@
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
             />
-
-            <b-modal
-                ref="my-modal"
-                title="Notice:"
-                centered
-                no-close-on-esc
-                no-close-on-backdrop
-                hide-header-close
-            >
-                <div class="d-block">
-                    <h5>Please choose venues:</h5>
-                    <b-form-group label="Can select multiple:" v-slot="{ ariaDescribedby }">
-                        <b-form-checkbox-group
-                            id="checkbox-group-1"
-                            :options="
-                                venues.map((item) => {
-                                    return item.name;
-                                })
-                            "
-                            :aria-describedby="ariaDescribedby"
-                            name="flavour-1"
-                        ></b-form-checkbox-group>
-                    </b-form-group>
-                </div>
-
-                <template #modal-footer="{ ok }">
-                    <b-button variant="info" @click="ok()">
-                        Confirm
-                    </b-button>
-                </template>
-            </b-modal>
         </b-container>
 
         <br />
@@ -285,12 +254,6 @@ export default {
             router.post("/assign-exhibitor", this.form);
             this.selectedIds = [];
         },
-        showModal() {
-            this.$refs["my-modal"].show();
-        },
-    },
-    mounted() {
-        this.showModal();
     },
 };
 </script>
