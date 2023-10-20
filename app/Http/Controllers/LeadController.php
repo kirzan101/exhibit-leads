@@ -12,7 +12,6 @@ use App\Models\Lead;
 use App\Services\ActivityLogService;
 use App\Services\AssignedEmployeeService;
 use App\Services\EmployeeService;
-use App\Services\EmployeeVenueService;
 use App\Services\LeadService;
 use App\Services\PropertyService;
 use App\Services\SourceService;
@@ -31,7 +30,6 @@ class LeadController extends Controller
     private PropertyService $propertyService;
     private VenueService $venueService;
     private SourceService $sourceService;
-    private EmployeeVenueService $employeeVenueService;
     public $module_name = 'leads';
 
     public function __construct(
@@ -40,14 +38,12 @@ class LeadController extends Controller
         PropertyService $propertyService,
         VenueService $venueService,
         SourceService $sourceService,
-        EmployeeVenueService $employeeVenueService,
     ) {
         $this->leadService = $leadService;
         $this->employeeService = $employeeService;
         $this->propertyService = $propertyService;
         $this->venueService = $venueService;
         $this->sourceService = $sourceService;
-        $this->employeeVenueService = $employeeVenueService;
     }
 
     /**
@@ -242,7 +238,6 @@ class LeadController extends Controller
             'lead_status' => $request->lead_status,
             'employee_id' => $request->employee_id,
             'is_confirmer' => (Auth::user()->employee->userGroup->name == 'confirmers') ? true : false,
-            'employee_venues' => $this->employeeVenueService->employeeVenueIds(Auth::user()->employee->id),
         ]);
     }
 

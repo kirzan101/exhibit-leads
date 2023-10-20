@@ -7,7 +7,6 @@ use App\Http\Controllers\AssignedExhibitorController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\EmployeeVenueController;
 use App\Http\Controllers\ExhibitController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadStatusController;
@@ -151,7 +150,4 @@ Route::middleware('auth')->group(function () {
 
     // activity logs
     Route::get('/activity-logs', [ActivityLogController::class, 'index']);
-
-    //employee venues
-    Route::put('/employee-venues', [EmployeeVenueController::class, 'update']);
 });

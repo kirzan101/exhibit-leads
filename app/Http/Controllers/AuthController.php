@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Services\ActivityLogService;
-use App\Services\EmployeeVenueService;
 
 class AuthController extends Controller
 {
     private ActivityLogService $activityLogService;
-    private EmployeeVenueService $employeeVenueService;
 
-    public function __construct(ActivityLogService $activityLogService, EmployeeVenueService $employeeVenueService)
+    public function __construct(ActivityLogService $activityLogService)
     {
         $this->activityLogService = $activityLogService;
-        $this->employeeVenueService = $employeeVenueService;
     }
 
     /**
@@ -65,12 +61,6 @@ class AuthController extends Controller
 
             $this->activityLogService->createActivityLog($log);
 
-            //delete venue records for confirmers
-            // exclude admin account
-            if (Helper::checkAccess('confirms', 'read') && Auth::user()->employee->userGroup->id != 1) {
-                $this->employeeVenueService->deleteEmployeeVenueByEmployeeId(Auth::user()->employee->id);
-            }
-
             return redirect()->intended();
         }
 
@@ -96,13 +86,7 @@ class AuthController extends Controller
         ];
 
         $this->activityLogService->createActivityLog($log);
-
-        //delete venue records for confirmers
-        // exclude admin account
-        if (Helper::checkAccess('confirms', 'read') && Auth::user()->employee->userGroup->id != 1) {
-            $this->employeeVenueService->deleteEmployeeVenueByEmployeeId(Auth::user()->employee->id);
-        }
-
+        
         Auth::logout();
 
         return redirect()->route('login');
