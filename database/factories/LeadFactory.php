@@ -44,7 +44,7 @@ class LeadFactory extends Factory
             'source_prefix' => fake()->randomElement(['LSR', 'ALM', 'PRJ', 'ROI', 'SURVEY']),
             'source' => fake()->randomElement(['AA', 'BB', 'CC', 'DD', 'EE']),
             'refer_by' => fake()->name(),
-            'date_filled' => fake()->dateTimeBetween(now(), "-5 days")
+            'date_filled' => fake()->dateTimeBetween("-5 days", now())
         ];
     }
 }
