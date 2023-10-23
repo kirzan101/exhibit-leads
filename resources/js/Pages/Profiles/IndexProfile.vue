@@ -244,7 +244,8 @@ export default {
                 email: this.user.email,
                 password: null,
                 is_active: this.user.is_active,
-                exhibitor_id: this.employee.exhibitor_id
+                exhibitor_id: this.employee.exhibitor_id,
+                venue_ids: []
             },
             property_options: [
                 { value: null, text: "-- select --" },
