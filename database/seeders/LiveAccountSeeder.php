@@ -86,7 +86,7 @@ class LiveAccountSeeder extends Seeder
                 'user_group' => 'rois'
             ],
             [
-                'first_name' => 'Jose',
+                'first_name' => 'Jonan',
                 'last_name' => 'Gloria',
                 'position' => 'ROI',
                 'property_id' => 1,
@@ -109,6 +109,27 @@ class LiveAccountSeeder extends Seeder
             [
                 'first_name' => 'Dianne',
                 'last_name' => 'David',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'employees'
+            ],
+            [
+                'first_name' => 'Nasreene Marie',
+                'last_name' => 'Umba',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'employees'
+            ],
+            [
+                'first_name' => 'Rhazel',
+                'last_name' => 'Ugale',
+                'position' => 'ROI',
+                'property_id' => 1,
+                'user_group' => 'employees'
+            ],
+            [
+                'first_name' => 'Kennon Koi',
+                'last_name' => 'Armamento',
                 'position' => 'ROI',
                 'property_id' => 1,
                 'user_group' => 'employees'
