@@ -133,15 +133,15 @@
                         >
                             <b-form-select
                                 id="property-location"
-                                v-model="form.property"
-                                :state="errors.property ? false : null"
-                                :options="property_locations"
+                                v-model="form.property_id"
+                                :state="errors.property_id ? false : null"
+                                :options="property_options"
                                 required
                             ></b-form-select>
                             <b-form-invalid-feedback
-                                :state="errors.property ? false : null"
+                                :state="errors.property_id ? false : null"
                             >
-                                {{ errors.property }}
+                                {{ errors.property_id }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -162,6 +162,25 @@
                                 :state="errors.position ? false : null"
                             >
                                 {{ errors.position }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+
+                <b-row>
+                    <b-col sm="4">
+                        <b-form-group label="Is Active" label-for="is-active">
+                            <b-form-checkbox
+                                id="is-active"
+                                v-model="form.is_active"
+                                name="is-active"
+                                :value="true"
+                            >
+                            </b-form-checkbox>
+                            <b-form-invalid-feedback
+                                :state="errors.is_active ? false : null"
+                            >
+                                {{ errors.is_active }}
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
@@ -212,6 +231,7 @@ export default {
         errors: Object,
         employee: Object,
         user: Object,
+        properties: Array,
     },
     data() {
         return {
@@ -220,19 +240,17 @@ export default {
                 middle_name: this.employee.middle_name,
                 last_name: this.employee.last_name,
                 position: this.employee.position,
-                property: this.employee.property,
+                property_id: this.employee.property_id,
                 email: this.user.email,
                 password: null,
+                is_active: this.user.is_active,
+                exhibitor_id: this.employee.exhibitor_id
             },
-            property_locations: [
-                { text: "-- select --", value: null },
-                "Astoria Plaza",
-                "Astoria Current",
-                "Astoria Greenbelt",
-                "Astoria Palawan",
-                "Astoria Boracay",
-                "Astoria Bohol",
-                "Stellar Potter's Ridge",
+            property_options: [
+                { value: null, text: "-- select --" },
+                ...this.properties.map((item) => {
+                    return { value: item.id, text: item.name };
+                }),
             ],
             alert: false,
         };

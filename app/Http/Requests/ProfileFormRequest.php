@@ -26,7 +26,7 @@ class ProfileFormRequest extends FormRequest
             'middle_name' => 'nullable|min:2',
             'last_name' => 'required|min:2',
             'position' => 'required|min:2',
-            'property' => 'required|min:2',
+            'property_id' => 'required|exists:properties,id',
             'email' => 'required|email',
             'password' => 'nullable|min:2'
         ];

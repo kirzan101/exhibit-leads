@@ -188,7 +188,23 @@
                             </div>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="6" v-if="form.user_group_id === 3">
+                    <b-col sm="2">
+                        <b-form-group label="Is Active?" label-for="is-active">
+                            <b-form-checkbox
+                                id="is-active"
+                                v-model="form.is_active"
+                                name="is-active"
+                                :value="true"
+                            >
+                            </b-form-checkbox>
+                            <b-form-invalid-feedback
+                                :state="errors.is_active ? false : null"
+                            >
+                                {{ errors.is_active }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="4" v-if="form.user_group_id === 3">
                         <b-form-group
                             label="Exhibitor"
                             label-for="exhibitor"
@@ -278,6 +294,7 @@ export default {
                 user_id: this.user.id,
                 user_group_id: this.employee.user_group_id,
                 exhibitor_id: this.employee.exhibitor_id,
+                is_active: this.user.is_active
             },
             property_locations: [
                 { text: "-- select --", value: null },

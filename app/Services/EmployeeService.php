@@ -36,40 +36,62 @@ class EmployeeService
      * create employee service
      *
      * @param array $request
-     * @return Employee
+     * @return array
      */
-    public function createEmployee(array $request): Employee
+    public function createEmployee(array $request): array
     {
-        // dd($request['password']);
-        // generate username
-        $username = Helper::username($request['first_name'], $request['last_name']);
+        try {
+            DB::beginTransaction();
 
-        $user = User::create([
-            'username' => $username,
-            'email' => $request['email'],
-            'password' => bcrypt($request['password']),
-            'is_active' => $request['is_active']
-        ]);
+            // generate username
+            $username = Helper::username($request['first_name'], $request['last_name']);
 
-        $employee = Employee::create([
-            'first_name' => $request['first_name'],
-            'middle_name' => $request['middle_name'],
-            'last_name' => $request['last_name'],
-            'property_id' => $request['property_id'],
-            'position' => $request['position'],
-            'user_group_id' => $request['user_group_id'],
-            'user_id' => $user->id,
-            'exhibitor_id' => $request['exhibitor_id']
-        ]);
-
-        foreach ($request['venue_ids'] as $venue_id) {
-            EmployeeVenue::create([
-                'employee_id' => $employee->id,
-                'venue_id' => $venue_id
+            $user = User::create([
+                'username' => $username,
+                'email' => $request['email'],
+                'password' => bcrypt($request['password']),
+                'is_active' => $request['is_active']
             ]);
-        }
 
-        return $employee;
+            $employee = Employee::create([
+                'first_name' => $request['first_name'],
+                'middle_name' => $request['middle_name'],
+                'last_name' => $request['last_name'],
+                'property_id' => $request['property_id'],
+                'position' => $request['position'],
+                'user_group_id' => $request['user_group_id'],
+                'user_id' => $user->id,
+                'exhibitor_id' => $request['exhibitor_id']
+            ]);
+
+            foreach ($request['venue_ids'] as $venue_id) {
+                EmployeeVenue::create([
+                    'employee_id' => $employee->id,
+                    'venue_id' => $venue_id
+                ]);
+            }
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully created the employee!', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            DB::rollBack();
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        //log activity
+        ActivityLog::create([
+            'name' => 'employees',
+            'description' => $return_values['message'],
+            'event' => 'create',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+
+        return $return_values;
     }
 
     /**
@@ -77,60 +99,108 @@ class EmployeeService
      *
      * @param array $request
      * @param Employee $employee
-     * @return Employee
+     * @return array
      */
-    public function updateEmployee(array $request, Employee $employee): Employee
+    public function updateEmployee(array $request, Employee $employee): array
     {
-        $user = User::find($request['user_id']);
-        $user->update([
-            'email' => $request['email'],
-            'is_active' => $request['is_active']
-        ]);
-
-        $employee = tap($employee)->update([
-            'first_name' => $request['first_name'],
-            'middle_name' => $request['middle_name'],
-            'last_name' => $request['last_name'],
-            'property_id' => $request['property_id'],
-            'position' => $request['position'],
-            'user_group_id' => $request['user_group_id'],
-            'exhibitor_id' => $request['exhibitor_id']
-        ]);
-
-        foreach ($request['venue_ids'] as $venue_id) {
-            EmployeeVenue::create([
-                'employee_id' => $employee->id,
-                'venue_id' => $venue_id
+        try {
+            DB::beginTransaction();
+            $user = User::find($request['user_id']);
+            $user->update([
+                'email' => $request['email'],
+                'is_active' => $request['is_active']
             ]);
-        }
 
-        return $employee;
+            $employee = tap($employee)->update([
+                'first_name' => $request['first_name'],
+                'middle_name' => $request['middle_name'],
+                'last_name' => $request['last_name'],
+                'property_id' => $request['property_id'],
+                'position' => $request['position'],
+                'user_group_id' => $request['user_group_id'],
+                'exhibitor_id' => $request['exhibitor_id']
+            ]);
+
+            foreach ($request['venue_ids'] as $venue_id) {
+                EmployeeVenue::create([
+                    'employee_id' => $employee->id,
+                    'venue_id' => $venue_id
+                ]);
+            }
+
+            $this->last_id = $employee->id;
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully updated the profile!', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            DB::rollBack();
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        //log activity
+        ActivityLog::create([
+            'name' => 'employees',
+            'description' => $return_values['message'],
+            'event' => 'update',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+        return $return_values;
     }
 
     /**
      * delete employee service
      *
      * @param Employee $employee
-     * @return boolean
+     * @return array
      */
-    public function deleteEmployee(Employee $employee): bool
+    public function deleteEmployee(Employee $employee): array
     {
-        // delete employee venues
-        EmployeeVenue::where('employee_id', $employee->id)->delete();
+        $request_array = [
+            'employee_id' => $employee->id,
+        ];
 
-        // get the user id
-        $user_id = $employee->user_id;
 
-        // delete employee record
-        $result = $employee->delete();
+        try {
+            $this->last_id = $employee->id;
 
-        // find user
-        $user = User::find($user_id);
+            // delete employee venues
+            EmployeeVenue::where('employee_id', $employee->id)->delete();
 
-        // delete user associated to employee
-        $user->delete();
+            // get the user id
+            $user_id = $employee->user_id;
 
-        return $result;
+            // delete employee record
+            $employee->delete();
+
+            // find user
+            $user = User::find($user_id);
+
+            // delete user associated to employee
+            $user->delete();
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully deleted the employee!', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+
+        //log activity
+        ActivityLog::create([
+            'name' => 'users',
+            'description' => $return_values['message'],
+            'event' => 'delete',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request_array),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
+        ]);
+
+        return $return_values;
     }
 
     /**
@@ -153,20 +223,49 @@ class EmployeeService
      * reset user pasword | Default Password: P@ssw0rd
      *
      * @param integer $id
-     * @return boolean
+     * @return array
      */
-    public function resetPassword(int $id): bool
+    public function resetPassword(int $id): array
     {
-        $employee = Employee::find($id);
+        try {
+            DB::beginTransaction();
+            $employee = Employee::find($id);
 
-        $user = User::find($employee->user_id);
+            $this->last_id = $employee->id;
 
-        $result = $user->update([
-            'password' => bcrypt('P@ssw0rd'),
-            'is_password_changed' => false
+            $user = User::find($employee->user_id);
+
+            tap($user)->update([
+                'password' => bcrypt('P@ssw0rd'),
+                'is_password_changed' => false
+            ]);
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully reset the password! The new password is:  P@ssw0rd', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            DB::rollBack();
+            $return_values = ['result' => 'error', 'message' =>  $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        $request_array = [
+            'password' => 'P@ssw0rd',
+            'is_password_changed' => true,
+            'user_id' => $user->id
+        ];
+
+        //log activity
+        ActivityLog::create([
+            'name' => 'users',
+            'description' => $return_values['message'],
+            'event' => 'update',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request_array),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
         ]);
 
-        return $result;
+        return $return_values;
     }
 
     /**
@@ -206,7 +305,7 @@ class EmployeeService
         ActivityLog::create([
             'name' => 'users',
             'description' => $return_values['message'],
-            'event' => 'delete',
+            'event' => 'update',
             'status' => $return_values['result'],
             'browser' => json_encode(Helper::deviceInfo()),
             'properties' => json_encode($request_array),

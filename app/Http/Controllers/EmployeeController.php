@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Requests\EmployeeFormRequest;
 use App\Http\Requests\ProfileFormRequest;
 use App\Http\Resources\EmployeeResource;
+use App\Http\Resources\UserResource;
 use App\Models\Employee;
 use App\Services\EmployeeService;
 use App\Services\PropertyService;
@@ -82,21 +83,13 @@ class EmployeeController extends Controller
     {
         $this->authorize('create', Employee::class);
 
-        try {
-            $request->validate([
-                'password' => 'required|min:2'
-            ]);
+        $request->validate([
+            'password' => 'required|min:2'
+        ]);
 
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->employeeService->createEmployee($request->toArray());
 
-            $this->employeeService->createEmployee($request->toArray());
-        } catch (Exception $ex) {
-            DB::rollBack();
-            return redirect()->route('employees.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('employees.index')->with('success', 'Successfully saved!');
+        return redirect()->route('employees.index')->with($result, $message);
     }
 
     /**
@@ -108,7 +101,7 @@ class EmployeeController extends Controller
 
         return Inertia::render('Employees/ShowEmployee', [
             'employee' => new EmployeeResource($this->employeeService->showEmployee($employee)),
-            'user' => $employee->user,
+            'user' => new UserResource($employee->user),
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' => $this->propertyService->indexProperty(),
@@ -125,7 +118,7 @@ class EmployeeController extends Controller
 
         return Inertia::render('Employees/EditEmployee', [
             'employee' => new EmployeeResource($this->employeeService->showEmployee($employee)),
-            'user' => $employee->user,
+            'user' => new UserResource($employee->user),
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
             'properties' => $this->propertyService->indexProperty(),
@@ -143,19 +136,11 @@ class EmployeeController extends Controller
         //clear the notification message session
         Helper::clearNotifications();
 
-        try {
-            DB::beginTransaction();
+        $request->merge(['user_id' => $employee->user_id]);
 
-            $request->merge(['user_id' => $employee->user_id]);
+        ['result' => $result, 'message' => $message] = $this->employeeService->updateEmployee($request->toArray(), $employee);
 
-            $this->employeeService->updateEmployee($request->toArray(), $employee);
-        } catch (Exception $ex) {
-            DB::rollBack();
-            return redirect()->route('employees.index')->with('error', $ex->getMessage());
-        }
-
-        DB::commit();
-        return redirect()->route('employees.index')->with('success', 'Successfully saved!');
+        return redirect()->route('employees.index')->with($result, $message);
     }
 
     /**
@@ -165,13 +150,9 @@ class EmployeeController extends Controller
     {
         $this->authorize('delete', Employee::class);
 
-        $result = $this->employeeService->deleteEmployee($employee);
+        ['result' => $result, 'message' => $message] = $this->employeeService->deleteEmployee($employee);
 
-        if ($result) {
-            return redirect()->route('employees.index')->with('success', 'Successfully deleted!');
-        }
-
-        return redirect()->route('employees.index')->with('error', 'error on deletion');
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -184,12 +165,9 @@ class EmployeeController extends Controller
     {
         $this->authorize('update', Employee::class);
 
-        $result = $this->employeeService->resetPassword($id);
+        ['result' => $result, 'message' => $message] = $this->employeeService->resetPassword($id);
 
-        if ($result) {
-            return redirect()->route('employees.index')->with('success', 'Successfully reset the password! The new password is:  P@ssw0rd');
-        }
-        return redirect()->route('employees.index')->with('error', 'error on password reset');
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -200,7 +178,8 @@ class EmployeeController extends Controller
         $employee = Auth::user()->employee;
         return Inertia::render('Profiles/IndexProfile', [
             'employee' => $this->employeeService->showEmployee($employee),
-            'user' => Auth::user()
+            'user' => new UserResource(Auth::user()),
+            'properties' => $this->propertyService->indexProperty()
         ]);
     }
 
@@ -211,29 +190,17 @@ class EmployeeController extends Controller
     {
         $employee = Auth::user()->employee;
 
-        //clear the notification message session
-        // Helper::clearNotifications();
+        $request->merge(['user_id' => $employee->user_id]);
+        $request->merge(['user_group_id' => $employee->user_group_id]);
 
-        try {
-            DB::beginTransaction();
+        ['result' => $result, 'message' => $message] = $this->employeeService->updateEmployee($request->toArray(), $employee);
 
-            // add additional fields for ids in request
-            $request->merge(['user_id' => $employee->user_id]);
-            $request->merge(['user_group_id' => $employee->user_group_id]);
-
-            $employee = $this->employeeService->updateEmployee($request->toArray(), $employee);
-
-            // if password is filled
-            if ($request->password != null) {
-                $this->employeeService->updatePassword($request->toArray(), $employee->user_id);
-            }
-        } catch (Exception $ex) {
-            DB::rollBack();
-            return redirect()->route('profile')->with('error', $ex->getMessage());
+        // if password is filled
+        if ($request->password != null) {
+            $this->employeeService->updatePassword($request->toArray(), $employee->user_id);
         }
 
-        DB::commit();
-        return redirect()->route('profile')->with('success', 'Successfully updated!');
+        return redirect()->back()->with($result, $message);
     }
 
     /**
