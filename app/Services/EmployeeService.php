@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\Helper;
+use App\Models\ActivityLog;
 use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\EmployeeVenue;
@@ -12,9 +13,12 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeService
 {
+    public $last_id;
+
     /**
      * index of employees service
      *
@@ -43,7 +47,8 @@ class EmployeeService
         $user = User::create([
             'username' => $username,
             'email' => $request['email'],
-            'password' => bcrypt($request['password'])
+            'password' => bcrypt($request['password']),
+            'is_active' => $request['is_active']
         ]);
 
         $employee = Employee::create([
@@ -79,6 +84,7 @@ class EmployeeService
         $user = User::find($request['user_id']);
         $user->update([
             'email' => $request['email'],
+            'is_active' => $request['is_active']
         ]);
 
         $employee = tap($employee)->update([
@@ -156,7 +162,8 @@ class EmployeeService
         $user = User::find($employee->user_id);
 
         $result = $user->update([
-            'password' => bcrypt('P@ssw0rd')
+            'password' => bcrypt('P@ssw0rd'),
+            'is_password_changed' => false
         ]);
 
         return $result;
@@ -167,17 +174,47 @@ class EmployeeService
      *
      * @param array $request
      * @param Employee $employee
-     * @return Employee
+     * @return array
      */
-    public function updatePassword(array $request, int $id): bool
+    public function updatePassword(array $request, int $id): array
     {
         $user = User::find($id);
 
-        $result = $user->update([
+        $this->last_id = $user->id;
+
+        try {
+            DB::beginTransaction();
+            $user = tap($user)->update([
+                'password' => bcrypt($request['password']),
+                'is_password_changed' => true
+            ]);
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully updated password!', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            DB::rollBack();
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+        DB::commit();
+
+        $request_array = [
             'password' => bcrypt($request['password']),
+            'is_password_changed' => true,
+            'user_id' => $id
+        ];
+
+        //log activity
+        ActivityLog::create([
+            'name' => 'users',
+            'description' => $return_values['message'],
+            'event' => 'delete',
+            'status' => $return_values['result'],
+            'browser' => json_encode(Helper::deviceInfo()),
+            'properties' => json_encode($request_array),
+            'causer_id' => Auth::user()->id,
+            'subject_id' => $return_values['subject']
         ]);
 
-        return $result;
+        return $return_values;
     }
 
     /**

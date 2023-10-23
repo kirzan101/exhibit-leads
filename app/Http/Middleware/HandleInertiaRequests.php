@@ -51,7 +51,10 @@ class HandleInertiaRequests extends Middleware
                     'full_name' => Auth::user()->employee->getFullName(),
                     'email' => Auth::user()->email,
                     'employee' => Auth::user()->employee,
-                    'user_group' => Auth::user()->employee->userGroup
+                    'user_group' => Auth::user()->employee->userGroup,
+                    'is_active' => (bool) Auth::user()->is_active,
+                    'is_password_changed' => (bool) Auth::user()->is_password_changed,
+                    'id' => Auth::user()->id
                 ],
                 'permissions' => Auth::user()->employee->userGroup->user_group_permissions->map(function ($item, $key) {
                     return $item->permission;

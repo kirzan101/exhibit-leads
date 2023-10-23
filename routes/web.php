@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::post('employees/reset-password/{id}', [EmployeeController::class, 'resetPassword']);
     Route::post('remarks', [AssignedEmployeeController::class, 'remarks']);
+    Route::put('employees/{user_id}/password-update', [EmployeeController::class, 'updatePassword']);
 
     // assign employee
     // Route::resource('assigned-employees', AssignedEmployeeController::class, ['except' => ['store', 'destroy', 'reassignEmployee', 'show', 'edit', 'update', 'create']]);

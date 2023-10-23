@@ -48,6 +48,17 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+
+            // if account is deactivated
+            if(!Auth::user()->is_active) {
+
+                Auth::logout();
+
+                return back()->withErrors([
+                    'email' => 'The account is deactivated.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             //encrypt passwords

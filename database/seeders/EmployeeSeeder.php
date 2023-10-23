@@ -26,7 +26,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Admin',
                 'property_id' => 1,
                 'user_group' => 'admin',
-                'email' => 'admin@astoria.com.ph'
+                'email' => 'admin@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Christian',
@@ -34,7 +35,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Admin',
                 'property_id' => 1,
                 'user_group' => 'admin',
-                'email' => ''
+                'email' => 'christian.escamilla@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Exhibitor admin',
@@ -42,7 +44,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Exhibitor Admin',
                 'property_id' => 1,
                 'user_group' => 'exhibit-admin',
-                'email' => 'exhibitor-admin@astoria.com.ph'
+                'email' => 'exhibitor-admin@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Exhibitor',
@@ -50,7 +53,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Exhibitor',
                 'property_id' => 1,
                 'user_group' => 'exhibit',
-                'email' => 'exhibitor@astoria.com.ph'
+                'email' => 'exhibitor@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'ROI',
@@ -58,7 +62,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'ROI',
                 'property_id' => 1,
                 'user_group' => 'rois',
-                'email' => 'roi@astoria.com.ph'
+                'email' => 'roi@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Survey',
@@ -66,7 +71,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Survey',
                 'property_id' => 1,
                 'user_group' => 'surveys',
-                'email' => 'survey@astoria.com.ph'
+                'email' => 'survey@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Encoder',
@@ -74,7 +80,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Encoder',
                 'property_id' => 1,
                 'user_group' => 'encoders',
-                'email' => 'encoder@astoria.com.ph'
+                'email' => 'encoder@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Confirmer1',
@@ -82,7 +89,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Confirmer',
                 'property_id' => 1,
                 'user_group' => 'confirmers',
-                'email' => 'confirmer1@astoria.com.ph'
+                'email' => 'confirmer1@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Confirmer2',
@@ -90,7 +98,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Confirmer',
                 'property_id' => 1,
                 'user_group' => 'confirmers',
-                'email' => 'confirmer2@astoria.com.ph'
+                'email' => 'confirmer2@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Booker1',
@@ -98,7 +107,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Booker',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'booker1@astoria.com.ph'
+                'email' => 'booker1@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Booker2',
@@ -106,7 +116,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Booker',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'booker2@astoria.com.ph'
+                'email' => 'booker2@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'ROI1',
@@ -114,7 +125,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'ROI',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'roi-booker1@astoria.com.ph'
+                'email' => 'roi-booker1@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'ROI2',
@@ -122,7 +134,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'ROI',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'roi-booker2@astoria.com.ph'
+                'email' => 'roi-booker2@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Survey1',
@@ -130,7 +143,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Survey',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'survey-booker1@astoria.com.ph'
+                'email' => 'survey-booker1@astoria.com.ph',
+                'is_password_changed' => true
             ],
             [
                 'first_name' => 'Survey2',
@@ -138,7 +152,8 @@ class EmployeeSeeder extends Seeder
                 'position' => 'Survey',
                 'property_id' => 1,
                 'user_group' => 'employees',
-                'email' => 'survey-booker2@astoria.com.ph'
+                'email' => 'survey-booker2@astoria.com.ph',
+                'is_password_changed' => true
             ],
         ];
 
@@ -152,7 +167,8 @@ class EmployeeSeeder extends Seeder
             $user = User::create([
                 'username' => Helper::username($account['first_name'], $account['last_name']),
                 'email' => $email,
-                'password' => bcrypt('q')
+                'password' => bcrypt('q'),
+                'is_password_changed' => $account['is_password_changed']
             ]);
 
             $employee = Employee::create([

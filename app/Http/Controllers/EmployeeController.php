@@ -51,7 +51,7 @@ class EmployeeController extends Controller
 
         $employees = EmployeeResource::collection($this->employeeService->indexEmployeePaginate($request->toArray()));
 
-        return Inertia::render('Employees/IndexPaginateEmployee',[
+        return Inertia::render('Employees/IndexPaginateEmployee', [
             'sortBy' => $sort_by,
             'sortDesc' => filter_var($request->is_sort_desc, FILTER_VALIDATE_BOOLEAN),
             'search' => $request->search,
@@ -111,7 +111,7 @@ class EmployeeController extends Controller
             'user' => $employee->user,
             'user_groups' => $this->userGroupService->indexUserGroup(),
             'venues' => $this->venueService->indexVenueService(),
-            'properties' =>$this->propertyService->indexProperty(),
+            'properties' => $this->propertyService->indexProperty(),
             'exhibitors' => $this->employeeService->indexTeamLead()
         ]);
     }
@@ -224,10 +224,9 @@ class EmployeeController extends Controller
             $employee = $this->employeeService->updateEmployee($request->toArray(), $employee);
 
             // if password is filled
-            if($request->password != null) {
+            if ($request->password != null) {
                 $this->employeeService->updatePassword($request->toArray(), $employee->user_id);
             }
-
         } catch (Exception $ex) {
             DB::rollBack();
             return redirect()->route('profile')->with('error', $ex->getMessage());
@@ -235,5 +234,23 @@ class EmployeeController extends Controller
 
         DB::commit();
         return redirect()->route('profile')->with('success', 'Successfully updated!');
+    }
+
+    /**
+     * update user password
+     *
+     * @param Request $request
+     * @param [Integer] $user_id
+     * @return void
+     */
+    public function updatePassword(Request $request, $user_id)
+    {
+        $request->validate([
+            'password' => 'required|min:3'
+        ]);
+
+        ['result' => $result, 'message' => $message] = $this->employeeService->updatePassword($request->toArray(), $user_id);
+
+        return redirect()->back()->with($result, $message);
     }
 }
