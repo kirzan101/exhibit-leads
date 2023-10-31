@@ -114,7 +114,7 @@ class VenueService
     {
         try {
             DB::beginTransaction();
-            $this->last_id = $venue;
+            $this->last_id = $venue->id;
 
             $venue->delete();
 
@@ -130,7 +130,7 @@ class VenueService
         ActivityLog::create([
             'name' => $this->module_name,
             'description' => $return_values['message'],
-            'event' => 'deleted',
+            'event' => 'delete',
             'status' => $return_values['result'],
             'browser' => json_encode(Helper::deviceInfo()),
             'properties' => '{"venue_id":' . $this->last_id  . '}',

@@ -185,7 +185,9 @@ class LeadController extends Controller
      */
     public function destroy(Lead $lead)
     {
-        //
+        ['result' => $result, 'message' => $message] = $this->leadService->deleteLead($lead);
+
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -352,6 +354,12 @@ class LeadController extends Controller
         ]);
     }
 
+    /**
+     * Paginated list of Confirmed leads
+     *
+     * @param Request $request
+     * @return void
+     */
     public function indexPaginateConfirmed(Request $request)
     {
         // $this->authorize('read', AssignedConfirmer::class);

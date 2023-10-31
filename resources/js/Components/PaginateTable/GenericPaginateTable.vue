@@ -164,14 +164,19 @@
                     v-if="check_access(module, 'update')"
                     >Edit</Link
                 >
+                <b-button v-b-modal.remove-modal variant="danger" v-if="check_access(module, 'delete')" @click="selectItem(row.item.id)">Delete</b-button>
+                <b-button variant="danger" v-else>Delete</b-button>
             </template>
             <!-- actions end -->
         </b-table>
+
+        <RemoveModal message="Delete the record?" @submit-remove="submitDelete" />
     </b-container>
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
+import RemoveModal from "../Modals/RemoveModal.vue";
 
 export default {
     props: {
@@ -185,6 +190,7 @@ export default {
     },
     components: {
         Link,
+        RemoveModal
     },
     data() {
         return {
@@ -199,6 +205,7 @@ export default {
             },
             selected_ids: [],
             checkedAll: false,
+            selectedItem: ""
         };
     },
     computed: {
@@ -268,6 +275,15 @@ export default {
             } else {
                 this.selected_ids.push(item.id);
             }
+        },
+        selectItem(id) {
+            return this.selectedItem = id;
+        },
+        submitDelete() {
+            router.delete(`/${this.module}/${this.selectedItem}`);
+
+            this.$bvModal.hide("remove-modal");
+            return this.selectedItem = "";
         },
     },
 };

@@ -734,7 +734,6 @@ class LeadService
             $this->last_id = $lead->id;
             $lead = $lead->delete();
 
-
             $return_values = ['result' => 'success', 'message' => 'Succefully deleted!', 'subject' => $this->last_id];
         } catch (Exception $e) {
 
