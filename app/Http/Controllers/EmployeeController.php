@@ -58,6 +58,10 @@ class EmployeeController extends Controller
             'search' => $request->search,
             'module' => 'employees',
             'items' => $employees,
+            'user_groups' => $this->userGroupService->indexUserGroup(),
+            'positions' => Helper::positionList(),
+            'user_group_id' => $request->user_group_id,
+            'position' => $request->position
         ]);
     }
 
@@ -200,7 +204,7 @@ class EmployeeController extends Controller
             $this->employeeService->updatePassword($request->toArray(), $employee->user_id);
         }
 
-        return redirect()->back()->with($result, $message);
+        return redirect()->back()->with($result, 'Successfully updated the profile!');
     }
 
     /**

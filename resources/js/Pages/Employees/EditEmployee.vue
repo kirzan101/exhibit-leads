@@ -116,13 +116,18 @@
                             label-for="position"
                             label-class="required"
                         >
-                            <b-form-input
+                            <!-- <b-form-input
                                 type="text"
                                 id="position"
                                 v-model="form.position"
                                 :state="errors.position ? false : null"
                                 required
-                            ></b-form-input>
+                            ></b-form-input> -->
+                            <b-form-select
+                                v-model="form.position"
+                                :options="default_position_options"
+                                :state="errors.position ? false : null"
+                            ></b-form-select>
                             <b-form-invalid-feedback
                                 :state="errors.position ? false : null"
                             >
@@ -280,7 +285,7 @@ export default {
         user_groups: Array,
         properties: Array,
         venues: Array,
-        exhibitors: Array
+        exhibitors: Array,
     },
     data() {
         return {
@@ -294,7 +299,7 @@ export default {
                 user_id: this.user.id,
                 user_group_id: this.employee.user_group_id,
                 exhibitor_id: this.employee.exhibitor_id,
-                is_active: this.user.is_active
+                is_active: this.user.is_active,
             },
             property_locations: [
                 { text: "-- select --", value: null },
@@ -361,6 +366,21 @@ export default {
             if (value != 3) {
                 this.form.exhibitor_id = null;
             }
+        },
+    },
+    computed: {
+        default_position_options() {
+            return [
+                { text: "-- select --", value: null },
+                { text: "Admin", value: "Admin" },
+                { text: "Booker", value: "Booker" },
+                { text: "Confirmer", value: "Confirmer" },
+                { text: "Encoder", value: "Encoder" },
+                { text: "Exhibitor", value: "Exhibitor" },
+                { text: "Exhibitor Admin", value: "Exhibitor Admin" },
+                { text: "ROI", value: "ROI" },
+                { text: "Survey", value: "Survey" },
+            ];
         },
     },
 };

@@ -4,6 +4,54 @@
         <b-row>
             <b-col lg="6" class="my-1">
                 <b-form-group
+                    label="User group"
+                    label-for="user-group-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                    v-slot="{ ariaDescribedby }"
+                >
+                    <b-input-group size="sm">
+                        <b-form-select
+                            id="user-group-select"
+                            v-model="filter.user_group_id"
+                            :options="userGroupOptions"
+                            :aria-describedby="ariaDescribedby"
+                            class="w-75"
+                            @change="filterTable"
+                        >
+                        </b-form-select>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+
+            <b-col lg="6" class="my-1">
+                <b-form-group
+                    label="Position"
+                    label-for="position-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                    v-slot="{ ariaDescribedby }"
+                >
+                    <b-input-group size="sm">
+                        <b-form-select
+                            id="position-select"
+                            v-model="filter.position"
+                            :options="positionOptions"
+                            :aria-describedby="ariaDescribedby"
+                            class="w-75"
+                            @change="filterTable"
+                        >
+                        </b-form-select>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+
+            <b-col lg="6" class="my-1">
+                <b-form-group
                     label="Sort"
                     label-for="sort-by-select"
                     label-cols-sm="3"
@@ -208,6 +256,10 @@ export default {
         search_filter: String,
         module: String,
         isBusy: Boolean,
+        user_groups: Array,
+        positions: Array,
+        user_group_id: Number,
+        position: String
     },
     components: {
         Link,
@@ -222,6 +274,8 @@ export default {
                 is_sort_desc: this.sort_desc,
                 per_page: this.items.meta.per_page,
                 search: this.search_filter,
+                user_group_id: this.user_group_id,
+                position: this.position
             },
             selected_ids: [],
             checkedAll: false,
@@ -249,6 +303,28 @@ export default {
                     .map((f) => {
                         return { text: f.label, value: f.key };
                     }),
+            ];
+        },
+        userGroupOptions() {
+            return [
+                { value: null, text: "-- select --" },
+                ...this.user_groups.map((user_group) => {
+                    return {
+                        text: user_group.name,
+                        value: user_group.id,
+                    };
+                }),
+            ];
+        },
+        positionOptions() {
+            return [
+                { value: null, text: "-- select --" },
+                ...this.positions.map((item) => {
+                    return {
+                        text: item.position,
+                        value: item.position,
+                    };
+                }),
             ];
         },
     },

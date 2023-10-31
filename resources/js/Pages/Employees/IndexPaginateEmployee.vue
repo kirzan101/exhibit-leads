@@ -50,6 +50,10 @@
                 :search_filter="search"
                 :isBusy="is_busy"
                 :module="module"
+                :user_groups="user_groups"
+                :positions="positions"
+                :user_group_id="user_group_id"
+                :position="position"
                 @toggle-load-data="loadData"
             />
         </b-container>
@@ -73,6 +77,10 @@ export default {
         search: String,
         module: String,
         items: Object,
+        user_groups: Array,
+        positions: Array,
+        user_group_id: Number,
+        position: String
     },
     data() {
         return {
@@ -80,7 +88,7 @@ export default {
                 { key: "full_name", label: "Name", isSortable: true },
                 { key: "user.email", label: "Email", isSortable: false },
                 { key: "position", label: "Position", isSortable: false },
-                { key: "property.name", label: "Property", isSortable: false },
+                { key: "user_group.name", label: "User Group", isSortable: false },
                 { key: "actions", label: "Actions" },
             ],
             alert: false,
@@ -113,7 +121,7 @@ export default {
         loadData(filter) {
             router.reload({
                 data: filter,
-                only: ["items", "sortBy", "sortDesc", "search"],
+                only: ["items", "sortBy", "sortDesc", "search", "user_group_id", "position"],
             });
         },
     },

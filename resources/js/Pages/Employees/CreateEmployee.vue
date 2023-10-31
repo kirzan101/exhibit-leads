@@ -137,13 +137,18 @@
                             label-for="position"
                             label-class="required"
                         >
-                            <b-form-input
+                            <!-- <b-form-input
                                 type="text"
                                 id="position"
                                 v-model="form.position"
                                 :state="errors.position ? false : null"
                                 required
-                            ></b-form-input>
+                            ></b-form-input> -->
+                            <b-form-select
+                                v-model="form.position"
+                                :options="default_position_options"
+                                :state="errors.position ? false : null"
+                            ></b-form-select>
                             <b-form-invalid-feedback
                                 :state="errors.position ? false : null"
                             >
@@ -313,7 +318,7 @@ export default {
                 user_group_id: null,
                 venue_ids: null,
                 exhibitor_id: null,
-                is_active: true
+                is_active: true,
             },
             property_locations: [
                 { text: "-- select --", value: null },
@@ -371,9 +376,24 @@ export default {
         },
         "form.user_group_id": function (value) {
             // 3 - employee user group
-            if(value != 3) {
+            if (value != 3) {
                 this.form.exhibitor_id = null;
             }
+        },
+    },
+    computed: {
+        default_position_options() {
+            return [
+                { text: "-- select --", value: null },
+                { text: "Admin", value: "Admin" },
+                { text: "Booker", value: "Booker" },
+                { text: "Confirmer", value: "Confirmer" },
+                { text: "Encoder", value: "Encoder" },
+                { text: "Exhibitor", value: "Exhibitor" },
+                { text: "Exhibitor Admin", value: "Exhibitor Admin" },
+                { text: "ROI", value: "ROI" },
+                { text: "Survey", value: "Survey" },
+            ];
         },
     },
 };

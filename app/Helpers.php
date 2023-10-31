@@ -439,4 +439,20 @@ class Helper
             'browser' => $agent->browser()
         ];
     }
+
+    /**
+     * list all the distinct position
+     *
+     * @return array
+     */
+    public static function positionList() : array
+    {
+        $positions = DB::table('employees')
+            ->select('position')
+            ->groupBy('position')
+            ->get()
+            ->toArray();
+
+        return $positions;
+    }
 }

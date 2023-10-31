@@ -130,7 +130,7 @@ class EmployeeService
 
             $this->last_id = $employee->id;
 
-            $return_values = ['result' => 'success', 'message' => 'Successfully updated the profile!', 'subject' => $this->last_id];
+            $return_values = ['result' => 'success', 'message' => 'Successfully updated the employee!', 'subject' => $this->last_id];
         } catch (Exception $e) {
             DB::rollBack();
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
@@ -427,6 +427,20 @@ class EmployeeService
                 $query->where('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('employees.position', 'LIKE', '%' . $request['search'] . '%');
+            });
+        }
+
+        // position filter
+        if (array_key_exists('position', $request) && !empty($request['position'])) {
+            $employees->where(function ($query) use ($request) {
+                $query->where('employees.position', 'LIKE', '%' . $request['position'] . '%');
+            });
+        }
+
+        // user group filter
+        if (array_key_exists('user_group_id', $request) && !empty($request['user_group_id'])) {
+            $employees->where(function ($query) use ($request) {
+                $query->where('employees.user_group_id', 'LIKE', '%' . $request['user_group_id'] . '%');
             });
         }
 
