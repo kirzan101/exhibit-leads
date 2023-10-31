@@ -314,10 +314,10 @@ class AssignedExhibitorService
             $assigned_leads->where('leads.occupation', $request['occupation']);
         }
 
-        // lead_status
-        if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
-            $assigned_leads->where('assigned_exhibitors.lead_status', $request['lead_status']);
-        }
+        // // lead_status
+        // if (array_key_exists('lead_status', $request) && !empty($request['lead_status'])) {
+        //     $assigned_leads->where('assigned_exhibitors.lead_status', $request['lead_status']);
+        // }
 
         //date filter
         if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {

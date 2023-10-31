@@ -4,7 +4,7 @@
         <b-row>
             <!-- first filter -->
             <b-col sm="6" md="6" class="my-1">
-                <b-form-group
+                <!-- <b-form-group
                     label="Status"
                     label-for="status-select"
                     label-cols-sm="3"
@@ -19,7 +19,7 @@
                         @change="filterTable"
                         size="sm"
                     ></b-form-select>
-                </b-form-group>
+                </b-form-group> -->
             </b-col>
 
             <b-col sm="6" md="6" class="my-1">
@@ -334,7 +334,7 @@ export default {
                 source_name: this.sourceName,
                 start_to: this.startTo,
                 end_to: this.endTo,
-                lead_status: this.leadStatus,
+                // lead_status: this.leadStatus,
             },
             selectedIds: [],
             checkedAll: false,
@@ -368,7 +368,7 @@ export default {
             form: {
                 remarks: "",
                 lead_id: "",
-                lead_status: "",
+                // lead_status: "",
                 venue_id: "",
                 presentation_date: null,
                 presentation_time: null,
@@ -464,7 +464,7 @@ export default {
         selectedLead(data) {
             this.form.lead_id = data.id;
             this.form.remarks = data.assigned_exhibitor.remarks;
-            this.form.lead_status = data.assigned_exhibitor.lead_status;
+            // this.form.lead_status = data.assigned_exhibitor.lead_status;
             this.form.venue_id = data.venue_id;
             this.updated_by =
                 data.updated_by.length != 0
@@ -495,7 +495,7 @@ export default {
             //empty form
             this.form.lead_id = null;
             this.form.remarks = null;
-            this.form.lead_status = null;
+            // this.form.lead_status = null;
             this.form.venue_id = null;
             this.updated_by = null;
             this.form.presentation_date = null;

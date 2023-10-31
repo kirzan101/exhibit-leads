@@ -107,7 +107,6 @@
                 :sourceName="source_name"
                 :startTo="start_to"
                 :endTo="end_to"
-                :leadStatus="lead_status"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
             />
@@ -146,7 +145,6 @@ export default {
         source_name: String,
         start_to: String,
         end_to: String,
-        lead_status: String,
     },
     data() {
         return {
@@ -221,7 +219,6 @@ export default {
                     "source_name",
                     "start_to",
                     "end_to",
-                    "lead_status",
                 ],
             });
         },

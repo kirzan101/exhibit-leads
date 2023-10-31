@@ -112,7 +112,8 @@ class AssignedExhibitorController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->createAssignedExhbitor($request->toArray());
 
-        return redirect()->route('leads.index')->with($result, $message);
+        // return redirect()->route('leads.index')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -200,7 +201,8 @@ class AssignedExhibitorController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->updateAssignedExhibitor($request->toArray());
 
-        return redirect('/assigned-exhibitors')->with($result, $message);
+        // return redirect('/assigned-exhibitors')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -219,6 +221,7 @@ class AssignedExhibitorController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->assignedExhibitorService->removedAssignedExhibitor($request);
 
-        return redirect('/assigned-exhibitors')->with($result, $message);
+        // return redirect('/assigned-exhibitors')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 }
