@@ -390,6 +390,15 @@ class LeadService
             ->where('assigned_exhibitors.employee_id', '=', Auth::user()->employee->id)
             ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
 
+        // if loggedin user is admin
+        if(Auth::user()->employee->userGroup->id == 1) {
+            $leads = Lead::select('leads.*')
+            ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
+            ->where('leads.is_booker_assigned', false)
+            ->where('leads.is_exhibitor_assigned', true)
+            ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
+        }
+
         //set default values
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
         $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';

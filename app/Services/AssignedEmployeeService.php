@@ -206,7 +206,8 @@ class AssignedEmployeeService
                     ]);
 
                     // if lead is from roi or survey
-                    if (!$lead->is_exhibitor_assigned && (Auth::user()->employee->user_group_id == 7 || Auth::user()->employee->user_group_id == 8)) {
+                    //&& (Auth::user()->employee->user_group_id == 7 || Auth::user()->employee->user_group_id == 8)
+                    if (!$lead->is_exhibitor_assigned) {
                         AssignedExhibitor::create([
                             'lead_id' => $lead->getKey(),
                             'employee_id' => $request['employee_id'],

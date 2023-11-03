@@ -212,7 +212,7 @@ class EmployeeService
     public function showEmployee(Employee $employee): Employee
     {
         // removes admin account
-        if ($employee->userGroup->id == 1) {
+        if (!Auth::user()->employee->userGroup->id == 1 && $employee->userGroup->id == 1) {
             return abort(404);
         }
 

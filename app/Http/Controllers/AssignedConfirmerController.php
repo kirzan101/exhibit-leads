@@ -90,7 +90,8 @@ class AssignedConfirmerController extends Controller
         }
 
         DB::commit();
-        return redirect()->route('done')->with('success', 'Successfully assigned!');
+        // return redirect()->route('done')->with('success', 'Successfully assigned!');
+        return redirect()->back()->with('success', 'Successfully assigned!');
     }
 
     /**
@@ -159,7 +160,8 @@ class AssignedConfirmerController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->updateAssignedConfirmer($request->toArray());
 
-        return redirect()->route('assigned-confirmers.index')->with($result, $message);
+        // return redirect()->route('assigned-confirmers.index')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -178,7 +180,8 @@ class AssignedConfirmerController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->removedAssigned($request);
 
-        return redirect()->route('assigned-confirmers.index')->with($result, $message);
+        // return redirect()->route('assigned-confirmers.index')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -197,7 +200,8 @@ class AssignedConfirmerController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->confirmLead($request->toArray());
 
-        return redirect()->route('confirms')->with($result, $message);
+        // return redirect()->route('confirms')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -214,6 +218,7 @@ class AssignedConfirmerController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedConfirmerService->removeConfirmedLead($request->toArray());
 
-        return redirect()->route('confirmed')->with($result, $message);
+        // return redirect()->route('confirmed')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 }

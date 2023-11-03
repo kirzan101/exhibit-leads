@@ -253,7 +253,9 @@
                 <b-form-checkbox
                     v-model="checkedAll"
                     @change="selectAll"
+                    v-if="check_access('assigns', 'create')"
                 ></b-form-checkbox>
+                <p v-else></p>
             </template>
 
             <template v-slot:cell(selected)="row">
@@ -262,7 +264,9 @@
                         v-model="selectedIds"
                         :value="row.item.id"
                         :id="row.item.id + '-id'"
+                        v-if="check_access('assigns', 'create')"
                     ></b-form-checkbox>
+                    <p v-else></p>
                 </b-form-group>
             </template>
             <!-- checkbox end -->

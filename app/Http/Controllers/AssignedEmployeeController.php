@@ -181,7 +181,7 @@ class AssignedEmployeeController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->updateAssignedEmployee($request->toArray());
 
-        return redirect()->route('assigned-employees')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -200,7 +200,7 @@ class AssignedEmployeeController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->removedAssigned($request->toArray());
 
-        return redirect()->route('assigned-employees')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -224,6 +224,6 @@ class AssignedEmployeeController extends Controller
 
         ['result' => $result, 'message' => $message] = $this->assignedEmployeeService->modifyRemarks($request);
 
-        return redirect()->route('assigned-employees')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 }

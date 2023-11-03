@@ -151,13 +151,18 @@
                             label-for="position"
                             label-class="required"
                         >
-                            <b-form-input
+                            <!-- <b-form-input
                                 type="text"
                                 id="position"
                                 v-model="form.position"
                                 :state="errors.position ? false : null"
                                 required
-                            ></b-form-input>
+                            ></b-form-input> -->
+                            <b-form-select
+                                v-model="form.position"
+                                :options="default_position_options"
+                                :state="errors.position ? false : null"
+                            ></b-form-select>
                             <b-form-invalid-feedback
                                 :state="errors.position ? false : null"
                             >
@@ -274,6 +279,21 @@ export default {
             this.$page.props.flash.success = null;
             this.$page.props.flash.error = null;
             this.$page.props.flash.message = null;
+        },
+    },
+    computed: {
+        default_position_options() {
+            return [
+                { text: "-- select --", value: null },
+                { text: "Admin", value: "Admin" },
+                { text: "Booker", value: "Booker" },
+                { text: "Confirmer", value: "Confirmer" },
+                { text: "Encoder", value: "Encoder" },
+                { text: "Exhibitor", value: "Exhibitor" },
+                { text: "Exhibitor Admin", value: "Exhibitor Admin" },
+                { text: "ROI", value: "ROI" },
+                { text: "Survey", value: "Survey" },
+            ];
         },
     },
 };

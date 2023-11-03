@@ -263,7 +263,8 @@ class LeadController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
-        return redirect()->route('assigned-employees')->with($result, $message);
+        // return redirect()->route('assigned-employees')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -286,7 +287,8 @@ class LeadController extends Controller
             return redirect()->route('done')->with('error', $e->getMessage());
         }
 
-        return redirect()->route('done')->with('success', 'Successfully removed from done!');
+        // return redirect()->route('done')->with('success', 'Successfully removed from done!');
+        return redirect()->back()->with('success', 'Successfully removed from done!');
     }
 
     /**
@@ -304,7 +306,8 @@ class LeadController extends Controller
 
         ['result' => $result, 'message' => $message, 'subject' => $subject] = $this->leadService->done($lead, $request->status, $request->employee_type);
 
-        return redirect()->route('confirms')->with($result, $message);
+        // return redirect()->route('confirms')->with($result, $message);
+        return redirect()->back()->with($result, $message);
     }
 
     /**
@@ -325,10 +328,12 @@ class LeadController extends Controller
             }
         } catch (Exception $e) {
 
-            return redirect()->route('done')->with('error', $e->getMessage());
+            // return redirect()->route('done')->with('error', $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('confirms')->with('success', 'Successfully removed from confirms!');
+        // return redirect()->route('confirms')->with('success', 'Successfully removed from confirms!');
+        return redirect()->back()->with('success', 'Successfully removed from confirms!');
     }
 
     /**
