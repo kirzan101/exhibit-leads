@@ -60,7 +60,7 @@ class AssignedExhibitorService
 
                     $this->last_id = $assigned_exhibitor->id;
 
-                    $return_values = ['result' => 'success', 'message' => 'Succefully created!', 'subject' => $this->last_id];
+                    $return_values = ['result' => 'success', 'message' => 'Succefully assigned!', 'subject' => $this->last_id];
 
                     //log activity
                     ActivityLog::create([
@@ -93,7 +93,7 @@ class AssignedExhibitorService
             return $return_values;
         }
 
-        return ['result' => 'success', 'message' => 'Succefully Assigned!', 'subject' => $this->last_id];
+        return $return_values;
     }
 
     /**
