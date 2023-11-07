@@ -465,6 +465,14 @@ class LeadService
                 ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id');
         }
 
+        // if account is exhibitor level
+        if(in_array(Auth::user()->employee->usergroup->name, ['rois', 'exhibit', 'surveys', 'exhibit-admin'])) {
+            $leads = Lead::select('leads.*')
+            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+            ->join('employees', 'employees.id', '=', 'assigned_employees.employee_id')
+            ->where('employees.exhibitor_id', Auth::user()->employee->id);
+        }
+
         //set default values
         $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
         $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';

@@ -41,6 +41,9 @@ class SourceSeeder extends Seeder
             [
                 'name' => 'LS',
             ],
+            [
+                'name' => 'SURVEY',
+            ]
         ];
 
         foreach($sources as $source) {

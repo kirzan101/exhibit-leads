@@ -367,7 +367,7 @@ class LeadController extends Controller
      */
     public function indexPaginateConfirmed(Request $request)
     {
-        // $this->authorize('read', AssignedConfirmer::class);
+        $this->authorize('read', Confirmed::class);
 
         //set default value for lead name
         $sort_by = $request->sort_by;

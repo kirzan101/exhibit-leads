@@ -75,6 +75,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'venues')
             ->orWhere('module', 'assigns')
             ->orWhere('module', 'status')
+            ->orWhere('module', 'confirmed')
             ->get();
         $employee_permissions = Permission::where('module', 'leads')->orWhere('module', 'status')->get();
         $confirmer_permissions = Permission::where('module', 'confirms')->get();
@@ -84,6 +85,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->orWhere('module', 'status')
+            ->orWhere('module', 'confirmed')
             ->get();
         $encoder_permissions = Permission::where('module', 'leads')->get();
         $roi_permissions = Permission::where('module', 'rois')
@@ -92,6 +94,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->orWhere('module', 'status')
+            ->orWhere('module', 'confirmed')
             ->get();
         $survey_permissions = Permission::where('module', 'surveys')
             ->orWhere('module', 'employees')
@@ -99,6 +102,7 @@ class UserGroupSeeder extends Seeder
             ->orWhere('module', 'sources')
             ->orWhere('module', 'venues')
             ->orWhere('module', 'status')
+            ->orWhere('module', 'confirmed')
             ->get();
 
         if ($admin_permissions->count() > 0) {

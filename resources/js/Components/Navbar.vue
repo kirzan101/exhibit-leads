@@ -87,7 +87,7 @@
                                 >Sources</Link
                             >
                             <Link
-                                v-if="check_access('confirms', 'read')"
+                                v-if="check_access('confirmed', 'read')"
                                 role="menuitem"
                                 target="_self"
                                 class="dropdown-item"

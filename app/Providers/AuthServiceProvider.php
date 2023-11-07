@@ -14,6 +14,7 @@ use App\Models\Venue;
 use App\Policies\AssignedConfirmerPolicy;
 use App\Policies\AssignedEmployeePolicy;
 use App\Policies\AssignedExhibitorPolicy;
+use App\Policies\ConfirmedPolicy;
 use App\Policies\EmployeePolicy;
 use App\Policies\ExhibitPolicy;
 use App\Policies\LeadPolicy;
@@ -45,6 +46,7 @@ class AuthServiceProvider extends ServiceProvider
         Survey::class => SurveyPolicy::class,
         UserGroup::class => UserGroupPolicy::class,
         Venue::class => VenuePolicy::class,
+        Confirmed::class => ConfirmedPolicy::class,
     ];
 
     /**
