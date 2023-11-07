@@ -606,6 +606,11 @@ class LeadService
             $leads->where('assigned_confirmers.employee_id', $request['exhibitor_id']);
         }
 
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $leads->whereBetween('leads.presentation_date', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d')]);
+        }
+
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);
     }
     #indexes end
