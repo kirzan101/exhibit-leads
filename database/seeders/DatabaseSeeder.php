@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             LiveAccountSeeder::class
         ]);
 
-        Lead::factory(50)->create();
+        // Lead::factory(50)->create();
         
         // Employee::factory(2)->create();
 
