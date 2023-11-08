@@ -30,7 +30,7 @@ class EmployeeResource extends JsonResource
             'venue_id' => $this->venue_id,
             'exhibitor_id' => $this->exhibitor_id,
             'is_active' => (bool) $this->is_active,
-            'is_changed_passowrd' => (bool) $this->is_changed_password
+            // 'is_password_changed' => (bool) $this->is_password_changed
         ];
     }
 }
