@@ -87,6 +87,8 @@
                 :occupationName="occupation"
                 :venueId="venue_id"
                 :sourceName="source_name"
+                :referBys="refer_bys"
+                :referBy="refer_by"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
             />
@@ -124,6 +126,8 @@ export default {
         occupation: String,
         venue_id: String,
         source_name: String,
+        refer_bys: Array,
+        refer_by: String
     },
     data() {
         return {
@@ -186,6 +190,7 @@ export default {
                     "occupation",
                     "venue_id",
                     "source_name",
+                    "refer_by"
                 ],
             });
         },

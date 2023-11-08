@@ -281,8 +281,8 @@ class LeadService
                     ->orWhere('leads.last_name', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
-                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%')
-                    ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+                    ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
+                    // ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
             });
         }
 
@@ -301,6 +301,11 @@ class LeadService
         // occupation
         if (array_key_exists('occupation', $request) && !empty($request['occupation'])) {
             $leads->where('occupation', $request['occupation']);
+        }
+
+        // refer_by
+        if (array_key_exists('refer_by', $request) && !empty($request['refer_by'])) {
+            $leads->where('refer_by', $request['refer_by']);
         }
 
         return $leads->orderBy($sort_by, $sort)->paginate($per_page);

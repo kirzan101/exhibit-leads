@@ -55,11 +55,10 @@ class Helper
      */
     public static function deleteFile(string $file_name): bool
     {
-        
+
         try {
 
             Storage::disk('public')->delete($file_name);
-            
         } catch (Exception $ex) {
 
             return false;
@@ -429,7 +428,7 @@ class Helper
      *
      * @return array
      */
-    public static function deviceInfo() : array
+    public static function deviceInfo(): array
     {
         $agent = new Agent();
 
@@ -445,7 +444,7 @@ class Helper
      *
      * @return array
      */
-    public static function positionList() : array
+    public static function positionList(): array
     {
         $positions = DB::table('employees')
             ->select('position')
@@ -454,5 +453,61 @@ class Helper
             ->toArray();
 
         return $positions;
+    }
+
+    /**
+     * list all the distinct refer_by
+     *
+     * @param string|null $source
+     * @value ROI|SURVEY|EXHIBIT
+     * @return array
+     */
+    public static function referByList(?string $source): array
+    {
+        $filter_source = [];
+        $refer_bys = DB::table('leads')
+            ->select('refer_by')
+            ->whereNotNull('refer_by')
+            ->groupBy('refer_by')
+            ->get()
+            ->toArray();
+
+        if ($source) {
+            switch ($source) {
+                case "ROI":
+                    $filter_source = self::roiPrefixes();
+                    break;
+                case "SURVEY":
+                    $filter_source = self::surveyPrefix();
+                    break;
+                case "EXHIBIT":
+                    $filter_source = self::exhibitPrefixes();
+                    break;
+                default:
+                    $filter_source = [
+                        'LSR',
+                        'ALM',
+                        'PRJ',
+                        'LS',
+                        'IP',
+                        'ROI',
+                        'NMB',
+                        'BROI',
+                        'BNMB',
+                        'SURVEY'
+                    ];
+            }
+
+
+            $refer_bys = DB::table('leads')
+                ->select('refer_by')
+                ->whereNotNull('refer_by')
+                ->whereIn('source_prefix', $filter_source)
+                ->groupBy('refer_by')
+                ->get()
+                ->toArray();
+        }
+
+        return $refer_bys;
     }
 }

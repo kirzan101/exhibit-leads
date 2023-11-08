@@ -73,12 +73,14 @@ class RoiController extends Controller
             'occupation' => $request->occupation,
             'venue_id' => $request->venue_id,
             'source_name' => $request->source_name,
+            'refer_by' => $request->refer_by,
             'module' => 'rois',
             'items' => $leads,
             'employees' =>$this->employeeService->indexTeamLeadEmployees(Auth::user()->employee->id),
             'occupation_list' => Helper::occupationList(),
             'venues' => $this->venueService->indexVenueService(),
             'sources' => Helper::leadSource('ROI'),
+            'refer_bys' => Helper::referByList('ROI'),
             'exhibitors' => $this->employeeService->indexExhibitor(),
             'exhibitor' => $exhibitor->id // add value if only one exhibitor must be assign
         ]);

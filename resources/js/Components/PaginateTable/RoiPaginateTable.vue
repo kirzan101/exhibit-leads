@@ -3,7 +3,24 @@
         <!-- User Interface controls -->
         <b-row>
             <!-- first filter -->
-            <b-col lg="6" class="my-1"> &nbsp; </b-col>
+            <b-col lg="6" class="my-1">
+                <b-form-group
+                    label="Refer by"
+                    label-for="refer-by-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="refer-by-select"
+                        v-model="filter.refer_by"
+                        :options="refer_by_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
 
             <b-col lg="6" class="my-1">
                 <b-form-group
@@ -247,6 +264,8 @@ export default {
         occupationName: String,
         venueId: String,
         sourceName: String,
+        referBys: Array,
+        referBy: String
     },
     components: {
         Link,
@@ -264,6 +283,7 @@ export default {
                 occupation: this.occupationName,
                 venue_id: this.venueId,
                 source_name: this.sourceName,
+                refer_by: this.referBy
             },
             selectedIds: [],
             checkedAll: false,
@@ -285,6 +305,12 @@ export default {
                     return { value: item.source, text: item.source };
                 }),
             ],
+            refer_by_options: [
+                { value: null, text: "-- select --" },
+                ...this.referBys.map((item) => {
+                    return { value: item.refer_by, text: item.refer_by };
+                }),
+            ]
         };
     },
     computed: {
