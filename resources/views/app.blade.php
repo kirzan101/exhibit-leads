@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @vite('resources/js/app.js')
     @vite('resources/css/app.css')
+    @vite('resources/css/login.css')
     @inertiaHead
 </head>
 

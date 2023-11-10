@@ -1,13 +1,17 @@
 <template>
-    <div class="container lg:p-10">
+    <div>
         <head>
             <title>LeadGen | Login</title>
         </head>
-        <div class="col-lg-4 col-md-6 mx-auto">
-            <b-card class="mt-5">
-                <div class="mx-auto">
-                    <h1 class="text-center">LeadGen</h1>
-                    <h3 class="text-center">Login</h3>
+        <div class="sidenav">
+            <div class="login-main-text">
+                <h1 class="font-weight-bold">LeadGen</h1>
+                <p>Lead Generation System</p>
+            </div>
+        </div>
+        <div class="main">
+            <div class="col-md-6 col-sm-12">
+                <div class="login-form">
                     <b-form @submit.prevent="login">
                         <b-form-group
                             id="email"
@@ -40,10 +44,21 @@
                             ></b-form-input>
                         </b-form-group>
 
-                        <b-button type="submit" variant="success">Login</b-button>
+                        <b-button type="submit" variant="info"
+                            >Login</b-button
+                        >
                     </b-form>
                 </div>
-            </b-card>
+            </div>
+            <!-- Footer -->
+            <footer class="">
+                <!-- Copyright -->
+                <div class="text-center mt-5 py-3">
+                    © {{ getCurrentYear }} Astoria ICT
+                </div>
+                <!-- Copyright -->
+            </footer>
+            <!-- Footer -->
         </div>
     </div>
 </template>
@@ -54,7 +69,7 @@ import { router } from "@inertiajs/vue2";
 export default {
     layout: null,
     props: {
-        errors: Object
+        errors: Object,
     },
     data() {
         return {
@@ -64,10 +79,16 @@ export default {
             },
         };
     },
+    computed: {
+        getCurrentYear() {
+            const date = new Date();
+            return date.getFullYear();
+        }
+    },
     methods: {
         login() {
             router.post("/login", this.form);
-        },
+        }
     },
 };
 </script>

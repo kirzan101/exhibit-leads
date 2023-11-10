@@ -233,7 +233,7 @@
                     v-if="check_access(module, 'update')"
                     >Edit</Link
                 >
-                <b-button v-b-modal.remove-modal variant="danger" v-if="check_access(module, 'delete')" @click="selectLead(row.item.id)">Delete</b-button>
+                <b-button v-b-modal.remove-modal variant="danger" class="m-1" v-if="check_access(module, 'delete')" @click="selectLead(row.item.id)">Delete</b-button>
                 <b-button variant="danger" v-else>Delete</b-button>
             </template>
             <!-- actions end -->

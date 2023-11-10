@@ -11,19 +11,19 @@
 </template>
 
 <script>
-import Navbar from '../Components/Navbar.vue';
-import ChangePasswordModal from '../Components/Modals/ChangePasswordModal.vue';
+import Navbar from "../Components/Navbar.vue";
+import ChangePasswordModal from "../Components/Modals/ChangePasswordModal.vue";
 export default {
     data() {
         return {
             user_id: this.$page.props.auth.user.id,
             is_password_changed: this.$page.props.auth.user.is_password_changed,
             is_active: this.$page.props.auth.user.is_active,
-        }
+        };
     },
     components: {
         Navbar,
-        ChangePasswordModal
+        ChangePasswordModal,
     },
-}
+};
 </script>
