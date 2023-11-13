@@ -413,7 +413,7 @@ class EmployeeService
     {
         $employees = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
-            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('user_groups.name', 'employees')
             ->where('users.is_active', true);
 
