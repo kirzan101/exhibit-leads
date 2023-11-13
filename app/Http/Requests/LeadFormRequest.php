@@ -48,7 +48,7 @@ class LeadFormRequest extends FormRequest
             'other_gadgets' => 'nullable|min:2',
             'spouse_occupation' => 'nullable|min:2',
             'nature_of_business' => 'nullable|min:2',
-            'property_id' => 'required|exists:properties,id',
+            'property_id' => 'nullable|integer',//'required|exists:properties,id',
             'contract_file' => 'nullable|file|mimes:png,jpg,jpeg',
             'source_prefix' => 'required|min:2',
             'source' => 'required_with:source_prefix|min:2',

@@ -127,6 +127,9 @@ class EmployeeService
                     'venue_id' => $venue_id
                 ]);
             }
+            
+            // remove password on the list request list, update of password is on different service
+            unset($request['password']);
 
             $this->last_id = $employee->id;
 

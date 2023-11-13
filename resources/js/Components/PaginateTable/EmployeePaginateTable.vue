@@ -245,7 +245,7 @@
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue2";
+import { Link, router } from "@inertiajs/vue2";
 
 export default {
     props: {

@@ -42,7 +42,7 @@ return new class extends Migration
             $table->string('spouse_last_name')->nullable();
             $table->string('spouse_occupation')->nullable();
             $table->string('nature_of_business')->nullable();
-            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('property_id')->nullable();
             $table->string('contract_file')->nullable();
             $table->string('file_name')->nullable();
             $table->boolean('is_done')->default(false);
