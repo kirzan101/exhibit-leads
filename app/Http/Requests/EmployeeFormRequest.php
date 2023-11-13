@@ -29,7 +29,7 @@ class EmployeeFormRequest extends FormRequest
             'property_id' => 'required|exists:properties,id',
             'email' => 'required|email|unique:users,email,'.$this->user_id,
             'user_group_id' => 'required|exists:user_groups,id',
-            'venue_ids' => 'required|array',
+            'venue_ids' => 'nullable|array',
             'exhibitor_id' => 'required_if:user_group_id,3' //employee user group
         ];
     }

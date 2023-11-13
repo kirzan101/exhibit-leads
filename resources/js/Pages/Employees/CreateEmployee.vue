@@ -189,7 +189,7 @@
                     <b-col sm="6">
                         <b-form-group>
                             <template #label>
-                                <b class="required">Choose your venues:</b
+                                <b>Choose your venues:</b
                                 ><br />
                                 <b-form-checkbox
                                     v-model="allSelected"

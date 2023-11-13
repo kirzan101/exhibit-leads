@@ -64,11 +64,13 @@ class EmployeeService
                 'exhibitor_id' => $request['exhibitor_id']
             ]);
 
-            foreach ($request['venue_ids'] as $venue_id) {
-                EmployeeVenue::create([
-                    'employee_id' => $employee->id,
-                    'venue_id' => $venue_id
-                ]);
+            if($request['venue_ids']) {
+                foreach ($request['venue_ids'] as $venue_id) {
+                    EmployeeVenue::create([
+                        'employee_id' => $employee->id,
+                        'venue_id' => $venue_id
+                    ]);
+                }
             }
 
             $return_values = ['result' => 'success', 'message' => 'Successfully created the employee!', 'subject' => $this->last_id];
@@ -121,11 +123,22 @@ class EmployeeService
                 'exhibitor_id' => $request['exhibitor_id']
             ]);
 
-            foreach ($request['venue_ids'] as $venue_id) {
-                EmployeeVenue::create([
-                    'employee_id' => $employee->id,
-                    'venue_id' => $venue_id
-                ]);
+            if($request['venue_ids']) {
+
+                // delete previous records
+                $employeeVenues = EmployeeVenue::where('employee_id', $employee->id)->get();
+                if($employeeVenues->count() > 0) {
+                    foreach($employeeVenues as $employeeVenue) {
+                        $employeeVenue->delete();
+                    }
+                }
+                
+                foreach ($request['venue_ids'] as $venue_id) {
+                    EmployeeVenue::create([
+                        'employee_id' => $employee->id,
+                        'venue_id' => $venue_id
+                    ]);
+                }
             }
             
             // remove password on the list request list, update of password is on different service
@@ -328,7 +341,9 @@ class EmployeeService
     {
         $confirmers = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('user_groups.name', 'confirmers')
+            ->where('users.is_active', true)
             ->get();
 
         return $confirmers;
@@ -343,7 +358,9 @@ class EmployeeService
     {
         $encoders = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('user_groups.name', 'employees')
+            ->where('users.is_active', true)
             ->get();
 
         //if loggedin is an exhibit, roi & survey team lead
@@ -361,7 +378,9 @@ class EmployeeService
     {
         $exhibitors = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->whereIn('user_groups.name', ['exhibit', 'rois', 'surveys'])
+            ->where('users.is_active', true)
             ->get();
 
         return $exhibitors;
@@ -376,7 +395,9 @@ class EmployeeService
     {
         $exhibitors = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
             ->where('user_groups.name', 'exhibit')
+            ->where('users.is_active', true)
             ->get();
 
         return $exhibitors;
@@ -392,7 +413,9 @@ class EmployeeService
     {
         $employees = Employee::select('employees.*')
             ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
-            ->where('user_groups.name', 'employees');
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->where('user_groups.name', 'employees')
+            ->where('users.is_active', true);
 
         if ($exhibitor_id) {
             $isAdmin = (Employee::find($exhibitor_id)->user_group_id == 1) ? true : false;
