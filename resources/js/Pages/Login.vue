@@ -6,7 +6,12 @@
         <div class="sidenav">
             <div class="login-main-text">
                 <h1 class="font-weight-bold">LeadGen</h1>
-                <p>Lead Generation System</p>
+                <p>
+                    Lead Generation System
+                    <br />
+                    <small>v{{ this.$page.props.app.version }} - LIVE</small>
+                </p>
+                <!-- <br /> -->
             </div>
         </div>
         <div class="main">
@@ -44,9 +49,7 @@
                             ></b-form-input>
                         </b-form-group>
 
-                        <b-button type="submit" variant="info"
-                            >Login</b-button
-                        >
+                        <b-button type="submit" variant="info">Login</b-button>
                     </b-form>
                 </div>
             </div>
@@ -54,7 +57,7 @@
             <footer class="">
                 <!-- Copyright -->
                 <div class="text-center mt-5 py-3">
-                    © {{ getCurrentYear }} Astoria ICT
+                    © {{ getCurrentYear }} LeadGen | Astoria ICT
                 </div>
                 <!-- Copyright -->
             </footer>
@@ -83,12 +86,12 @@ export default {
         getCurrentYear() {
             const date = new Date();
             return date.getFullYear();
-        }
+        },
     },
     methods: {
         login() {
             router.post("/login", this.form);
-        }
+        },
     },
 };
 </script>

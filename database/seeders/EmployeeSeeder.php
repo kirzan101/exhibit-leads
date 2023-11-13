@@ -39,122 +39,131 @@ class EmployeeSeeder extends Seeder
                 'is_password_changed' => true
             ],
             [
-                'first_name' => 'Exhibitor admin',
-                'last_name' => 'Account',
-                'position' => 'Exhibitor Admin',
+                'first_name' => 'Jose',
+                'last_name' => 'Bustamante',
+                'position' => 'Admin',
                 'property_id' => 1,
-                'user_group' => 'exhibit-admin',
-                'email' => 'exhibitor-admin@astoria.com.ph',
+                'user_group' => 'admin',
+                'email' => 'jose.bustamante@astoria.com.ph',
                 'is_password_changed' => true
             ],
-            [
-                'first_name' => 'Exhibitor',
-                'last_name' => 'Account',
-                'position' => 'Exhibitor',
-                'property_id' => 1,
-                'user_group' => 'exhibit',
-                'email' => 'exhibitor@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'ROI',
-                'last_name' => 'Account',
-                'position' => 'ROI',
-                'property_id' => 1,
-                'user_group' => 'rois',
-                'email' => 'roi@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Survey',
-                'last_name' => 'Account',
-                'position' => 'Survey',
-                'property_id' => 1,
-                'user_group' => 'surveys',
-                'email' => 'survey@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Encoder',
-                'last_name' => 'Account',
-                'position' => 'Encoder',
-                'property_id' => 1,
-                'user_group' => 'encoders',
-                'email' => 'encoder@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Confirmer1',
-                'last_name' => 'Account',
-                'position' => 'Confirmer',
-                'property_id' => 1,
-                'user_group' => 'confirmers',
-                'email' => 'confirmer1@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Confirmer2',
-                'last_name' => 'Account',
-                'position' => 'Confirmer',
-                'property_id' => 1,
-                'user_group' => 'confirmers',
-                'email' => 'confirmer2@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Booker1',
-                'last_name' => 'Account',
-                'position' => 'Booker',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'booker1@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Booker2',
-                'last_name' => 'Account',
-                'position' => 'Booker',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'booker2@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'ROI1',
-                'last_name' => 'Account',
-                'position' => 'ROI',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'roi-booker1@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'ROI2',
-                'last_name' => 'Account',
-                'position' => 'ROI',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'roi-booker2@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Survey1',
-                'last_name' => 'Account',
-                'position' => 'Survey',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'survey-booker1@astoria.com.ph',
-                'is_password_changed' => true
-            ],
-            [
-                'first_name' => 'Survey2',
-                'last_name' => 'Account',
-                'position' => 'Survey',
-                'property_id' => 1,
-                'user_group' => 'employees',
-                'email' => 'survey-booker2@astoria.com.ph',
-                'is_password_changed' => true
-            ],
+            // [
+            //     'first_name' => 'Exhibitor admin',
+            //     'last_name' => 'Account',
+            //     'position' => 'Exhibitor Admin',
+            //     'property_id' => 1,
+            //     'user_group' => 'exhibit-admin',
+            //     'email' => 'exhibitor-admin@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Exhibitor',
+            //     'last_name' => 'Account',
+            //     'position' => 'Exhibitor',
+            //     'property_id' => 1,
+            //     'user_group' => 'exhibit',
+            //     'email' => 'exhibitor@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'ROI',
+            //     'last_name' => 'Account',
+            //     'position' => 'ROI',
+            //     'property_id' => 1,
+            //     'user_group' => 'rois',
+            //     'email' => 'roi@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Survey',
+            //     'last_name' => 'Account',
+            //     'position' => 'Survey',
+            //     'property_id' => 1,
+            //     'user_group' => 'surveys',
+            //     'email' => 'survey@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Encoder',
+            //     'last_name' => 'Account',
+            //     'position' => 'Encoder',
+            //     'property_id' => 1,
+            //     'user_group' => 'encoders',
+            //     'email' => 'encoder@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Confirmer1',
+            //     'last_name' => 'Account',
+            //     'position' => 'Confirmer',
+            //     'property_id' => 1,
+            //     'user_group' => 'confirmers',
+            //     'email' => 'confirmer1@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Confirmer2',
+            //     'last_name' => 'Account',
+            //     'position' => 'Confirmer',
+            //     'property_id' => 1,
+            //     'user_group' => 'confirmers',
+            //     'email' => 'confirmer2@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Booker1',
+            //     'last_name' => 'Account',
+            //     'position' => 'Booker',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'booker1@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Booker2',
+            //     'last_name' => 'Account',
+            //     'position' => 'Booker',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'booker2@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'ROI1',
+            //     'last_name' => 'Account',
+            //     'position' => 'ROI',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'roi-booker1@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'ROI2',
+            //     'last_name' => 'Account',
+            //     'position' => 'ROI',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'roi-booker2@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Survey1',
+            //     'last_name' => 'Account',
+            //     'position' => 'Survey',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'survey-booker1@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
+            // [
+            //     'first_name' => 'Survey2',
+            //     'last_name' => 'Account',
+            //     'position' => 'Survey',
+            //     'property_id' => 1,
+            //     'user_group' => 'employees',
+            //     'email' => 'survey-booker2@astoria.com.ph',
+            //     'is_password_changed' => true
+            // ],
         ];
 
         $exhibit_admin = '';
