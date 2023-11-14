@@ -357,6 +357,14 @@
                 {{ user_group == "rois" ? row.item.refer_by : "" }}
             </template>
             <!-- format refer by end -->
+
+            <!-- row count start -->
+            <template #head(row_count)="column"> # </template>
+
+            <template v-slot:cell(row_count)="row">
+                {{ rowNumbering(row.index) }}
+            </template>
+            <!-- row count end -->
         </b-table>
 
         <ConfirmModal
@@ -607,8 +615,8 @@ export default {
                     data.assigned_confirmer.lead_status;
             } else {
                 // empty form confirmer
-                this.formConfirmer.remarks = null,
-                this.formConfirmer.lead_status = null
+                (this.formConfirmer.remarks = null),
+                    (this.formConfirmer.lead_status = null);
             }
         },
         formatDate(value) {
@@ -624,12 +632,12 @@ export default {
             router.post("/confirmer/done", form);
 
             this.emptyForm();
-            
+
             this.$bvModal.hide("done-modal");
         },
         submitConfirm(form) {
             this.$emit("toggle-clear-notif");
-            
+
             router.post("/confirm", form);
 
             this.emptyForm();
@@ -649,7 +657,26 @@ export default {
             this.formConfirmer.lead_id = null;
             this.formConfirmer.remarks = null;
             this.formConfirmer.lead_status = null;
-        }
+        },
+        rowNumbering(rowCount) {
+            console.log(this.items.meta);
+
+            if (this.sort_desc) {
+                // get the total then minus to the current page number
+                // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50
+                // the objective is to start to the last count of rows,
+                // add 1 to make the counting start to the base count
+                return (
+                    Number(this.items.meta.total) -
+                    (Number(this.items.meta.from) + Number(rowCount)) +
+                    1
+                );
+            }
+
+            //counts the number of the rows
+            //sample computation 1(from) + 0(index) = 1
+            return Number(this.items.meta.from) + Number(rowCount);
+        },
     },
 };
 </script>

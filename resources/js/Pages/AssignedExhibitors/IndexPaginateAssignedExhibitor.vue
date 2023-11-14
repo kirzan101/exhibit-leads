@@ -150,6 +150,7 @@ export default {
         return {
             fields: [
                 { key: "selected", label: "selected", sortable: false },
+                { key: "row_count", label: "row_count", sortable: false },
                 {
                     key: "lead_full_name",
                     label: "Lead name",

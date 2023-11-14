@@ -166,6 +166,7 @@ export default {
             showDismissibleAlert: false,
             fields: [
                 { key: "selected", label: "selected", sortable: false },
+                { key: "row_count", label: "row_count", sortable: false },
                 // {
                 //     key: "id",
                 //     label: "Id",

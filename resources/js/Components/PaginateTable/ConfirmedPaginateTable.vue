@@ -340,6 +340,14 @@
                 {{ formatDate(row.item.assigned_confirmer.updated_at) }}
             </template>
             <!-- format assigned date end -->
+
+            <!-- row count start -->
+            <template #head(row_count)="column"> # </template>
+
+            <template v-slot:cell(row_count)="row">
+                {{ rowNumbering(row.index) }}
+            </template>
+            <!-- row count end -->
         </b-table>
     </b-container>
 </template>
@@ -585,6 +593,25 @@ export default {
                 " " +
                 date_value.toLocaleTimeString("en-US")
             );
+        },
+        rowNumbering(rowCount) {
+            console.log(this.items.meta);
+
+            if (this.sort_desc) {
+                // get the total then minus to the current page number
+                // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50
+                // the objective is to start to the last count of rows,
+                // add 1 to make the counting start to the base count
+                return (
+                    Number(this.items.meta.total) -
+                    (Number(this.items.meta.from) + Number(rowCount)) +
+                    1
+                );
+            }
+
+            //counts the number of the rows
+            //sample computation 1(from) + 0(index) = 1
+            return Number(this.items.meta.from) + Number(rowCount);
         },
     },
 };

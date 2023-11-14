@@ -85,6 +85,7 @@ export default {
     data() {
         return {
             fields: [
+                { key: "row_count", label: "row_count", sortable: false },
                 { key: "full_name", label: "Name", isSortable: true },
                 { key: "user.email", label: "Email", isSortable: false },
                 { key: "position", label: "Position", isSortable: false },

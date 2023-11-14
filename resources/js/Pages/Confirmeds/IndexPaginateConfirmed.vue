@@ -155,6 +155,7 @@ export default {
         return {
             fields: [
                 { key: "selected", label: "selected", isSortable: false },
+                { key: "row_count", label: "row_count", sortable: false },
                 { key: "lead_full_name", label: "Lead name", isSortable: true },
                 { key: "occupation", label: "Occupation", isSortable: true },
                 { key: "venue.name", label: "Venue", isSortable: true },
