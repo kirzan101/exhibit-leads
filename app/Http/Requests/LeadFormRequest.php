@@ -59,7 +59,8 @@ class LeadFormRequest extends FormRequest
             'venue_id' => 'nullable|exists:venues,id',
             'spouse_first_name' => 'nullable|min:2',
             'spouse_last_name' => 'nullable|min:2',
-            'date_filled' => 'required|date_format:Y-m-d'
+            'date_filled' => 'required|date_format:Y-m-d',
+            'stab_number' => 'nullable|regex:/^[0-9]+$/|max:6|unique:leads,stab_number,'.$this->id,
         ];
     }
 

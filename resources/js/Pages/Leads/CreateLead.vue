@@ -468,7 +468,7 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Property Location"
                             label-for="property-location"
@@ -487,7 +487,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group label="Venue" label-for="venue">
                             <b-form-select
                                 id="venue"
@@ -503,7 +503,26 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
+                        <b-form-group
+                            label="Stab Number"
+                            label-for="stab-number"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="stab-number"
+                                v-model="form.stab_number"
+                                :state="errors.stab_number ? false : null"
+                                maxlength="6"
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.stab_number ? false : null"
+                            >
+                                {{ errors.stab_number }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="3">
                         <b-form-group
                             label="Contract file"
                             label-for="contract-file"
@@ -794,6 +813,7 @@ export default {
                 spouse_first_name: null,
                 spouse_last_name: null,
                 date_filled: null,
+                stab_number: null,
             },
             titles: [
                 { text: "-- select --", value: null },

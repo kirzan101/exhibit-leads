@@ -64,6 +64,7 @@ class Lead extends Model
         'membership_type',
         'is_confidential',
         'venue_id',
+        'stab_number',
         'date_filled',
         'created_by',
         'updated_by',
