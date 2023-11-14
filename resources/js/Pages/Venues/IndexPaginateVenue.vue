@@ -38,9 +38,7 @@
                             >Add</Link
                         >
                     </div>
-                    <div class="col-sm-6">
-                        &nbsp;
-                    </div>
+                    <div class="col-sm-6">&nbsp;</div>
                 </div>
             </h5>
 
@@ -79,6 +77,7 @@ export default {
     data() {
         return {
             fields: [
+                { key: "row_count", label: "row_count", sortable: false },
                 {
                     key: "name",
                     label: "Name",

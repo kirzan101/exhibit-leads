@@ -79,6 +79,7 @@ export default {
     data() {
         return {
             fields: [
+                { key: "row_count", label: "row_count", sortable: false },
                 {
                     key: "name",
                     label: "Name",

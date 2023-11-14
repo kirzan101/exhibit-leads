@@ -69,6 +69,7 @@ export default {
     data() {
         return {
             fields: [
+                { key: "row_count", label: "row_count", sortable: false },
                 { key: "name", label: "Name", isSortable: true },
                 { key: "description", label: "Description", isSortable: false },
                 { key: "event", label: "Event", isSortable: false },

@@ -233,13 +233,31 @@
                     v-if="check_access(module, 'update')"
                     >Edit</Link
                 >
-                <b-button v-b-modal.remove-modal variant="danger" class="m-1" v-if="check_access(module, 'delete')" @click="selectLead(row.item.id)">Delete</b-button>
+                <b-button
+                    v-b-modal.remove-modal
+                    variant="danger"
+                    class="m-1"
+                    v-if="check_access(module, 'delete')"
+                    @click="selectLead(row.item.id)"
+                    >Delete</b-button
+                >
                 <b-button variant="danger" v-else>Delete</b-button>
             </template>
             <!-- actions end -->
+
+            <!-- row count start -->
+            <template #head(row_count)="column"> # </template>
+
+            <template v-slot:cell(row_count)="row">
+                {{ rowNumbering(row.index) }}
+            </template>
+            <!-- row count end -->
         </b-table>
 
-        <RemoveModal message="Delete the lead?" @submit-remove="submitDeleteLead" />
+        <RemoveModal
+            message="Delete the lead?"
+            @submit-remove="submitDeleteLead"
+        />
     </b-container>
 </template>
 
@@ -268,7 +286,7 @@ export default {
     },
     components: {
         Link,
-        RemoveModal
+        RemoveModal,
     },
     data() {
         return {
@@ -304,7 +322,7 @@ export default {
                     return { value: item.source, text: item.source };
                 }),
             ],
-            selectedLead: ""
+            selectedLead: "",
         };
     },
     computed: {
@@ -376,14 +394,33 @@ export default {
             }
         },
         selectLead(id) {
-            return this.selectedLead = id;
+            return (this.selectedLead = id);
         },
         submitDeleteLead() {
             router.delete(`/leads/${this.selectedLead}`);
 
             this.$bvModal.hide("remove-modal");
-            return this.selectedLead = "";
-        }
+            return (this.selectedLead = "");
+        },
+        rowNumbering(rowCount) {
+            console.log(this.items.meta);
+
+            if (this.sort_desc) {
+                // get the total then minus to the current page number
+                // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50
+                // the objective is to start to the last count of rows,
+                // add 1 to make the counting start to the base count
+                return (
+                    Number(this.items.meta.total) -
+                    (Number(this.items.meta.from) + Number(rowCount)) +
+                    1
+                );
+            }
+
+            //counts the number of the rows
+            //sample computation 1(from) + 0(index) = 1
+            return Number(this.items.meta.from) + Number(rowCount);
+        },
     },
 };
 </script>
