@@ -293,7 +293,9 @@
                 <b-form-checkbox
                     v-model="checkedAll"
                     @change="selectAll"
+                    v-if="check_access('confirmed', 'update')"
                 ></b-form-checkbox>
+                <p v-else>&nbsp;</p>
             </template>
 
             <template v-slot:cell(selected)="row">
@@ -302,7 +304,9 @@
                         v-model="selectedIds"
                         :value="row.item.id"
                         :id="row.item.id + '-id'"
+                        v-if="check_access('confirmed', 'update')"
                     ></b-form-checkbox>
+                    <p v-else>&nbsp;</p>
                 </b-form-group>
             </template>
             <!-- checkbox end -->
@@ -313,7 +317,7 @@
                     :href="'assigned-confirmers/' + row.item.id"
                     class="btn m-1 btn-info"
                     type="button"
-                    v-if="check_access('confirms', 'read')"
+                    v-if="check_access('confirmed', 'read')"
                     >Show</Link
                 >
 
@@ -595,8 +599,6 @@ export default {
             );
         },
         rowNumbering(rowCount) {
-            console.log(this.items.meta);
-
             if (this.sort_desc) {
                 // get the total then minus to the current page number
                 // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50

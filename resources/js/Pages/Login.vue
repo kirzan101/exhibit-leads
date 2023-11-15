@@ -9,7 +9,7 @@
                 <p>
                     Lead Generation System
                     <br />
-                    <small>v{{ this.$page.props.app.version }} - LIVE</small>
+                    <small>v{{ this.$page.props.app.version }}</small>
                 </p>
                 <!-- <br /> -->
             </div>
@@ -21,7 +21,7 @@
                         <b-form-group
                             id="email"
                             label="Email"
-                            label-for="email"
+                            label-for="email-input"
                         >
                             <b-form-input
                                 type="email"
@@ -29,6 +29,7 @@
                                 required
                                 v-model="form.email"
                                 :state="errors.email ? false : null"
+                                id="email-input"
                             ></b-form-input>
                             <b-form-invalid-feedback
                                 :state="errors.email ? false : null"
@@ -39,13 +40,14 @@
                         <b-form-group
                             id="password"
                             label="Password"
-                            label-for="password"
+                            label-for="password-input"
                         >
                             <b-form-input
                                 type="password"
                                 placeholder="Enter Password"
                                 required
                                 v-model="form.password"
+                                id="password-input"
                             ></b-form-input>
                         </b-form-group>
 
@@ -54,10 +56,12 @@
                 </div>
             </div>
             <!-- Footer -->
-            <footer class="">
+            <footer>
                 <!-- Copyright -->
                 <div class="text-center mt-5 py-3">
-                    © {{ getCurrentYear }} LeadGen | Astoria ICT
+                    © {{ getCurrentYear }} LeadGen v{{ this.$page.props.app.version }}
+                    <br />
+                    Astoria ICT
                 </div>
                 <!-- Copyright -->
             </footer>

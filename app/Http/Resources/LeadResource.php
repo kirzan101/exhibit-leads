@@ -41,7 +41,7 @@ class LeadResource extends JsonResource
             'fax' => $this->fax,
             'combined_monthly_income' => $this->combined_monthly_income,
             'internet_connection' => $this->internet_connection,
-            'owned_gadgets' => $this->owned_gadgets,
+            'owned_gadgets' => explode(',', $this->owned_gadgets), //$this->owned_gadgets
             'other_gadgets' => $this->other_gadgets,
             'spouse_full_name' => $this->getSpouseFullName(),
             'spouse_first_name' => $this->spouse_first_name,

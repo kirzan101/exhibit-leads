@@ -64,7 +64,7 @@ class EmployeeService
                 'exhibitor_id' => $request['exhibitor_id']
             ]);
 
-            if($request['venue_ids']) {
+            if ($request['venue_ids']) {
                 foreach ($request['venue_ids'] as $venue_id) {
                     EmployeeVenue::create([
                         'employee_id' => $employee->id,
@@ -123,16 +123,16 @@ class EmployeeService
                 'exhibitor_id' => $request['exhibitor_id']
             ]);
 
-            if($request['venue_ids']) {
+            if ($request['venue_ids']) {
 
                 // delete previous records
                 $employeeVenues = EmployeeVenue::where('employee_id', $employee->id)->get();
-                if($employeeVenues->count() > 0) {
-                    foreach($employeeVenues as $employeeVenue) {
+                if ($employeeVenues->count() > 0) {
+                    foreach ($employeeVenues as $employeeVenue) {
                         $employeeVenue->delete();
                     }
                 }
-                
+
                 foreach ($request['venue_ids'] as $venue_id) {
                     EmployeeVenue::create([
                         'employee_id' => $employee->id,
@@ -140,7 +140,7 @@ class EmployeeService
                     ]);
                 }
             }
-            
+
             // remove password on the list request list, update of password is on different service
             unset($request['password']);
 
@@ -426,6 +426,34 @@ class EmployeeService
         }
 
         return $employees->orderBy('employees.id', 'desc')->get();
+    }
+
+    /**
+     * Get the list of assigned employee
+     *
+     * @param integer|null $exhibitor_id
+     * @return void
+     */
+    public function indexAssignedEmployee(?int $exhibitor_id)
+    {
+        $employees = Employee::select('employees.*')
+            ->join('assigned_employees', 'assigned_employees.employee_id', '=', 'employees.id')
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('user_groups.name', 'employees')
+            ->where('users.is_active', true);
+
+        if ($exhibitor_id) {
+            $isAdmin = (Employee::find($exhibitor_id)->user_group_id == 1) ? true : false;
+
+            if (!$isAdmin) {
+                $employees = $employees->where('employees.exhibitor_id', $exhibitor_id);
+            }
+        }
+
+        // dd($employees->distinct()->orderBy('employees.id', 'desc')->get());
+
+        return $employees->distinct()->orderBy('employees.id', 'desc')->get();
     }
 
     /**

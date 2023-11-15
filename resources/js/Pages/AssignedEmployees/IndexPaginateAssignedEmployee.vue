@@ -100,6 +100,8 @@
                 :startTo="start_to"
                 :endTo="end_to"
                 :leadStatus="lead_status"
+                :assigned_to="assigned_to"
+                :bookers="bookers"
                 @toggle-load-data="loadData"
                 @selected-ids="getSelectedIds"
                 @toggle-clear-notif="clearNotif"
@@ -140,6 +142,8 @@ export default {
         start_to: String,
         end_to: String,
         lead_status: String,
+        assigned_to: Number,
+        bookers: Array
     },
     data() {
         return {
@@ -229,6 +233,7 @@ export default {
                     "start_to",
                     "end_to",
                     "lead_status",
+                    "assigned_to"
                 ],
             });
         },

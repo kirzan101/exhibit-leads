@@ -793,12 +793,12 @@ class LeadService
         $lead = new Lead;
         $lead = $model;
 
-        if ($model->owned_gadgets) {
-            $owned_gadgets = $model->owned_gadgets;
-            $arrayed_owned_gadgets = explode(',', $owned_gadgets);
+        // if ($model->owned_gadgets) {
+        //     $owned_gadgets = $model->owned_gadgets;
+        //     $arrayed_owned_gadgets = explode(',', $owned_gadgets);
 
-            $lead->owned_gadgets = $arrayed_owned_gadgets;
-        }
+        //     $lead->owned_gadgets = $arrayed_owned_gadgets;
+        // }
 
         // if ($model->contract_file) {
         //     $lead->contract_file = response()->file(public_path($model->contract_file))->getFile(); //$lead->getUploadedFile();

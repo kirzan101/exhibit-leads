@@ -4,6 +4,19 @@
         <transition name="page" mode="out-in" appear>
             <main :key="$page.url" class="m-2 mt-4">
                 <slot />
+                <!-- Footer -->
+                <footer>
+                    <!-- Copyright -->
+                    <div class="text-center mt-3 py-3">
+                        © {{ getCurrentYear }} LeadGen v{{
+                            this.$page.props.app.version
+                        }}
+                        <br />
+                        Astoria ICT
+                    </div>
+                    <!-- Copyright -->
+                </footer>
+                <!-- Footer -->
             </main>
         </transition>
         <ChangePasswordModal v-if="!is_password_changed" :user_id="user_id" />
@@ -24,6 +37,12 @@ export default {
     components: {
         Navbar,
         ChangePasswordModal,
+    },
+    computed: {
+        getCurrentYear() {
+            const date = new Date();
+            return date.getFullYear();
+        },
     },
 };
 </script>

@@ -390,8 +390,6 @@ export default {
             }
         },
         rowNumbering(rowCount) {
-            console.log(this.items.meta);
-
             if (this.sort_desc) {
                 // get the total then minus to the current page number
                 // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50

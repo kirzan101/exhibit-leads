@@ -176,6 +176,17 @@ class UserGroupSeeder extends Seeder
                         'user_group_id' => $usergroup->id,
                         'permission_id' => $admin_permissions->where('module', 'confirms')->where('type', 'update')->first()->id
                     ]);
+
+                    // add Confirmed page permission
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'confirmed')->where('type', 'read')->first()->id
+                    ]);
+
+                    UserGroupPermission::create([
+                        'user_group_id' => $usergroup->id,
+                        'permission_id' => $admin_permissions->where('module', 'confirmed')->where('type', 'create')->first()->id
+                    ]);
                 } else if ($usergroup->name == 'encoders') {
                     foreach ($encoder_permissions as $permission) {
                         UserGroupPermission::create([
