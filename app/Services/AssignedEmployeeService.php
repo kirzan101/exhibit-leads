@@ -113,6 +113,11 @@ class AssignedEmployeeService
             $assigned_leads->whereBetween('assigned_employees.created_at', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
         }
 
+        //assigned to
+        if (array_key_exists('assigned_to', $request) && !empty($request['assigned_to'])) {
+            $assigned_leads->where('assigned_employees.employee_id', $request['assigned_to']);
+        }
+
         return $assigned_leads->orderBy($sort_by, $sort)->paginate($per_page);
     }
 

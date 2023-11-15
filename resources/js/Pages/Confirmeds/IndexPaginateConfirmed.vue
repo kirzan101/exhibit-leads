@@ -47,7 +47,7 @@
                         >
                     </div>
                     <div class="col-sm-6">
-                        <div v-if="check_access('confirms', 'create')">
+                        <div v-if="check_access('confirmed', 'update')">
                             <b-button
                                 class="btn btn-danger m-1"
                                 v-b-modal.remove-modal
@@ -180,7 +180,7 @@ export default {
                     label: "Done at",
                     isSortable: true,
                 },
-                { key: "actions", label: "Actions" },
+                // { key: "actions", label: "Actions" },
             ],
             is_busy: false,
             selected_lead: [],

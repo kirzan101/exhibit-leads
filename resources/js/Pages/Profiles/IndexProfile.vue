@@ -127,12 +127,13 @@
                     </b-col>
                     <b-col sm="3">
                         <b-form-group
+                            id="property"
                             label="Property"
-                            label-for="property"
+                            label-for="property-input"
                             label-class="required"
                         >
                             <b-form-select
-                                id="property-location"
+                                id="property-input"
                                 v-model="form.property_id"
                                 :state="errors.property_id ? false : null"
                                 :options="property_options"
@@ -147,8 +148,9 @@
                     </b-col>
                     <b-col sm="3">
                         <b-form-group
+                            id="position"
                             label="Position"
-                            label-for="position"
+                            label-for="position-input"
                             label-class="required"
                         >
                             <!-- <b-form-input
@@ -159,6 +161,7 @@
                                 required
                             ></b-form-input> -->
                             <b-form-select
+                                id="position-input"
                                 v-model="form.position"
                                 :options="default_position_options"
                                 :state="errors.position ? false : null"
@@ -250,7 +253,7 @@ export default {
                 password: null,
                 is_active: this.user.is_active,
                 exhibitor_id: this.employee.exhibitor_id,
-                venue_ids: []
+                venue_ids: [],
             },
             property_options: [
                 { value: null, text: "-- select --" },

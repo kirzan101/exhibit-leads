@@ -2,6 +2,31 @@
     <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
+            <!-- booker filter -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Assigned to"
+                    label-for="assigned-to-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="assigned-to-select"
+                        v-model="filter.assigned_to"
+                        :options="booker_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                &nbsp;
+            </b-col>
+            <!-- booker filter end-->
+
             <!-- first filter -->
             <b-col sm="6" md="6" class="my-1">
                 <b-form-group
@@ -376,6 +401,8 @@ export default {
         startTo: String,
         endTo: String,
         leadStatus: String,
+        assigned_to: Number,
+        bookers: Array
     },
     components: {
         Link,
@@ -398,6 +425,7 @@ export default {
                 start_to: this.startTo,
                 end_to: this.endTo,
                 lead_status: this.leadStatus,
+                assigned_to: this.assigned_to,
             },
             selectedIds: [],
             checkedAll: false,
@@ -425,6 +453,15 @@ export default {
                     return {
                         value: item.name,
                         text: item.name + " " + "(" + item.code + ")",
+                    };
+                }),
+            ],
+            booker_options: [
+                { value: null, text: "-- select --" },
+                ...this.bookers.map((item) => {
+                    return {
+                        value: item.id,
+                        text: item.full_name,
                     };
                 }),
             ],
@@ -570,8 +607,6 @@ export default {
             this.form.presentation_time = null;
         },
         rowNumbering(rowCount) {
-            console.log(this.items.meta);
-
             if (this.sort_desc) {
                 // get the total then minus to the current page number
                 // sample computation 50(total) - (1(from) + 0(index)) + 1 = 50

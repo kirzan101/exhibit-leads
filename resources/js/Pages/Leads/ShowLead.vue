@@ -492,7 +492,6 @@
                         <b-form-group
                             label="Property Location"
                             label-for="property-location"
-                            label-class="required"
                         >
                             <b-form-select
                                 id="property-location"

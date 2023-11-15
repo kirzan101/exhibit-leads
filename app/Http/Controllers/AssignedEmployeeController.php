@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Helper;
 use App\Http\Requests\AssignedEmployeeFormRequest;
 use App\Http\Requests\LeadFormRequest;
+use App\Http\Resources\EmployeeResource;
 use App\Http\Resources\LeadResource;
 use App\Models\AssignedEmployee;
 use App\Models\Employee;
@@ -100,6 +101,8 @@ class AssignedEmployeeController extends Controller
             'start_to' => $request->start_to,
             'end_to' => $request->end_to,
             'lead_status' => $request->lead_status,
+            'assigned_to' => $request->assigned_to,
+            'bookers' => EmployeeResource::collection($this->employeeService->indexAssignedEmployee(Auth::user()->employee->id))
         ]);
     }
 
