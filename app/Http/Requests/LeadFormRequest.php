@@ -29,7 +29,7 @@ class LeadFormRequest extends FormRequest
             'alias' => 'nullable|min:2',
             'suffix' => 'nullable|min:2',
             'birth_date' => 'nullable|date_format:Y-m-d',
-            'age' => 'required|numeric',
+            'age' => 'nullable|numeric',
             'address' => 'required|min:2',
             'secondary_address' => 'nullable|min:2',
             'nationality' => 'nullable|min:2',
@@ -61,6 +61,7 @@ class LeadFormRequest extends FormRequest
             'spouse_last_name' => 'nullable|min:2',
             'date_filled' => 'required|date_format:Y-m-d',
             'stab_number' => 'nullable|regex:/^[0-9]+$/|max:6|unique:leads,stab_number,'.$this->id,
+            'exhibitor' => 'nullable|min:2',
         ];
     }
 

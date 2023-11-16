@@ -66,6 +66,7 @@ class Lead extends Model
         'venue_id',
         'stab_number',
         'date_filled',
+        'exhibitor',
         'created_by',
         'updated_by',
     ];
