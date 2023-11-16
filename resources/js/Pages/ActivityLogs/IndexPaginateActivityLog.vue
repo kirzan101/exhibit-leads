@@ -42,6 +42,11 @@
                 :search_filter="search"
                 :isBusy="is_busy"
                 :module="module"
+                :startTo="start_to"
+                :endTo="end_to"
+                :nameInput="name"
+                :userId="user_id"
+                :causer_list="causers"
                 @toggle-load-data="loadData"
             />
         </b-container>
@@ -65,6 +70,11 @@ export default {
         search: String,
         module: String,
         items: Object,
+        start_to: String,
+        end_to: String,
+        name: String,
+        user_id: String,
+        causers: Array
     },
     data() {
         return {
@@ -110,7 +120,16 @@ export default {
         loadData(filter) {
             router.reload({
                 data: filter,
-                only: ["items", "sortBy", "sortDesc", "search"],
+                only: [
+                    "items",
+                    "sortBy",
+                    "sortDesc",
+                    "search",
+                    "start_to",
+                    "end_to",
+                    "name",
+                    "user_id"
+                ],
             });
         },
     },

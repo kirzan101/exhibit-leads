@@ -71,6 +71,100 @@
                 </b-form-group>
             </b-col>
 
+            <!-- booker filter -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Causer"
+                    label-for="causer-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="causer-select"
+                        v-model="filter.user_id"
+                        :options="causerOptions"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Name"
+                    label-for="name-input"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-input-group size="sm">
+                        <b-form-input
+                            id="name-input"
+                            v-model="filter.name"
+                            type="name"
+                            placeholder="Name"
+                            v-debounce:500ms="filterTable"
+                            maxlength="15"
+                        ></b-form-input>
+
+                        <b-input-group-append>
+                            <b-button
+                                :disabled="!filter.name"
+                                @click="
+                                    filter.name = '';
+                                    filterTable();
+                                "
+                                >Clear</b-button
+                            >
+                        </b-input-group-append>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+            <!-- booker filter end-->
+
+            <!-- access date filter start -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Start to"
+                    label-for="start-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-input
+                        type="date"
+                        id="start-to"
+                        v-model="filter.start_to"
+                        v-debounce:500ms="filterDate"
+                        @change="filterDate"
+                    ></b-form-input>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="End to"
+                    label-for="end-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-input
+                        type="date"
+                        id="end-to"
+                        v-model="filter.end_to"
+                        v-debounce:500ms="filterDate"
+                        @change="filterDate"
+                    ></b-form-input>
+                </b-form-group>
+            </b-col>
+            <!-- access date filter end -->
+
             <b-col sm="5" md="6" class="my-1">
                 <b-form-group
                     label="Per page"
@@ -186,6 +280,11 @@ export default {
         search_filter: String,
         module: String,
         isBusy: Boolean,
+        startTo: String,
+        endTo: String,
+        nameInput: String,
+        userId: String,
+        causer_list: Array
     },
     components: {
         Link,
@@ -201,6 +300,10 @@ export default {
                 is_sort_desc: this.sort_desc,
                 per_page: this.items.meta.per_page,
                 search: this.search_filter,
+                start_to: this.startTo,
+                end_to: this.endTo,
+                name: this.nameInput,
+                user_id: this.userId
             },
             jsonModal: {
                 title: null,
@@ -228,6 +331,15 @@ export default {
                     .filter((f) => f.isSortable)
                     .map((f) => {
                         return { text: f.label, value: f.key };
+                    }),
+            ];
+        },
+        causerOptions() {
+            return [
+                { text: "-- select --", value: null },
+                ...this.causer_list
+                    .map((f) => {
+                        return { text: f.full_name, value: f.user.id };
                     }),
             ];
         },
@@ -284,6 +396,17 @@ export default {
             //counts the number of the rows
             //sample computation 1(from) + 0(index) = 1
             return Number(this.items.meta.from) + Number(rowCount);
+        },
+        filterDate() {
+            this.is_Busy = true;
+
+            if (
+                this.filter.start_to != null ||
+                (this.filter.start_to != "" && this.filter.end_to != null) ||
+                this.filter.end_to != ""
+            ) {
+                this.$emit("toggle-load-data", this.filter);
+            }
         },
     },
 };

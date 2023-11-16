@@ -175,12 +175,14 @@
                             id="start-to"
                             v-model="filter.start_to"
                             v-debounce:500ms="filterDate"
+                            @change="filterDate"
                         ></b-form-input>
                         <b-form-input
                             type="time"
                             id="start-time-to"
                             v-model="filter.start_time_to"
                             v-debounce:500ms="filterDate"
+                            @change="filterDate"
                         ></b-form-input>
                     </b-input-group>
                 </b-form-group>
@@ -207,12 +209,14 @@
                             id="end-to"
                             v-model="filter.end_to"
                             v-debounce:500ms="filterDate"
+                            @change="filterDate"
                         ></b-form-input>
                         <b-form-input
                             type="time"
                             id="end-time-to"
                             v-model="filter.end_time_to"
                             v-debounce:500ms="filterDate"
+                            @change="filterDate"
                         ></b-form-input>
                     </b-input-group>
                 </b-form-group>

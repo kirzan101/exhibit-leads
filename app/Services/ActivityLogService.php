@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Helpers\Helper;
 use App\Models\ActivityLog;
+use App\Models\Employee;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -28,22 +30,24 @@ class ActivityLogService
 
         // search filter
         if (array_key_exists('search', $request) && !empty($request['search'])) {
-            $activity_logs->where('activity_logs.name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('activity_logs.description', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('employees.first_name', 'LIKE', '%' . $request['search'] . '%')
-                ->orWhere('employees.last_name', 'LIKE', '%' . $request['search'] . '%');
+            $activity_logs->where('activity_logs.description', 'LIKE', '%' . $request['search'] . '%');
         }
 
         if (array_key_exists('event', $request) && !empty($request['event'])) {
-            $activity_logs->whereBetween('activity_logs.event', $request['event']);
+            $activity_logs->where('activity_logs.event', $request['event']);
         }
 
         if (array_key_exists('name', $request) && !empty($request['name'])) {
-            $activity_logs->whereBetween('activity_logs.name', $request['name']);
+            $activity_logs->where('activity_logs.name', 'LIKE', '%' . $request['name'] . '%');
         }
 
         if (array_key_exists('user_id', $request) && !empty($request['user_id'])) {
-            $activity_logs->whereBetween('activity_logs.causer_id', $request['user_id']);
+            $activity_logs->where('activity_logs.causer_id', $request['user_id']);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $activity_logs->whereBetween('activity_logs.created_at', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
         }
 
         return $activity_logs->orderBy($sort_by, $sort)->paginate($per_page);
