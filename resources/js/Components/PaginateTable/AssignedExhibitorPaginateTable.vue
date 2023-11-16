@@ -168,6 +168,7 @@
                         id="start-to"
                         v-model="filter.start_to"
                         v-debounce:500ms="filterDate"
+                        @change="filterDate"
                     ></b-form-input>
                 </b-form-group>
             </b-col>
@@ -186,6 +187,7 @@
                         id="end-to"
                         v-model="filter.end_to"
                         v-debounce:500ms="filterDate"
+                        @change="filterDate"
                     ></b-form-input>
                 </b-form-group>
             </b-col>

@@ -125,7 +125,6 @@
                         <b-form-group
                             label="Age"
                             label-for="age"
-                            label-class="required"
                         >
                             <b-form-input
                                 type="number"
@@ -567,7 +566,25 @@
                     </b-col>
                 </b-row>
                 <b-row>
-                    <b-col sm="4">
+                    <b-col sm="3">
+                        <b-form-group
+                            label="Exhibitor"
+                            label-for="exhibitor"
+                        >
+                            <b-form-input
+                                type="text"
+                                id="exhibitor"
+                                v-model="form.exhibitor"
+                                :state="errors.exhibitor ? false : null"
+                            ></b-form-input>
+                            <b-form-invalid-feedback
+                                :state="errors.exhibitor ? false : null"
+                            >
+                                {{ errors.exhibitor }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </b-col>
+                    <b-col sm="3">
                         <b-form-group
                             label="Membership Type"
                             label-for="membership-type"
@@ -585,7 +602,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Presentation date"
                             label-for="presentation-date"
@@ -627,7 +644,7 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </b-col>
-                    <b-col sm="4">
+                    <b-col sm="3">
                         <b-form-group
                             label="Source"
                             label-for="source"
@@ -834,7 +851,9 @@ export default {
                 spouse_first_name: this.lead.spouse_first_name,
                 spouse_last_name: this.lead.spouse_last_name,
                 date_filled: this.lead.date_filled,
-                stab_number: this.lead.stab_number
+                stab_number: this.lead.stab_number,
+                exhibitor: this.lead.exhibitor,
+                id: this.lead.id,
             }),
             titles: [
                 { text: "-- select --", value: null },

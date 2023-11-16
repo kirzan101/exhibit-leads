@@ -81,6 +81,7 @@ class LeadResource extends JsonResource
             'venue_id' => $this->venue_id,
             'date_filled' => $this->date_filled,
             'stab_number' => $this->stab_number,
+            'exhibitor' => $this->exhibitor,
             'created_at' => $this->created_at,
             'created_by' => $this->createdBy,
             'updated_at' => $this->updated_at,

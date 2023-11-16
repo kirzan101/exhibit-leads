@@ -282,7 +282,7 @@ class LeadService
                     ->orWhere('leads.occupation', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('leads.mobile_number_one', 'LIKE', '%' . $request['search'] . '%')
                     ->orWhere('leads.mobile_number_two', 'LIKE', '%' . $request['search'] . '%');
-                    // ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
+                // ->orWhere('leads.refer_by', 'LIKE', '%' . $request['search'] . '%');
             });
         }
 
@@ -396,12 +396,12 @@ class LeadService
             ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
 
         // if loggedin user is admin
-        if(Auth::user()->employee->userGroup->id == 1) {
+        if (Auth::user()->employee->userGroup->id == 1) {
             $leads = Lead::select('leads.*')
-            ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
-            ->where('leads.is_booker_assigned', false)
-            ->where('leads.is_exhibitor_assigned', true)
-            ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
+                ->join('assigned_exhibitors', 'assigned_exhibitors.lead_id', '=', 'leads.id')
+                ->where('leads.is_booker_assigned', false)
+                ->where('leads.is_exhibitor_assigned', true)
+                ->whereIn('leads.source_prefix', Helper::exhibitPrefixes());
         }
 
         //set default values
@@ -471,11 +471,11 @@ class LeadService
         }
 
         // if account is exhibitor level
-        if(in_array(Auth::user()->employee->usergroup->name, ['rois', 'exhibit', 'surveys', 'exhibit-admin'])) {
+        if (in_array(Auth::user()->employee->usergroup->name, ['rois', 'exhibit', 'surveys', 'exhibit-admin'])) {
             $leads = Lead::select('leads.*')
-            ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
-            ->join('employees', 'employees.id', '=', 'assigned_employees.employee_id')
-            ->where('employees.exhibitor_id', Auth::user()->employee->id);
+                ->join('assigned_employees', 'assigned_employees.lead_id', '=', 'leads.id')
+                ->join('employees', 'employees.id', '=', 'assigned_employees.employee_id')
+                ->where('employees.exhibitor_id', Auth::user()->employee->id);
         }
 
         //set default values

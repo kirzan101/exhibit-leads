@@ -457,6 +457,19 @@ class EmployeeService
     }
 
     /**
+     * List of causers in activity logs
+     *
+     * @return Collection
+     */
+    public function indexCausers() : Collection
+    {
+        return Employee::select('employees.*')
+            ->join('activity_logs', 'activity_logs.causer_id', 'employees.user_id')
+            ->distinct()
+            ->get();
+    }
+
+    /**
      * index of paginate employees service
      *
      * @return Paginator
