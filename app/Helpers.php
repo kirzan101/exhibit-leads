@@ -274,7 +274,7 @@ class Helper
             $lead_sources = $lead_sources->whereIn('source_prefix', $prefix);
         }
 
-        return $lead_sources->orderBy('source')->get()->toArray();
+        return $lead_sources->whereNull('deleted_at')->orderBy('source')->get()->toArray();
     }
 
     /**
@@ -286,6 +286,7 @@ class Helper
     {
         $occupations = DB::table('leads')
             ->select('occupation')
+            ->whereNull('deleted_at')
             ->groupBy('occupation')
             ->get()
             ->toArray();
@@ -468,6 +469,7 @@ class Helper
         $refer_bys = DB::table('leads')
             ->select('refer_by')
             ->whereNotNull('refer_by')
+            ->whereNull('deleted_at')
             ->groupBy('refer_by')
             ->get()
             ->toArray();
@@ -503,6 +505,7 @@ class Helper
                 ->select('refer_by')
                 ->whereNotNull('refer_by')
                 ->whereIn('source_prefix', $filter_source)
+                ->whereNull('deleted_at')
                 ->groupBy('refer_by')
                 ->get()
                 ->toArray();
