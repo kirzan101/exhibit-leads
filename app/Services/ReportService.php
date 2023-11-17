@@ -49,7 +49,7 @@ class ReportService
 
         // source filter
         if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
-            [$prefix, $suffix] = explode("-", $request['source_name']);
+            [$prefix, $suffix] = explode("-", $request['source_name'], 2);
             $leads->where('leads.source_prefix', $prefix)
                 ->where('leads.source', $suffix);
         }
