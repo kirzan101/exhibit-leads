@@ -259,6 +259,7 @@ class Helper
     {
         $lead_sources = DB::table('leads')
             ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"))
+            ->whereNull('deleted_at')
             ->distinct('source_prefix');
 
         if ($team) {
