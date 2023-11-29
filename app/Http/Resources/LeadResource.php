@@ -85,7 +85,8 @@ class LeadResource extends JsonResource
             'created_at' => $this->created_at,
             'created_by' => $this->createdBy,
             'updated_at' => $this->updated_at,
-            'updated_by' => $this->updatedBy
+            'updated_by' => $this->updatedBy,
+            'nature_of_business' => $this->nature_of_business,
         ];
     }
 }
