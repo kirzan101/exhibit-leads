@@ -514,4 +514,25 @@ class Helper
 
         return $refer_bys;
     }
+
+    /**
+     * Get the list of codes in user groups
+     *
+     * @return array
+     */
+    public static function userGroupCodes(): array
+    {
+        $codes = [
+            'ADMIN',
+            'EXHIBIT',
+            'EMPLOYEES',
+            'CONFIRMERS',
+            'EXHIBIT-ADMIN',
+            'ENCODERS',
+            'SURVEYS',
+            'ROIS'
+        ];
+
+        return $codes;
+    }
 }

@@ -354,11 +354,11 @@
 
             <!-- format refer by start -->
             <template #head(refer_by)="column">
-                {{ user_group == "rois" ? column.label : "" }}
+                {{ user_group == "ROIS" ? column.label : "" }}
             </template>
 
             <template #cell(refer_by)="row">
-                {{ user_group == "rois" ? row.item.refer_by : "" }}
+                {{ user_group == "ROIS" ? row.item.refer_by : "" }}
             </template>
             <!-- format refer by end -->
 
@@ -539,7 +539,7 @@ export default {
             ];
         },
         user_group() {
-            return this.$page.props.auth.user.employee.user_group.name;
+            return this.$page.props.auth.user.employee.user_group.code;
         },
     },
     watch: {

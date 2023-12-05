@@ -181,7 +181,7 @@ export default {
     },
     computed: {
         user_group() {
-            return this.$page.props.auth.user.employee.user_group.name;
+            return this.$page.props.auth.user.employee.user_group.code;
         },
     },
     methods: {

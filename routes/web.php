@@ -120,7 +120,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('/sources', SourceController::class);
 
     //user groups
-    Route::get('/usergroups', [UserGroupController::class, 'index']);
+    // Route::get('/usergroups', [UserGroupController::class, 'index']);
+    Route::resource('/usergroups', UserGroupController::class);
 
     //lead paginate
     Route::get('/paginate/leads', [PaginateController::class, 'leadPaginate']);
