@@ -88,7 +88,7 @@
             />
 
             <ConfirmerVenueModal
-                v-if="employee_venues.length == 0 && user_group == 'confirmers'"
+                v-if="employee_venues.length == 0 && user_group == 'CONFIRMERS'"
                 :employee_id="employee_id"
                 :venue_list="venues"
                 :employee_venue_list="employee_venues"
@@ -180,7 +180,7 @@ export default {
     },
     computed: {
         user_group() {
-            return this.$page.props.auth.user.employee.user_group.name;
+            return this.$page.props.auth.user.employee.user_group.code;
         },
     },
     methods: {

@@ -646,6 +646,8 @@ class LeadService
         $request['created_by'] = Auth::user()->employee->id;
 
         try {
+            DB::beginTransaction();
+
             $lead = Lead::create($request);
 
             // save file
@@ -663,8 +665,12 @@ class LeadService
 
             $return_values = ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $this->last_id];
         } catch (Exception $e) {
+            DB::rollBack();
+
             $return_values =  ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
         }
+
+        DB::commit();
 
         //log activity
         ActivityLog::create([

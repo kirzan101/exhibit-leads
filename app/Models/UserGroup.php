@@ -14,6 +14,7 @@ class UserGroup extends Model
         'department',
         'description',
         'property_id',
+        'code',
     ];
 
     /**

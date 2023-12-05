@@ -87,6 +87,15 @@
                                 >Sources</Link
                             >
                             <Link
+                                v-if="check_access('usergroups', 'read')"
+                                role="menuitem"
+                                target="_self"
+                                class="dropdown-item"
+                                @click="closeDropDown"
+                                href="/usergroups"
+                                >User Groups</Link
+                            >
+                            <Link
                                 v-if="check_access('confirmed', 'read')"
                                 role="menuitem"
                                 target="_self"
