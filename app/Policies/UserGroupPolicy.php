@@ -14,7 +14,7 @@ class UserGroupPolicy
      */
     public function read(User $user): bool
     {
-        return Helper::checkAccess('employees', 'read');
+        return Helper::checkAccess('usergroups', 'read');
     }
 
     /**
@@ -22,7 +22,7 @@ class UserGroupPolicy
      */
     public function create(User $user): bool
     {
-        return Helper::checkAccess('employees', 'create');
+        return Helper::checkAccess('usergroups', 'create');
     }
 
     /**
@@ -30,7 +30,7 @@ class UserGroupPolicy
      */
     public function update(User $user): bool
     {
-        return Helper::checkAccess('employees', 'update');
+        return Helper::checkAccess('usergroups', 'update');
     }
 
     /**
@@ -38,6 +38,6 @@ class UserGroupPolicy
      */
     public function delete(User $user): bool
     {
-        return Helper::checkAccess('employees', 'delete');
+        return Helper::checkAccess('usergroups', 'delete');
     }
 }

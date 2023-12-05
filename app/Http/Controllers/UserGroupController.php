@@ -38,6 +38,8 @@ class UserGroupController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('read', UserGroup::class);
+
         // $this->authorize('read', UserGroup::class);
         //set default value for lead name
         $sort_by = $request->sort_by;
@@ -67,6 +69,8 @@ class UserGroupController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', UserGroup::class);
+
         return Inertia::render('UserGroups/CreateUserGroup', [
             'properties' => $this->propertyService->indexProperty(),
             'permissions' => $this->permissionService->indexPermission(),
@@ -80,6 +84,7 @@ class UserGroupController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', UserGroup::class);
 
         ['result' => $result, 'message' => $message] = $this->userGroupService->createUserGroup($request->toArray());
 
@@ -92,6 +97,8 @@ class UserGroupController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('read', UserGroup::class);
+
         $userGroup = UserGroup::find($id);
         $user_group = new UserGroupResource($this->userGroupService->showUserGroup($userGroup));
         $permissions = $this->permissionService->indexPermission();
@@ -112,6 +119,8 @@ class UserGroupController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('update', UserGroup::class);
+
         $userGroup = UserGroup::find($id);
         $user_group = new UserGroupResource($this->userGroupService->showUserGroup($userGroup));
         $permissions = $this->permissionService->indexPermission();
@@ -132,6 +141,8 @@ class UserGroupController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->authorize('update', UserGroup::class);
+
         $userGroup = UserGroup::find($id);
 
         ['result' => $result, 'message' => $message] = $this->userGroupService->updateUserGroup($request->toArray(), $userGroup);
@@ -145,6 +156,8 @@ class UserGroupController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete', UserGroup::class);
+
         $userGroup = UserGroup::findOrFail($id);
 
         ['result' => $result, 'message' => $message] = $this->userGroupService->deleteUserGroup($userGroup);
