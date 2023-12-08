@@ -88,6 +88,14 @@ class Helper
                 return $result;
 
             do {
+                // replace ñ to n
+                $first_name = str_replace('ñ', 'n', $first_name);
+                $last_name = str_replace('ñ', 'n', $last_name);
+
+                // replace Ñ to n
+                $first_name = str_replace('Ñ', 'n', $first_name);
+                $last_name = str_replace('Ñ', 'n', $last_name);
+
                 //set the first name to small letters
                 $first_name = strtolower(trim($first_name));
 
