@@ -8,6 +8,7 @@ use App\Models\Contract;
 use App\Models\Employee;
 use App\Models\EmployeeVenue;
 use App\Models\User;
+use App\Models\UserGroup;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -451,7 +452,36 @@ class EmployeeService
             }
         }
 
-        // dd($employees->distinct()->orderBy('employees.id', 'desc')->get());
+        return $employees->distinct()->orderBy('employees.id', 'desc')->get();
+    }
+
+    /**
+     * Get the list of employees that belongs to a user group
+     *
+     * @return void
+     */
+    public function indexTeamLeadEmployeesByCode(string $code)
+    {
+        $employees = Employee::select('employees.*')
+            ->join('user_groups', 'user_groups.id', '=', 'employees.user_group_id')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('user_groups.name', 'employees')
+            ->where('users.is_active', true);
+
+        //get the user group by code
+        $userGroup = UserGroup::where('code', $code)->first();
+
+        if ($userGroup) {
+            //get the list of employees that belongs to the user group
+            $exhibitors = Employee::where('user_group_id', $userGroup->id)->get();
+
+            //get the employee ids
+            $exhibitors_id = $exhibitors->map(function ($exhibitor) {
+                return $exhibitor->id;
+            });
+
+            $employees->whereIn('employees.exhibitor_id', $exhibitors_id->toArray());
+        }
 
         return $employees->distinct()->orderBy('employees.id', 'desc')->get();
     }
@@ -461,7 +491,7 @@ class EmployeeService
      *
      * @return Collection
      */
-    public function indexCausers() : Collection
+    public function indexCausers(): Collection
     {
         return Employee::select('employees.*')
             ->join('activity_logs', 'activity_logs.causer_id', 'employees.user_id')
