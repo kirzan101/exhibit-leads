@@ -11,7 +11,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "@inertiajs/vue2": "^1.0.8",
+        "@inertiajs/vue2": "^1.0.14",
         "@vitejs/plugin-vue2": "^2.2.0",
         "bootstrap": "^4.5.3",
         "bootstrap-vue": "^2.23.1",

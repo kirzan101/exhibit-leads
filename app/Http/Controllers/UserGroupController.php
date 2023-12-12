@@ -50,7 +50,7 @@ class UserGroupController extends Controller
         }
 
         $user_groups = UserGroupResource::collection($this->userGroupService->indexUserGroupPaginate($request->toArray()));
-        // dd($user_groups);
+
         $properties = $this->propertyService->indexProperty();
 
         return Inertia::render('UserGroups/IndexPaginateUserGroup', [
