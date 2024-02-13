@@ -11,6 +11,7 @@ use App\Http\Controllers\EmployeeVenueController;
 use App\Http\Controllers\ExhibitController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LeadStatusController;
+use App\Http\Controllers\OcrContoller;
 use App\Http\Controllers\PaginateController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoiController;
@@ -156,4 +157,9 @@ Route::middleware('auth')->group(function () {
 
     //employee venues
     Route::put('/employee-venues', [EmployeeVenueController::class, 'update']);
+
+    //upload scan
+    Route::get('/scan', [OcrContoller::class, 'scan']);
+    Route::post('scan/upload', [OcrContoller::class, 'upload']);
+    Route::get('/scan/lead', [OcrContoller::class, 'lead']);
 });
