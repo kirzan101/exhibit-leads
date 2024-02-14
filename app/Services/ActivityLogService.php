@@ -71,12 +71,11 @@ class ActivityLogService
                 'status' => $request['status'],
                 'browser' => json_encode(Helper::deviceInfo()),
                 'properties' => $request['properties'],
-                'causer_id' => Auth::user()->id,
+                'causer_id' => 1,//Auth::user()->id,
                 'subject_id' => $request['subject_id']
             ]);
 
             $this->last_id = $activityLog->id;
-
         } catch (Exception $e) {
             DB::rollBack();
 
