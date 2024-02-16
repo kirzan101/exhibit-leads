@@ -71,7 +71,7 @@ class OpcLeadService
             // dd($request['leads']);
             if ($request['leads']) {
                 $leads = json_decode($request['leads']);
-                dd($leads);
+
                 foreach ($leads as $lead) {
                     dd($lead);
                     $opc_lead = OpcLead::create([
