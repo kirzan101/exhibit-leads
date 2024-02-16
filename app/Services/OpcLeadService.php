@@ -68,12 +68,11 @@ class OpcLeadService
     {
         try {
             DB::beginTransaction();
-            // dd($request['leads']);
+
             if ($request['leads']) {
                 $leads = json_decode($request['leads']);
 
                 foreach ($leads as $lead) {
-                    dd($lead);
                     $opc_lead = OpcLead::create([
                         'first_name' => $lead->first_name,
                         'middle_name' => $lead->middle_name,
