@@ -21,11 +21,13 @@ return new class extends Migration
             $table->string('companion_last_name')->nullable();
             $table->string('address')->nullable();
             $table->string('hotel')->nullable();
-            $table->string('mobile_number');
-            $table->string('occupation');
-            $table->string('age');
-            $table->string('source');
-            $table->string('civil_status');
+            $table->string('mobile_number')->nullable();
+            $table->string('occupation')->nullable();
+            $table->string('age')->nullable();
+            $table->string('source_prefix')->nullable();
+            $table->string('source')->nullable();
+            $table->string('civil_status')->nullable();
+            $table->date('date_filled')->nullable();
             $table->timestamps();
         });
     }

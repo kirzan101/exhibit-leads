@@ -22,7 +22,9 @@ class OpcLead extends Model
         'occupation',
         'age',
         'source',
+        'source_prefix',
         'civil_status',
+        'date_filled',
         'is_uploaded',
     ];
 
@@ -35,5 +37,15 @@ class OpcLead extends Model
     public function getFullName()
     {
         return sprintf('%s, %s', $this->last_name, $this->first_name);
+    }
+
+    /**
+     * Get the source prefix & source
+     *
+     * @return void
+     */
+    public function getSource()
+    {
+        return sprintf('%s-%s', $this->source_prefix, $this->source);
     }
 }
