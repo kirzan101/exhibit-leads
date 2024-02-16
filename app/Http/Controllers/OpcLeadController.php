@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OpcLeadResource;
+use App\Models\OpcLead;
 use App\Services\OpcLeadService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,6 +23,8 @@ class OpcLeadController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('read', OpcLead::class);
+
         //set default value for lead name
         $sort_by = $request->sort_by;
         if ($request->sort_by == 'full_name') {

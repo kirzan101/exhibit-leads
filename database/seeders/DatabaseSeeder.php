@@ -30,11 +30,13 @@ class DatabaseSeeder extends Seeder
             UserGroupSeeder::class,
             VenueSeeder::class,
             EmployeeSeeder::class,
-            LiveAccountSeeder::class
+            LiveAccountSeeder::class,
+            OpcLeadPermissionSeeder::class,
+            OpcLeadUserGroupSeeder::class
         ]);
 
         // Lead::factory(50)->create();
-        
+
         // Employee::factory(2)->create();
 
     }

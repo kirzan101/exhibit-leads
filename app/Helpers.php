@@ -538,7 +538,8 @@ class Helper
             'EXHIBIT-ADMIN',
             'ENCODERS',
             'SURVEYS',
-            'ROIS'
+            'ROIS',
+            'OPC_LEADS'
         ];
 
         return $codes;

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\OpcLead;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -67,29 +68,12 @@ class OpcLeadService
     {
         try {
             DB::beginTransaction();
-
+            // dd($request['leads']);
             if ($request['leads']) {
                 $leads = json_decode($request['leads']);
 
                 foreach ($leads as $lead) {
-                    // dd($lead->first_name);
-                    // $opc_lead = OpcLead::create([
-                    //     'first_name' => $lead['first_name'],
-                    //     'middle_name' => $lead['middle_name'],
-                    //     'last_name' => $lead['last_name'],
-                    //     'companion_first_name' => $lead['companion_first_name'],
-                    //     'companion_middle_name' => $lead['companion_middle_name'],
-                    //     'companion_last_name' => $lead['companion_last_name'],
-                    //     'address' => $lead['address'],
-                    //     'hotel' => $lead['hotel'],
-                    //     'mobile_number' => $lead['mobile_number'],
-                    //     'occupation' => $lead['occupation'],
-                    //     'age' => $lead['age'],
-                    //     'source' => $lead['source'],
-                    //     'civil_status' => $lead['civil_status'],
-                    //     'is_uploaded' => $lead['is_uploaded'],
-                    // ]);
-
+                    dd($lead);
                     $opc_lead = OpcLead::create([
                         'first_name' => $lead->first_name,
                         'middle_name' => $lead->middle_name,
@@ -103,7 +87,9 @@ class OpcLeadService
                         'occupation' => $lead->occupation,
                         'age' => $lead->age,
                         'source' => $lead->source,
+                        'source_prefix' => $lead->source_prefix,
                         'civil_status' => $lead->civil_status,
+                        'date_filled' => Carbon::parse($lead->created_at)->format('Y-m-d'),
                     ]);
                 }
             }
@@ -143,7 +129,9 @@ class OpcLeadService
                 'occupation' => $request['occupation'],
                 'age' => $request['age'],
                 'source' => $request['source'],
+                'source_prefix' => $request['source_prefix'],
                 'civil_status' => $request['civil_status'],
+                'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d'),
                 'is_uploaded' => $request['is_uploaded'],
             ]);
 
@@ -181,7 +169,9 @@ class OpcLeadService
                 'occupation' => $request['occupation'],
                 'age' => $request['age'],
                 'source' => $request['source'],
-                'civil_status' => $request['civil_status']
+                'source_prefix' => $request['source_prefix'],
+                'civil_status' => $request['civil_status'],
+                'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d')
             ]);
 
             $this->last_id = $opcLead->getKey();

@@ -50,6 +50,11 @@
                     >
                         <Link class="nav-link" href="/confirms">Confirms</Link>
                     </li>
+                    <li class="nav-item" v-if="check_access('opc-leads', 'read')">
+                        <Link class="nav-link" href="/opc-leads"
+                            >OPC Leads</Link
+                        >
+                    </li>
                     <!-- <b-nav-item href="#" disabled>Disabled</b-nav-item> -->
 
                     <b-nav-item-dropdown
