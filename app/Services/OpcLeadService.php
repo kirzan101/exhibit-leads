@@ -73,23 +73,27 @@ class OpcLeadService
                 $leads = json_decode($request['leads']);
 
                 foreach ($leads as $lead) {
-                    $opc_lead = OpcLead::create([
-                        'first_name' => $lead->first_name,
-                        'middle_name' => $lead->middle_name,
-                        'last_name' => $lead->last_name,
-                        'companion_first_name' => $lead->companion_first_name,
-                        'companion_middle_name' => $lead->companion_middle_name,
-                        'companion_last_name' => $lead->companion_last_name,
-                        'address' => $lead->address,
-                        'hotel' => $lead->hotel,
-                        'mobile_number' => $lead->mobile_number,
-                        'occupation' => $lead->occupation,
-                        'age' => $lead->age,
-                        'source' => $lead->source,
-                        'source_prefix' => $lead->source_prefix,
-                        'civil_status' => $lead->civil_status,
-                        'date_filled' => Carbon::parse($lead->created_at)->format('Y-m-d'),
-                    ]);
+                    $opc_leads = OpcLead::where('first_name', $lead->first_name)->where('last_name', $lead->last_name)->get();
+
+                    if($opc_leads->count() == 0) {
+                        $opc_lead = OpcLead::create([
+                            'first_name' => $lead->first_name,
+                            'middle_name' => $lead->middle_name,
+                            'last_name' => $lead->last_name,
+                            'companion_first_name' => $lead->companion_first_name,
+                            'companion_middle_name' => $lead->companion_middle_name,
+                            'companion_last_name' => $lead->companion_last_name,
+                            'address' => $lead->address,
+                            'hotel' => $lead->hotel,
+                            'mobile_number' => $lead->mobile_number,
+                            'occupation' => $lead->occupation,
+                            'age' => $lead->age,
+                            'source' => $lead->source,
+                            'source_prefix' => $lead->source_prefix,
+                            'civil_status' => $lead->civil_status,
+                            'date_filled' => Carbon::parse($lead->created_at)->format('Y-m-d'),
+                        ]);
+                    }
                 }
             }
 
