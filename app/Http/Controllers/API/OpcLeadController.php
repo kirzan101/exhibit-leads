@@ -18,17 +18,88 @@ class OpcLeadController extends Controller
         $this->opcLeadService = $opcLeadService;
     }
 
+    /**
+     * Store bulk leads
+     *
+     * @param Request $request
+     */
     public function storeBulk(Request $request)
     {
         $response_code = 422;
+        $message = 'Unprocessable Content';
 
         if ($request->has('leads')) {
             $result = $this->opcLeadService->createBulkOpcLead($request->toArray());
             $response_code = ($result['result'] == 'success') ? 200 : 500;
+            $message = $result['message'];
         }
 
         return response()->json([
-            'message' => $result['message'],
+            'message' => $message,
+        ], $response_code);
+    }
+
+    /**
+     * Store OPC lead
+     *
+     * @param Request $request
+     */
+    public function store(Request $request)
+    {
+        $response_code = 422;
+        $message = 'Unprocessable Content';
+
+        if (true) {
+            $result = $this->opcLeadService->createOpcLead($request->toArray());
+            $response_code = ($result['result'] == 'success') ? 200 : 500;
+            $message = $result['message'];
+        }
+
+        return response()->json([
+            'message' => $message,
+        ], $response_code);
+    }
+
+    /**
+     * Update OPC lead
+     *
+     * @param Request $request
+     * @param [type] $id
+     */
+    public function update(Request $request, $id)
+    {
+        $response_code = 422;
+        $message = 'Unprocessable Content';
+
+        if (true) {
+            $result = $this->opcLeadService->updateOpcLeadService($request->toArray(), OpcLead::find($id));
+            $response_code = ($result['result'] == 'success') ? 200 : 500;
+            $message = $result['message'];
+        }
+
+        return response()->json([
+            'message' => $message,
+        ], $response_code);
+    }
+
+    /**
+     * Delete OPC lead
+     *
+     * @param [type] $id
+     */
+    public function destroy($id)
+    {
+        $response_code = 422;
+        $message = 'Unprocessable Content';
+
+        if (true) {
+            $result = $this->opcLeadService->deleteOpcLeadService(OpcLead::find($id));
+            $response_code = ($result['result'] == 'success') ? 200 : 500;
+            $message = $result['message'];
+        }
+
+        return response()->json([
+            'message' => $message,
         ], $response_code);
     }
 }

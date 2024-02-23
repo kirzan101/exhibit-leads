@@ -27,6 +27,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/leads', [LeadController::class, 'index']);
+    Route::resource('opc-leads', OpcLeadController::class, ['except' => ['show', 'edit', 'create', 'index']]);
 });
 
 Route::post('opc-lead-bulk', [OpcLeadController::class, 'storeBulk']);

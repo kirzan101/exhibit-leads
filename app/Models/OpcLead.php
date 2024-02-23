@@ -26,6 +26,7 @@ class OpcLead extends Model
         'civil_status',
         'date_filled',
         'is_uploaded',
+        'remarks'
     ];
 
 
@@ -37,6 +38,20 @@ class OpcLead extends Model
     public function getFullName()
     {
         return sprintf('%s, %s', $this->last_name, $this->first_name);
+    }
+
+    /**
+     * Get the companion full name
+     *
+     * @return string
+     */
+    public function getCompanionFullName()
+    {
+        if(!$this->companion_first_name || !$this->companion_last_name) {
+            return '';
+        }
+
+        return sprintf('%s, %s', $this->companion_last_name, $this->companion_first_name); 
     }
 
     /**

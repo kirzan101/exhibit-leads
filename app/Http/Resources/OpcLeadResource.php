@@ -32,6 +32,8 @@ class OpcLeadResource extends JsonResource
             'date_filled' => $this->date_filled,
             'is_uploaded' => $this->is_uploaded,
             'full_name' => $this->getFullName(),
+            'companion_full_name' => $this->getCompanionFullName(),
+            'remarks' => $this->remarks,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

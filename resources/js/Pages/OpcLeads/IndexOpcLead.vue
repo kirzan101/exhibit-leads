@@ -29,14 +29,12 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">
-                        OPC Leads
-                    </div>
+                    <div class="col-sm-6">OPC Leads</div>
                     <div class="col-sm-6">&nbsp;</div>
                 </div>
             </h5>
 
-            <GenericPaginateTable
+            <OpcLeadPaginateTable
                 :items="items"
                 :fields="fields"
                 :sort_by="sortBy"
@@ -52,12 +50,12 @@
 
 <script>
 import { Link, router } from "@inertiajs/vue2";
-import GenericPaginateTable from "../../Components/PaginateTable/GenericPaginateTable.vue";
+import OpcLeadPaginateTable from "../../Components/PaginateTable/OpcLeadPaginateTable.vue";
 
 export default {
     components: {
         Link,
-        GenericPaginateTable,
+        OpcLeadPaginateTable,
     },
     props: {
         sortBy: String,
@@ -75,10 +73,15 @@ export default {
                     label: "Name",
                     isSortable: true,
                 },
-                { key: "source", label: "Source", isSortable: false },
+                {
+                    key: "mobile_number",
+                    label: "Mobile Number",
+                    isSortable: false,
+                },
                 { key: "occupation", label: "Occupation", isSortable: true },
+                { key: "source", label: "Source", isSortable: false },
                 { key: "date_filled", label: "Date Filled", isSortable: true },
-                // { key: "actions", label: "Actions" },
+                { key: "actions", label: "Actions" },
             ],
             alert: false,
             is_busy: false,
