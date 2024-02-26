@@ -71,7 +71,7 @@ class ActivityLogService
                 'status' => $request['status'],
                 'browser' => json_encode(Helper::deviceInfo()),
                 'properties' => $request['properties'],
-                'causer_id' => 1,//Auth::user()->id,
+                'causer_id' => (Auth::id()) ? Auth::id() : 1,
                 'subject_id' => $request['subject_id']
             ]);
 

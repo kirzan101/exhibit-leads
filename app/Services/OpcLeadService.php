@@ -75,7 +75,7 @@ class OpcLeadService
                 foreach ($leads as $lead) {
                     $opc_leads = OpcLead::where('first_name', $lead->first_name)->where('last_name', $lead->last_name)->get();
 
-                    if($opc_leads->count() == 0) {
+                    if ($opc_leads->count() == 0) {
                         $opc_lead = OpcLead::create([
                             'first_name' => $lead->first_name,
                             'middle_name' => $lead->middle_name,
@@ -91,6 +91,7 @@ class OpcLeadService
                             'source' => $lead->source,
                             'source_prefix' => $lead->source_prefix,
                             'civil_status' => $lead->civil_status,
+                            'remarks' => $lead->remarks,
                             'date_filled' => Carbon::parse($lead->created_at)->format('Y-m-d'),
                         ]);
                     }
@@ -134,6 +135,7 @@ class OpcLeadService
                 'source' => $request['source'],
                 'source_prefix' => $request['source_prefix'],
                 'civil_status' => $request['civil_status'],
+                'remarks' => $request['remarks'],
                 'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d'),
                 'is_uploaded' => $request['is_uploaded'],
             ]);
@@ -174,12 +176,13 @@ class OpcLeadService
                 'source' => $request['source'],
                 'source_prefix' => $request['source_prefix'],
                 'civil_status' => $request['civil_status'],
+                'remarks' => $request['remarks'],
                 'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d')
             ]);
 
             $this->last_id = $opcLead->getKey();
 
-            $return_values = ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $this->last_id];
+            $return_values = ['result' => 'success', 'message' => 'Successfully updated!', 'subject' => $this->last_id];
         } catch (Exception $e) {
 
             $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
@@ -200,5 +203,26 @@ class OpcLeadService
         $opcLead = $model;
 
         return $opcLead;
+    }
+
+    /**
+     * delete OPC lead service
+     *
+     * @param OpcLead $opcLead
+     * @return array
+     */
+    public function deleteOpcLeadService(OpcLead $opcLead): array
+    {
+        $this->last_id = $opcLead->id;
+
+        try {
+            $opcLead->delete();
+
+            $return_values = ['result' => 'success', 'message' => 'Successfully deleted!', 'subject' => $this->last_id];
+        } catch (Exception $e) {
+            $return_values = ['result' => 'error', 'message' => $e->getMessage(), 'subject' => $this->last_id];
+        }
+
+        return $return_values;
     }
 }

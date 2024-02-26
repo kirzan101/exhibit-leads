@@ -27,6 +27,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/leads', [LeadController::class, 'index']);
+    Route::resource('opc-leads', OpcLeadController::class, ['except' => ['show', 'edit', 'create', 'index']]);
+
+    //encrypt password
+    Route::post('/encrypt', [OpcLeadController::class, 'encryptMobilePassword']);
+    Route::post('/decrypt', [OpcLeadController::class, 'decryptMobilePassword']);
+    Route::post('opc-lead-bulk', [OpcLeadController::class, 'storeBulk']);
 });
 
-Route::post('opc-lead-bulk', [OpcLeadController::class, 'storeBulk']);
+Route::post('/mobile/login', [OpcLeadController::class, 'loginMobile']);
