@@ -137,7 +137,6 @@ class OpcLeadService
                 'civil_status' => $request['civil_status'],
                 'remarks' => $request['remarks'],
                 'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d'),
-                'is_uploaded' => $request['is_uploaded'],
             ]);
 
             $return_values = ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $this->last_id];
