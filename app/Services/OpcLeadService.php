@@ -224,4 +224,24 @@ class OpcLeadService
 
         return $return_values;
     }
+
+    public function checkOpcLeadRecordService(array $request): bool
+    {
+        if (strlen($request['middle_name']) > 0) {
+            $result = OpcLead::where('first_name', $request['first_name'])
+                ->where('middle_name', $request['middle_name'])
+                ->where('last_name', $request['last_name'])
+                ->where('mobile_number', $request['mobile_number'])
+                ->get()
+                ->count();
+        } else {
+            $result = OpcLead::where('first_name', $request['first_name'])
+                ->where('last_name', $request['last_name'])
+                ->where('mobile_number', $request['mobile_number'])
+                ->get()
+                ->count();
+        }
+
+        return ($result > 0) ? true : false;
+    }
 }
