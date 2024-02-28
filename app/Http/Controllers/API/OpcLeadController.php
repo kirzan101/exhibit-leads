@@ -52,10 +52,13 @@ class OpcLeadController extends Controller
         $response_code = 422;
         $message = 'Unprocessable Content';
 
-        if (true) {
+        if ($this->opcLeadService->checkOpcLeadRecordService($request->toArray())) {
             $result = $this->opcLeadService->createOpcLead($request->toArray());
             $response_code = ($result['result'] == 'success') ? 200 : 500;
             $message = $result['message'];
+        } else {
+            $response_code = 200;
+            $message = 'Duplicate record.';
         }
 
         return response()->json([
@@ -178,5 +181,18 @@ class OpcLeadController extends Controller
         $decrypted_password = $this->authMobileService->decryptMobilePassword($request->password);
 
         return $decrypted_password;
+    }
+
+    /**
+     * check if token is valid
+     *
+     * @return void
+     */
+    public function checkToken()
+    {
+        return response()->json([
+            'status' => true,
+            'message' => 'Valid token.'
+        ], 200);
     }
 }

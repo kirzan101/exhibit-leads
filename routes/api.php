@@ -32,7 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //encrypt password
     Route::post('/encrypt', [OpcLeadController::class, 'encryptMobilePassword']);
     Route::post('/decrypt', [OpcLeadController::class, 'decryptMobilePassword']);
+
     Route::post('opc-lead-bulk', [OpcLeadController::class, 'storeBulk']);
+    Route::post('opc-leads/check', [OpcLeadController::class, 'checkToken']);
 });
 
 Route::post('/mobile/login', [OpcLeadController::class, 'loginMobile']);
