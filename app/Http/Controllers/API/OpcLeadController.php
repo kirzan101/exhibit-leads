@@ -52,7 +52,7 @@ class OpcLeadController extends Controller
         $response_code = 422;
         $message = 'Unprocessable Content';
 
-        if ($this->opcLeadService->checkOpcLeadRecordService($request->toArray())) {
+        if (!$this->opcLeadService->checkOpcLeadRecordService($request->toArray())) {
             $result = $this->opcLeadService->createOpcLead($request->toArray());
             $response_code = ($result['result'] == 'success') ? 200 : 500;
             $message = $result['message'];
@@ -194,5 +194,12 @@ class OpcLeadController extends Controller
             'status' => true,
             'message' => 'Valid token.'
         ], 200);
+    }
+
+    public function test(Request $request)
+    {
+        $result = $this->opcLeadService->checkOpcLeadRecordService($request->toArray());
+
+        dd($result);
     }
 }
