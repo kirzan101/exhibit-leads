@@ -242,6 +242,8 @@ class OpcLeadService
                 ->count();
         }
 
+        // dd($result);
+
         return ($result > 0) ? true : false;
     }
 }

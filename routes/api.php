@@ -38,3 +38,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::post('/mobile/login', [OpcLeadController::class, 'loginMobile']);
+Route::post('/test', [OpcLeadController::class, 'test']);
