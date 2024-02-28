@@ -227,7 +227,7 @@ class OpcLeadService
 
     public function checkOpcLeadRecordService(array $request): bool
     {
-        if (strlen($request['middle_name']) > 0) {
+        if (array_key_exists('middle_name', $request) && strlen($request['middle_name']) > 0) {
             $result = OpcLead::where('first_name', $request['first_name'])
                 ->where('middle_name', $request['middle_name'])
                 ->where('last_name', $request['last_name'])
