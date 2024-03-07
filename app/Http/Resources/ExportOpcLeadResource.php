@@ -18,11 +18,11 @@ class ExportOpcLeadResource extends JsonResource
         return [
             'lead_name' => $this->getFullName(),
             'companion_name' => $this->getCompanionFullName(),
-            'address' => $this->address,
-            'hotel' => $this->hotel,
             'mobile_number' => $this->mobile_number,
             'occupation' => $this->occupation,
             'age' => $this->age,
+            'address' => $this->address,
+            'hotel' => $this->hotel,
             'source' => $this->getSource(),
             'civil_status' => $this->civil_status,
             'date_filled' => Carbon::parse($this->date_filled)->format('Y-m-d H:i A'),
