@@ -29,10 +29,31 @@
         <b-container fluid>
             <h5>
                 <div class="row">
-                    <div class="col-sm-6">OPC Leads</div>
+                    <div class="col-sm-6">
+                        OPC Leads |
+                        <b-button
+                            class="btn btn-success m-1"
+                            v-b-modal.download-modal
+                            align-v="end"
+                            v-if="items.data.length > 0"
+                            >Download</b-button
+                        >
+                        <b-button
+                            class="btn btn-success m-1"
+                            align-v="end"
+                            disabled
+                            v-else
+                            >Download</b-button
+                        >
+                    </div>
                     <div class="col-sm-6">&nbsp;</div>
                 </div>
             </h5>
+
+            <DownloadModal
+                message="Confirm Download?"
+                @submit-download="submitDownload"
+            />
 
             <OpcLeadPaginateTable
                 :items="items"
@@ -42,6 +63,10 @@
                 :search_filter="search"
                 :isBusy="is_busy"
                 :module="module"
+                :startTo="start_to"
+                :endTo="end_to"
+                :sourceName="source_name"
+                :sources="sources"
                 @toggle-load-data="loadData"
             />
         </b-container>
@@ -51,11 +76,13 @@
 <script>
 import { Link, router } from "@inertiajs/vue2";
 import OpcLeadPaginateTable from "../../Components/PaginateTable/OpcLeadPaginateTable.vue";
+import DownloadModal from "../../Components/Modals/DownloadModal.vue";
 
 export default {
     components: {
         Link,
         OpcLeadPaginateTable,
+        DownloadModal,
     },
     props: {
         sortBy: String,
@@ -63,6 +90,10 @@ export default {
         search: String,
         module: String,
         items: Object,
+        start_to: String,
+        end_to: String,
+        source_name: String,
+        sources: Array,
     },
     data() {
         return {
@@ -85,6 +116,14 @@ export default {
             ],
             alert: false,
             is_busy: false,
+            download_filter: {
+                sort_by: this.sort_by,
+                is_sort_desc: this.sort_desc,
+                search: this.search_filter,
+                source_name: this.sourceName,
+                start_to: this.startTo,
+                end_to: this.endTo,
+            },
         };
     },
     methods: {
@@ -113,7 +152,26 @@ export default {
         loadData(filter) {
             router.reload({
                 data: filter,
-                only: ["items", "sortBy", "sortDesc", "search"],
+                only: [
+                    "items",
+                    "sortBy",
+                    "sortDesc",
+                    "search",
+                    "source_name",
+                    "start_to",
+                    "end_to",
+                ],
+            });
+        },
+        submitDownload() {
+            this.$bvModal.hide("download-modal");
+            router.visit("/download/opc-leads", {
+                data: this.download_filter,
+                method: "get",
+                onBefore: (visit) => {
+                    // console.log(visit.url.href)
+                    window.open(visit.url.href);
+                },
             });
         },
     },

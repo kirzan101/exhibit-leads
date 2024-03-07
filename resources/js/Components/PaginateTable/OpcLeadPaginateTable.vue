@@ -2,6 +2,69 @@
     <b-container fluid>
         <!-- User Interface controls -->
         <b-row>
+            <!-- first filter start -->
+            <b-col sm="6" md="6" class="my-1"> &nbsp; </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Source"
+                    label-for="source-select"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-select
+                        id="source-select"
+                        v-model="filter.source_name"
+                        :options="source_options"
+                        @change="filterTable"
+                        size="sm"
+                    ></b-form-select>
+                </b-form-group>
+            </b-col>
+            <!-- first filter end -->
+
+            <!-- second filter start -->
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="Start to"
+                    label-for="start-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-input
+                        type="date"
+                        id="start-to"
+                        v-model="filter.start_to"
+                        v-debounce:500ms="filterDate"
+                        @change="filterDate"
+                    ></b-form-input>
+                </b-form-group>
+            </b-col>
+
+            <b-col sm="6" md="6" class="my-1">
+                <b-form-group
+                    label="End to"
+                    label-for="end-to"
+                    label-cols-sm="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                >
+                    <b-form-input
+                        type="date"
+                        id="end-to"
+                        v-model="filter.end_to"
+                        v-debounce:500ms="filterDate"
+                        @change="filterDate"
+                    ></b-form-input>
+                </b-form-group>
+            </b-col>
+            <!-- second filter end -->
+
             <b-col lg="6" class="my-1">
                 <b-form-group
                     label="Sort"
@@ -173,7 +236,7 @@
             @submit-remove="submitDelete"
         />
 
-        <ShowLeadDetailsModal :lead=selectedLead />
+        <ShowLeadDetailsModal :lead="selectedLead" />
     </b-container>
 </template>
 
@@ -191,6 +254,10 @@ export default {
         search_filter: String,
         module: String,
         isBusy: Boolean,
+        startTo: String,
+        endTo: String,
+        sourceName: String,
+        sources: Array,
     },
     components: {
         Link,
@@ -207,11 +274,20 @@ export default {
                 is_sort_desc: this.sort_desc,
                 per_page: this.items.meta.per_page,
                 search: this.search_filter,
+                start_to: this.startTo,
+                end_to: this.endTo,
+                source_name: this.sourceName,
             },
             selected_ids: [],
             checkedAll: false,
             selectedItem: "",
             selectedLead: {},
+            source_options: [
+                { value: null, text: "-- select --" },
+                ...this.sources.map((item) => {
+                    return { value: item.source, text: item.source };
+                }),
+            ],
         };
     },
     computed: {
@@ -263,6 +339,17 @@ export default {
             this.is_Busy = true;
 
             this.$emit("toggle-load-data", this.filter);
+        },
+        filterDate() {
+            this.is_Busy = true;
+
+            if (
+                this.filter.start_to != null ||
+                (this.filter.start_to != "" && this.filter.end_to != null) ||
+                this.filter.end_to != ""
+            ) {
+                this.$emit("toggle-load-data", this.filter);
+            }
         },
         selectAll() {
             this.selected_ids = [];

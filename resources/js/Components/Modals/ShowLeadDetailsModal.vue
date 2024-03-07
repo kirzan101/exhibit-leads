@@ -4,13 +4,15 @@
             <div>
                 <p>Name: <b>{{ lead.full_name }}</b></p>
                 <p>Companion Name: <b>{{ lead.companion_full_name }}</b></p>
-                <p>Mobile Number <b>{{ lead.mobile_number }}</b></p>
-                <p>Occupation <b>{{ lead.occupation }}</b></p>
-                <p>Age <b>{{ lead.age }}</b></p>
-                <p>Addres <b>{{ lead.address }}</b></p>
-                <p>Hotel <b>{{ lead.hotel }}</b></p>
-                <p>Source <b>{{ lead.source }}</b></p>
-                <p>Remarks <b>{{ lead.remarks }}</b></p>
+                <p>Mobile Number: <b>{{ lead.mobile_number }}</b></p>
+                <p>Occupation: <b>{{ lead.occupation }}</b></p>
+                <p>Age: <b>{{ lead.age }}</b></p>
+                <p>Addres: <b>{{ lead.address }}</b></p>
+                <p>Hotel: <b>{{ lead.hotel }}</b></p>
+                <p>Source: <b>{{ lead.source }}</b></p>
+                <p>Remarks: <b>{{ lead.remarks }}</b></p>
+                <p>Date filled: <b>{{ dateFilled }}</b></p>
+                <p>Date Uploaded: <b>{{ dateUploaded }}</b></p>
             </div>
         </form>
 
@@ -31,5 +33,15 @@ export default {
         url: String,
         lead: Object,
     },
+    computed: {
+        dateUploaded() {
+            const formatted = new Date(this.lead.created_at);
+            return formatted.toLocaleString();
+        },
+        dateFilled() {
+            const formatted = new Date(this.lead.date_filled);
+            return formatted.toLocaleString();
+        }
+    }
 };
 </script>

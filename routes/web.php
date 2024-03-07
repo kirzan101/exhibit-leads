@@ -159,4 +159,5 @@ Route::middleware('auth')->group(function () {
     Route::put('/employee-venues', [EmployeeVenueController::class, 'update']);
 
     Route::get('/opc-leads', [OpcLeadController::class, 'index']);
+    Route::get('/download/opc-leads', [OpcLeadController::class, 'downloadOpcLeads']);
 });

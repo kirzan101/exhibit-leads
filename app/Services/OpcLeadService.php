@@ -55,7 +55,19 @@ class OpcLeadService
             });
         }
 
-        return $opc_leads->orderBy($sort_by, $sort)->paginate($per_page);;
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name'], 2);
+            $opc_leads->where('source_prefix', $prefix)
+                ->where('source', $suffix);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $opc_leads->whereBetween('date_filled', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
+        }
+
+        return $opc_leads->orderBy($sort_by, $sort)->paginate($per_page);
     }
 
     /**
@@ -92,7 +104,7 @@ class OpcLeadService
                             'source_prefix' => $lead->source_prefix,
                             'civil_status' => $lead->civil_status,
                             'remarks' => $lead->remarks,
-                            'date_filled' => Carbon::parse($lead->created_at)->format('Y-m-d'),
+                            'date_filled' => Carbon::parse($request['created_at'])->tz("Asia/Singapore")->format('Y-m-d H:i:s'),
                         ]);
                     }
                 }
@@ -136,7 +148,7 @@ class OpcLeadService
                 'source_prefix' => $request['source_prefix'],
                 'civil_status' => $request['civil_status'],
                 'remarks' => $request['remarks'],
-                'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d'),
+                'date_filled' => Carbon::parse($request['created_at'])->tz("Asia/Singapore")->format('Y-m-d H:i:s'),
             ]);
 
             $return_values = ['result' => 'success', 'message' => 'Successfully saved!', 'subject' => $this->last_id];
@@ -176,7 +188,7 @@ class OpcLeadService
                 'source_prefix' => $request['source_prefix'],
                 'civil_status' => $request['civil_status'],
                 'remarks' => $request['remarks'],
-                'date_filled' => Carbon::parse($request['created_at'])->format('Y-m-d')
+                'date_filled' => Carbon::parse($request['created_at'])->tz("Asia/Singapore")->format('Y-m-d H:i:s'),
             ]);
 
             $this->last_id = $opcLead->getKey();
@@ -245,5 +257,50 @@ class OpcLeadService
         // dd($result);
 
         return ($result > 0) ? true : false;
+    }
+
+    /**
+     * OPC Lead Report service
+     *
+     * @param array $request
+     * @return Collection
+     */
+    public function opcLeadReportService(array $request): Collection
+    {
+        $opc_leads = OpcLead::query();
+
+        //set default values
+        $per_page = (array_key_exists('per_page', $request) && $request['per_page'] != null) ? (int)$request['per_page'] : 5;
+        $sort_by = (array_key_exists('sort_by', $request) && $request['sort_by'] != null) ? $request['sort_by'] : 'id';
+        $sort = 'desc';
+        if (array_key_exists('is_sort_desc', $request) && $request['is_sort_desc'] != null) {
+            $sort = ($request['is_sort_desc'] == 'true') ? 'desc' : 'asc';
+        }
+
+        if (array_key_exists('search', $request) && !empty($request['search'])) {
+            $opc_leads->where(function ($query) use ($request) {
+                $query->where('first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('middle_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orwhere('companion_first_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('companion_last_name', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('occupation', 'LIKE', '%' . $request['search'] . '%')
+                    ->orWhere('mobile_number', 'LIKE', '%' . $request['search'] . '%');
+            });
+        }
+
+        // source filter
+        if (array_key_exists('source_name', $request) && !empty($request['source_name'])) {
+            [$prefix, $suffix] = explode("-", $request['source_name'], 2);
+            $opc_leads->where('source_prefix', $prefix)
+                ->where('source', $suffix);
+        }
+
+        //date filter
+        if ((array_key_exists('start_to', $request) && !empty($request['start_to'])) && (array_key_exists('end_to', $request) && !empty($request['end_to']))) {
+            $opc_leads->whereBetween('date_filled', [Carbon::parse($request['start_to'])->startOfDay()->format('Y-m-d H:i:s'), Carbon::parse($request['end_to'])->endOfDay()->format('Y-m-d H:i:s')]);
+        }
+
+        return $opc_leads->orderBy($sort_by, $sort)->get();
     }
 }

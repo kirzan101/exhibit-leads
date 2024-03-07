@@ -544,4 +544,18 @@ class Helper
 
         return $codes;
     }
+
+    /**
+     * Get the List of Lead Source
+     *
+     * @return void
+     */
+    public static function opcLeadSource()
+    {
+        $lead_sources = DB::table('opc_leads')
+            ->select(DB::raw("CONCAT(source_prefix,'-',source) AS source"))
+            ->distinct('source_prefix');
+
+        return $lead_sources->orderBy('source')->get()->toArray();
+    }
 }
