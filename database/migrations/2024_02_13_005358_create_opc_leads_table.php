@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('source_prefix')->nullable();
             $table->string('source')->nullable();
             $table->string('civil_status')->nullable();
-            $table->date('date_filled')->nullable();
+            $table->dateTime('date_filled')->nullable();
             $table->timestamps();
         });
     }
