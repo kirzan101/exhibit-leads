@@ -277,7 +277,7 @@ class Helper
             } else if ($team == 'SURVEY') {
                 $prefix = ['SURVEY'];
             } else if ($team == 'EXHIBIT') {
-                $prefix = ['LSR', 'ALM', 'PRJ', 'LS', 'IP'];
+                $prefix = ['LSR', 'ALM', 'PRJ', 'LS', 'IP', 'ALDG', 'CLSR'];
             }
 
             $lead_sources = $lead_sources->whereIn('source_prefix', $prefix);
@@ -335,6 +335,12 @@ class Helper
             ],
             [
                 'name' => 'SURVEY',
+            ],
+            [
+                'name' => 'ALDG',
+            ],
+            [
+                'name' => 'CLSR',
             ]
         ];
 
@@ -396,7 +402,9 @@ class Helper
             'ALM',
             'PRJ',
             'LS',
-            'IP'
+            'IP',
+            'ALDG',
+            'CLSR'
         ];
 
         return $array;
@@ -505,7 +513,9 @@ class Helper
                         'NMB',
                         'BROI',
                         'BNMB',
-                        'SURVEY'
+                        'SURVEY',
+                        'ALDG',
+                        'CLSR'
                     ];
             }
 
